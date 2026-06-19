@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ATTENTION,
   BOTTOM_LINE,
@@ -11,6 +11,7 @@ import {
   type Citation,
 } from "@/lib/mock";
 import type { Confidence } from "@/lib/corpus";
+import { loadState, type Commitment } from "@/lib/store";
 import { C, CitationChip, ConfidenceBadge, severityColor, severityGlyph, StageSpine } from "@/components/ui";
 
 const serif = { fontFamily: "var(--font-newsreader), Georgia, serif" };
@@ -33,6 +34,17 @@ export default function BeforeView() {
   const [q, setQ] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [prior, setPrior] = useState<Commitment[]>([]);
+
+  useEffect(() => {
+    const sync = () => {
+      const s = loadState();
+      setPrior(s.writtenToMemory ? s.commitments : []);
+    };
+    sync();
+    window.addEventListener("majlis-store", sync);
+    return () => window.removeEventListener("majlis-store", sync);
+  }, []);
 
   const drawer = openCite ? resolveCitation(openCite.sourceId, openCite.passageId) : null;
 
@@ -84,6 +96,24 @@ export default function BeforeView() {
       </header>
 
       <main className="mx-auto max-w-3xl px-6 py-8 space-y-8">
+        {/* loop: commitments carried over from last cycle's After stage */}
+        {prior.length > 0 && (
+          <section className="rounded-xl p-4" style={{ background: "#F0F4EF", border: "1px solid #CBD9CB" }}>
+            <div className="text-[11px] uppercase mb-2" style={{ color: "#3F7A5B", letterSpacing: "0.1em" }}>
+              Carried over from last meeting — verify these were kept
+            </div>
+            <ul className="space-y-1.5">
+              {prior.map((c) => (
+                <li key={c.id} className="text-[13px] flex items-baseline gap-2">
+                  <span className="font-semibold">{c.entity}</span>
+                  <span>{c.text}</span>
+                  <span className="ml-auto whitespace-nowrap" style={{ color: C.muted }}>was due {c.due}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
         {/* ① the bottom line */}
         <section>
           <div className="text-[11px] uppercase mb-2" style={{ color: C.faint, letterSpacing: "0.1em" }}>

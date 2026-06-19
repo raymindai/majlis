@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { Confidence } from "@/lib/corpus";
 
 /** Editorial-institutional palette. */
@@ -62,12 +63,22 @@ export function CitationChip({ sourceId, onClick }: { sourceId: string; onClick?
 }
 
 export function StageSpine({ active }: { active: "before" | "during" | "after" }) {
-  const stages = ["before", "during", "after"] as const;
+  const stages = [
+    { key: "before", label: "before", href: "/" },
+    { key: "during", label: "during", href: "/during" },
+    { key: "after", label: "after", href: "/after" },
+  ] as const;
   return (
     <div className="flex items-center gap-1.5 text-[11px] uppercase" style={{ letterSpacing: "0.08em" }}>
       {stages.map((s, i) => (
-        <span key={s} className="flex items-center gap-1.5">
-          <span style={{ color: s === active ? C.ink : "#B3A892", fontWeight: s === active ? 600 : 400 }}>{s}</span>
+        <span key={s.key} className="flex items-center gap-1.5">
+          <Link
+            href={s.href}
+            className="hover:underline"
+            style={{ color: s.key === active ? C.ink : "#B3A892", fontWeight: s.key === active ? 600 : 400 }}
+          >
+            {s.label}
+          </Link>
           {i < 2 && <span style={{ color: "#CFC6B2" }}>▸</span>}
         </span>
       ))}

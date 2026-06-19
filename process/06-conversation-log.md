@@ -49,6 +49,9 @@ Session: 2026-06-19 → 2026-06-20.
 **User:** "let's push it to git first."
 **Claude:** committed corpus + process archive + grounding backbone locally (secrets verified out — `.env.local` gitignored/untracked); created a **private** GitHub repo and pushed `main` → github.com/raymindai/majlis.
 
+### Turn 18 — 2026-06-20 (overnight) · During + After + the loop
+**Claude:** built the full lifecycle. During (`/during`): live meeting feed with the signature **inconsistency flag** (EKD "on track" vs the recorded August slip) + commitment capture. After (`/after`): minutes drafted from captured items, each with confidence, + "write to institutional memory." `lib/store.ts`: localStorage-backed state (no DB needed) flowing before→during→after→next before. Before now surfaces carried-over prior commitments once written — **loop closed**. Stage spine navigable. Verified: all routes 200; live Q&A still grounded. Committed + pushed. Next: production build check, GOOD-MORNING.md, fal script, skin options.
+
 ### Turn 17 — 2026-06-20 (overnight) · Live Claude Q&A engine working
 **Context:** user went to sleep, asked me to build everything I can autonomously and leave the choices for the morning.
 **Claude:** wired the live Q&A engine — `app/api/ask` calls **claude-opus-4-8** via `messages.parse` + a zod schema forcing `claims[{text, confidence, sourceId, passageId}]`; the system prompt is the behavioral contract. before-view's Ask now calls it with loading / error / not-in-material states. **Verified live:** "Did EKD meet its March commitment?" → grounded "No" with confirmed/confirmed/unverified claims citing the exact passages; an out-of-scope question → notInMaterial. Committed + pushed. Next overnight: During, After + loop, skin chooser, fal, microsite, GOOD-MORNING.md.
