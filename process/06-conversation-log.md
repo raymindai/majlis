@@ -44,3 +44,28 @@ Session: 2026-06-19 → 2026-06-20.
 ### Turn 10 — 2026-06-20 · Stack + scaffold + journey reframe
 **User:** locked the stack — **Vercel + Supabase + Claude + fal**. Then, before committing to layout, asked to step back and think of the product as **multi-dimensional**, flowing across **before / during / after** the meeting — enumerate the full journey and all candidate features, *then* prioritize, *then* design layout (trying a few designs at that stage).
 **Claude:** scaffolded the Next.js app (TS/Tailwind/App Router) + installed the 4 SDKs; wrote `lib/corpus.ts` (the grounding backbone); created the 10-step build task list. Then reframed the concept around the **before→during→after lifecycle + the institutional-memory loop** (after-commitments become next cycle's prior positions); wrote the journey walkthrough + full feature inventory (`10-journey-and-features.md`) with a recommended build-deep / signature / sketch / cut split. Surfaced the scope-ambition fork. Deferred the visual-direction choice (user wants to see a few designs at layout stage).
+
+### Turn 11 — 2026-06-20 · Pushed to GitHub
+**User:** "let's push it to git first."
+**Claude:** committed corpus + process archive + grounding backbone locally (secrets verified out — `.env.local` gitignored/untracked); created a **private** GitHub repo and pushed `main` → github.com/raymindai/majlis.
+
+### Turn 16 — 2026-06-20 · Rebuilt Before on corrected IA + editorial-institutional skin
+**User:** combine wireframe+skin, reduce steps, increase density; and commit+push after major changes.
+**Claude:** saved the commit/push rule to memory. Rebuilt the Before screen for real on the `12` IA — exception-led hierarchy, provenance flow + working source drawer, shared UI components (ConfidenceBadge/CitationChip/StageSpine), institutional palette; Q&A on mock (live next). Removed the /explore variants; trimmed fonts. Verified rendering (200 at :3001) and pushed. Next: wire live Claude into the Ask, then During/After.
+
+### Turn 15 — 2026-06-20 · Adopt proper service + UX design
+**User:** we should take proper service and UX design to minimise risk and build a truly useful product.
+**Claude:** affirmed; reset the sequence to Define → Wireframe → Skin → Build (lean, time-boxed). Wrote the service & UX definition pack (`13-service-ux-definition.md`): primary persona + JTBD, a Before/During/After service blueprint (frontstage/backstage/moments of truth), an assumptions & risks register (R1 trust-too-much / R2 trust-too-little as the deciding risks), and success criteria for "truly useful." Noted it's assumption-led (no real DG access), so the risks register is the de-risk tool. Next: validate with user, then wireframe → skin → build.
+
+### Turn 14 — 2026-06-20 · Critique: hierarchy & data flow
+**User:** none of the variants have clear hierarchy or data flow; think about the primary audience.
+**Claude:** acknowledged the variants were skins on a flat skeleton. Re-centered on the primary audience (the Programme DG, minutes from a high-stakes meeting) and redesigned the information architecture: decision/risk-led hierarchy (bottom line + decision = primary; ranked exceptions = secondary; on-track/sources = tertiary/on-demand), a single reading flow ①→④, a provenance micro-flow (claim→confidence→source→passage), and the Before▸During▸After spine. Wrote `12-information-architecture.md`. Next: rebuild on this skeleton, then skin.
+
+### Turn 13 — 2026-06-20 · Design variants + selection criteria
+**Claude:** built the grounding mock + 3 rendered hero-screen variants of the Before screen — Institutional, Situation room, Dossier — live at localhost:3001/explore (all 200).
+**User:** before deciding, asked for the **selection criteria**.
+**Claude:** defined the design-direction rubric (`11-design-criteria.md`): must-pass gates (accessible/legible; no generic-AI tells) + weighted differentiators (carries the AI states [heaviest], trust/institutional fit, calm under pressure, scales across the lifecycle, distinctiveness). Offered to score the three against it.
+
+### Turn 12 — 2026-06-20 · Scope = all three stages; design exploration
+**User:** chose to build **all three stages substantively** (Before/During/After) — the most ambitious option. Also: "vercel is setup now."
+**Claude:** logged D9; committed to all-three with a spine-first de-risk approach; restructured tasks around the three stages + the loop; loaded the UI design toolkit and mined palettes/fonts for the layout exploration. Next: build a few rendered hero-screen variants to compare.

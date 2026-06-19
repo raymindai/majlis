@@ -45,6 +45,18 @@ Legend: ✅ locked · 🔶 open · 👤 user call · 🤖 Claude recommendation
 - **How we keep live trustworthy:** whole corpus in context (no retrieval gaps) + structured outputs for claims/confidence/citations + behavioral-contract system prompt + honest out-of-scope. Supersedes Claude's earlier hybrid recommendation.
 - **Consequence:** needs `ANTHROPIC_API_KEY` (Claude) and `FAL_KEY` (fal.ai / Nano Banana 2 imagery), provided by the user.
 
+## D9 — Lifecycle scope · ✅ 👤
+- **Date:** 2026-06-20
+- **Choice:** build **all three stages substantively** — Before, During, After — connected by the institutional-memory loop.
+- **Note:** user chose the most ambitious option over Claude's "Before-deep + 2 signature moments" recommendation. The brief warns to scope down; to de-risk, build a connected end-to-end **spine first** (always demoable), then deepen each stage.
+- **Next:** design exploration — build a few rendered hero-screen layout variants to compare before committing (user wants to try a few designs).
+
+## D10 — Design direction & IA · ✅ 👤-steered
+- **Date:** 2026-06-20
+- **Process correction (user):** combine wireframe + skin, reduce steps, increase density; and the first variants lacked clear hierarchy/data-flow — design for the primary audience.
+- **Choice:** rebuilt the Before screen on an **exception-led IA** (`12`): bottom-line + decision (primary) → ranked attention (secondary) → interrogate (on demand), with a provenance flow (claim → confidence → citation → source drawer). Skin = **editorial-institutional** (per criteria `11`: trust, calm, scales, avoids generic-AI). Re-skinnable component system.
+- **Live at** `/` (dev :3001); Q&A on mock pending live wiring.
+
 ## Earlier framing decisions (context)
 - **AI is the product, not a feature** — the scenario must make the AI's judgment the experience. 🤖
 - **Scope down to 1–2 capabilities built deeply.** 🤖
@@ -53,5 +65,5 @@ Legend: ✅ locked · 🔶 open · 👤 user call · 🤖 Claude recommendation
 
 ## Pending decisions (next forks)
 - 🔶 **D7 — Product name** (working title: "Majlis").
-- **Stack:** proceeding with Next.js + Vercel + live Claude + fal.ai (Nano Banana 2), desktop-first — unless changed.
-- **Blocked on user:** API keys (`ANTHROPIC_API_KEY`, `FAL_KEY`) → `.env.local`.
+- **Stack:** Next.js + Vercel + Supabase + live Claude + fal — locked.
+- **Keys:** Anthropic in place; fal + Supabase still needed (imagery + DB / the loop).
