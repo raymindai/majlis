@@ -49,6 +49,9 @@ Session: 2026-06-19 → 2026-06-20.
 **User:** "let's push it to git first."
 **Claude:** committed corpus + process archive + grounding backbone locally (secrets verified out — `.env.local` gitignored/untracked); created a **private** GitHub repo and pushed `main` → github.com/raymindai/majlis.
 
+### Turn 20 — 2026-06-20 (overnight) · Readout + wrap
+**Claude:** wrote `GOOD-MORNING.md` (run instructions, the ~3-min demo path, what's built, the open choices, and what was deliberately not built). Updated the build plan. Stopping the autonomous build here — everything buildable without the missing keys (fal, Supabase) or the user's input (microsite shape, product name, dark theme, deploy env) is done, working, and pushed. The product is live and deploy-ready.
+
 ### Turn 19 — 2026-06-20 (overnight) · Skin chooser + deploy-ready build
 **Claude:** verified a clean production `next build` (TypeScript + all routes) — deploy-ready (Vercel needs only the env keys added). Added a live **skin chooser**: the palette resolves through CSS variables (`globals.css`) with per-theme overrides; `C` tokens reference the vars; a floating, persisted ThemeSwitcher swaps Institutional ↔ Dossier. Committed + pushed. Next: fal image script (ready for key), GOOD-MORNING.md readout.
 

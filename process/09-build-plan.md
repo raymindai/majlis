@@ -16,14 +16,16 @@ Bounded meeting corpus → the whole pack fits in context (no retrieval gaps) + 
 - **Real rendered UI (not AI images):** charts, tables, document views, status dashboards — sharper and truer than generated images, and they're the actual product surface.
 
 ## Checklist
-- [x] Author the committee-pack corpus (`content/`) — the live grounding material
-- [ ] API keys in `.env.local` (`ANTHROPIC_API_KEY`, `FAL_KEY`) — **blocked on user**
-- [ ] Confirm exact fal endpoint id for Nano Banana 2 (check fal docs)
-- [ ] Generate imagery: 6 participant portraits · product/brief hero · 5 abstract entity marks
-- [ ] Scaffold Next.js app on Vercel
-- [ ] Q&A engine: server route → Claude, whole corpus in context, structured `{claims[]}` output
-- [ ] Hero UI: ask → streamed answer → inline citations → Confirmed/Likely/Unverified → source drawer
-- [ ] AI-states: loading/streaming, confidence, citations, conflict view, "not in material", empty, error
-- [ ] Briefing entry view (sketched) + risk flags (accent)
-- [ ] Microsite: decision-tree narrative (Trees 1–6) + embedded demo
-- [ ] Demo pass · deploy · shareable URL
+- [x] Author the committee-pack corpus (`content/`)
+- [x] Scaffold Next.js app (TS / Tailwind / App Router) + SDKs
+- [x] Anthropic key in `.env.local` — **fal + Supabase keys still pending (user)**
+- [x] Q&A engine: server route → Claude (opus-4-8), whole corpus in context, structured `{claims[]}`
+- [x] Before UI: ask → answer → confidence → citations → source drawer + AI-states (loading / conflict / not-in-material / empty / error)
+- [x] During stage (live feed, inconsistency flag, commitment capture)
+- [x] After stage (minutes + write-to-memory) and the loop
+- [x] Skin chooser (Institutional / Dossier)
+- [x] Production build clean (deploy-ready)
+- [ ] fal imagery — blocked on `FAL_KEY` (offer stands)
+- [ ] Supabase persistence — optional (loop runs on localStorage)
+- [ ] Microsite: decision-tree narrative — left for the user's shape input
+- [ ] Deploy: add `ANTHROPIC_API_KEY` to Vercel + promote
