@@ -1,26 +1,36 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Institutional skin (default) */
+  --c-bg: #f6f2e9;
+  --c-surface: #ffffff;
+  --c-surface-alt: #fcfaf4;
+  --c-ink: #14233a;
+  --c-muted: #5b6573;
+  --c-faint: #9a8c70;
+  --c-line: #e4dccb;
+  --c-accent: #b08d4f;
+}
+
+[data-theme="dossier"] {
+  /* Warm editorial dossier skin */
+  --c-bg: #fbfaf6;
+  --c-surface: #ffffff;
+  --c-surface-alt: #f4f0e6;
+  --c-ink: #211c16;
+  --c-muted: #5a5347;
+  --c-faint: #9a8f79;
+  --c-line: #e7dfcd;
+  --c-accent: #9b4722;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-sans: var(--font-inter);
+  --font-serif: var(--font-newsreader);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--c-bg);
+  color: var(--c-ink);
+  font-family: var(--font-inter), system-ui, sans-serif;
 }

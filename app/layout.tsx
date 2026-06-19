@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { inter, newsreader } from "@/lib/fonts";
+import ThemeSwitcher from "@/components/theme-switcher";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -14,7 +15,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${newsreader.variable} ${inter.variable} antialiased`}>
-      <body style={{ background: "#F6F2E9" }}>{children}</body>
+      <body style={{ background: "var(--c-bg, #F6F2E9)" }}>
+        {children}
+        <ThemeSwitcher />
+      </body>
     </html>
   );
 }

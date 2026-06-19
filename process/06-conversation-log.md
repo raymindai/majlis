@@ -49,6 +49,9 @@ Session: 2026-06-19 → 2026-06-20.
 **User:** "let's push it to git first."
 **Claude:** committed corpus + process archive + grounding backbone locally (secrets verified out — `.env.local` gitignored/untracked); created a **private** GitHub repo and pushed `main` → github.com/raymindai/majlis.
 
+### Turn 19 — 2026-06-20 (overnight) · Skin chooser + deploy-ready build
+**Claude:** verified a clean production `next build` (TypeScript + all routes) — deploy-ready (Vercel needs only the env keys added). Added a live **skin chooser**: the palette resolves through CSS variables (`globals.css`) with per-theme overrides; `C` tokens reference the vars; a floating, persisted ThemeSwitcher swaps Institutional ↔ Dossier. Committed + pushed. Next: fal image script (ready for key), GOOD-MORNING.md readout.
+
 ### Turn 18 — 2026-06-20 (overnight) · During + After + the loop
 **Claude:** built the full lifecycle. During (`/during`): live meeting feed with the signature **inconsistency flag** (EKD "on track" vs the recorded August slip) + commitment capture. After (`/after`): minutes drafted from captured items, each with confidence, + "write to institutional memory." `lib/store.ts`: localStorage-backed state (no DB needed) flowing before→during→after→next before. Before now surfaces carried-over prior commitments once written — **loop closed**. Stage spine navigable. Verified: all routes 200; live Q&A still grounded. Committed + pushed. Next: production build check, GOOD-MORNING.md, fal script, skin options.
 

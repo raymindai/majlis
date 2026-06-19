@@ -1,16 +1,20 @@
 import Link from "next/link";
 import type { Confidence } from "@/lib/corpus";
 
-/** Editorial-institutional palette. */
+/**
+ * Editorial palette. Core surfaces resolve through CSS variables (set per theme
+ * in globals.css) with the Institutional values as fallbacks, so the live skin
+ * switcher can re-theme the whole app without touching components.
+ */
 export const C = {
-  bg: "#F6F2E9",
-  surface: "#FFFFFF",
-  surfaceAlt: "#FCFAF4",
-  ink: "#14233A",
-  muted: "#5B6573",
-  faint: "#9A8C70",
-  line: "#E4DCCB",
-  accent: "#B08D4F",
+  bg: "var(--c-bg, #F6F2E9)",
+  surface: "var(--c-surface, #FFFFFF)",
+  surfaceAlt: "var(--c-surface-alt, #FCFAF4)",
+  ink: "var(--c-ink, #14233A)",
+  muted: "var(--c-muted, #5B6573)",
+  faint: "var(--c-faint, #9A8C70)",
+  line: "var(--c-line, #E4DCCB)",
+  accent: "var(--c-accent, #B08D4F)",
   confirmed: "#2F6B4F",
   likely: "#B5852F",
   unverified: "#A23B2D",
@@ -54,8 +58,8 @@ export function CitationChip({ sourceId, onClick }: { sourceId: string; onClick?
     <button
       type="button"
       onClick={onClick}
-      className="inline-flex items-center gap-1 text-[11px] rounded border px-1.5 py-0.5 transition-colors cursor-pointer hover:bg-[#F1EADB]"
-      style={{ borderColor: "#D8CFBD", color: "#5B6573" }}
+      className="inline-flex items-center gap-1 text-[11px] rounded border px-1.5 py-0.5 transition-colors cursor-pointer"
+      style={{ borderColor: C.line, color: C.muted }}
     >
       {sourceId} <span style={{ color: C.accent }}>›</span>
     </button>
@@ -75,11 +79,11 @@ export function StageSpine({ active }: { active: "before" | "during" | "after" }
           <Link
             href={s.href}
             className="hover:underline"
-            style={{ color: s.key === active ? C.ink : "#B3A892", fontWeight: s.key === active ? 600 : 400 }}
+            style={{ color: s.key === active ? C.ink : C.faint, fontWeight: s.key === active ? 600 : 400 }}
           >
             {s.label}
           </Link>
-          {i < 2 && <span style={{ color: "#CFC6B2" }}>▸</span>}
+          {i < 2 && <span style={{ color: C.line }}>▸</span>}
         </span>
       ))}
     </div>
