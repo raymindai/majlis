@@ -49,6 +49,10 @@ Session: 2026-06-19 → 2026-06-20.
 **User:** "let's push it to git first."
 **Claude:** committed corpus + process archive + grounding backbone locally (secrets verified out — `.env.local` gitignored/untracked); created a **private** GitHub repo and pushed `main` → github.com/raymindai/majlis.
 
+### Turn 17 — 2026-06-20 (overnight) · Live Claude Q&A engine working
+**Context:** user went to sleep, asked me to build everything I can autonomously and leave the choices for the morning.
+**Claude:** wired the live Q&A engine — `app/api/ask` calls **claude-opus-4-8** via `messages.parse` + a zod schema forcing `claims[{text, confidence, sourceId, passageId}]`; the system prompt is the behavioral contract. before-view's Ask now calls it with loading / error / not-in-material states. **Verified live:** "Did EKD meet its March commitment?" → grounded "No" with confirmed/confirmed/unverified claims citing the exact passages; an out-of-scope question → notInMaterial. Committed + pushed. Next overnight: During, After + loop, skin chooser, fal, microsite, GOOD-MORNING.md.
+
 ### Turn 16 — 2026-06-20 · Rebuilt Before on corrected IA + editorial-institutional skin
 **User:** combine wireframe+skin, reduce steps, increase density; and commit+push after major changes.
 **Claude:** saved the commit/push rule to memory. Rebuilt the Before screen for real on the `12` IA — exception-led hierarchy, provenance flow + working source drawer, shared UI components (ConfidenceBadge/CitationChip/StageSpine), institutional palette; Q&A on mock (live next). Removed the /explore variants; trimmed fonts. Verified rendering (200 at :3001) and pushed. Next: wire live Claude into the Ask, then During/After.

@@ -7,25 +7,62 @@ import {
   DECISION,
   MEETING_META,
   resolveCitation,
-  SAMPLE_QA,
   STEADY,
   type Citation,
-  type MockQA,
 } from "@/lib/mock";
+import type { Confidence } from "@/lib/corpus";
 import { C, CitationChip, ConfidenceBadge, severityColor, severityGlyph, StageSpine } from "@/components/ui";
 
 const serif = { fontFamily: "var(--font-newsreader), Georgia, serif" };
 
+type LiveAnswer = {
+  notInMaterial: boolean;
+  summary: string;
+  claims: { text: string; confidence: Confidence; sourceId: string; passageId: string }[];
+};
+
+const SUGGESTIONS = [
+  "What's the one thing I can't miss?",
+  "Did EKD meet its March commitment?",
+  "What does the MTA budget conflict change for the vote?",
+];
+
 export default function BeforeView() {
   const [openCite, setOpenCite] = useState<Citation | null>(null);
-  const [answer, setAnswer] = useState<MockQA | null>(null);
+  const [answer, setAnswer] = useState<LiveAnswer | null>(null);
   const [q, setQ] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const drawer = openCite ? resolveCitation(openCite.sourceId, openCite.passageId) : null;
 
-  function ask(question?: string) {
-    setAnswer(SAMPLE_QA); // mock for now; live Claude wired next
-    setQ(question ?? SAMPLE_QA.question);
+  async function ask(question?: string) {
+    const text = (question ?? q).trim();
+    if (!text || loading) return;
+    setQ(text);
+    setAnswer(null);
+    setError(null);
+    setLoading(true);
+    try {
+      const res = await fetch("/api/ask", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ question: text }),
+      });
+      if (!res.ok) throw new Error(String(res.status));
+      const data = (await res.json()) as LiveAnswer;
+      setAnswer(data);
+    } catch {
+      setError("Couldn't reach the assistant. Try again.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function reset() {
+    setAnswer(null);
+    setError(null);
+    setQ("");
   }
 
   return (
@@ -129,7 +166,7 @@ export default function BeforeView() {
           </div>
         </section>
 
-        {/* ④ interrogate */}
+        {/* ④ interrogate — live Claude */}
         <section>
           <div className="text-[11px] uppercase mb-2" style={{ color: C.faint, letterSpacing: "0.1em" }}>
             Interrogate
@@ -137,7 +174,7 @@ export default function BeforeView() {
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              ask(q || undefined);
+              ask();
             }}
             className="flex items-center gap-2 rounded-lg px-4 py-3"
             style={{ background: C.surface, border: `1px solid ${C.line}` }}
@@ -146,16 +183,23 @@ export default function BeforeView() {
               value={q}
               onChange={(e) => setQ(e.target.value)}
               placeholder="Ask the brief…"
-              className="flex-1 bg-transparent outline-none text-[15px]"
+              disabled={loading}
+              className="flex-1 bg-transparent outline-none text-[15px] disabled:opacity-60"
               style={{ color: C.ink }}
             />
-            <button type="submit" className="text-[13px] px-2 py-1 rounded cursor-pointer" style={{ color: C.accent }}>
-              Ask ↵
+            <button
+              type="submit"
+              disabled={loading}
+              className="text-[13px] px-2 py-1 rounded cursor-pointer disabled:opacity-50"
+              style={{ color: C.accent }}
+            >
+              {loading ? "…" : "Ask ↵"}
             </button>
           </form>
-          {!answer && (
+
+          {!answer && !loading && !error && (
             <div className="mt-2 flex flex-wrap gap-2">
-              {["Did EKD meet its March commitment?", "What does the MTA conflict change?"].map((s) => (
+              {SUGGESTIONS.map((s) => (
                 <button
                   key={s}
                   type="button"
@@ -168,32 +212,61 @@ export default function BeforeView() {
               ))}
             </div>
           )}
+
+          {loading && (
+            <div className="mt-4 rounded-xl p-5" style={{ background: C.surface, border: `1px solid ${C.line}` }}>
+              <div className="text-[13px] mb-3 flex items-center gap-2" style={{ color: C.muted }}>
+                <span className="h-2 w-2 rounded-full animate-pulse" style={{ background: C.accent }} />
+                Consulting the committee pack…
+              </div>
+              <div className="space-y-2">
+                <div className="h-3 rounded animate-pulse" style={{ background: "#EFE8D8", width: "92%" }} />
+                <div className="h-3 rounded animate-pulse" style={{ background: "#EFE8D8", width: "78%" }} />
+                <div className="h-3 rounded animate-pulse" style={{ background: "#EFE8D8", width: "64%" }} />
+              </div>
+            </div>
+          )}
+
+          {error && (
+            <div
+              className="mt-4 rounded-xl p-5 text-[14px] flex items-center justify-between"
+              style={{ background: "#FBF1EC", border: "1px solid #E7C9BE", color: C.unverified }}
+            >
+              <span>{error}</span>
+              <button type="button" onClick={() => ask()} className="underline cursor-pointer">Retry</button>
+            </div>
+          )}
+
           {answer && (
             <div className="mt-4 rounded-xl p-5" style={{ background: C.surface, border: `1px solid ${C.line}` }}>
-              <div className="text-[15px] mb-4" style={serif}>{answer.question}</div>
-              <div className="space-y-4">
-                {answer.claims.map((c, i) => (
-                  <div key={i}>
-                    <p className="text-[15px] leading-relaxed">{c.text}</p>
-                    <div className="mt-1.5 flex items-center gap-2">
-                      <ConfidenceBadge confidence={c.confidence} />
-                      <CitationChip
-                        sourceId={c.sourceId}
-                        onClick={() => setOpenCite({ sourceId: c.sourceId, passageId: c.passageId })}
-                      />
+              <div className="text-[14px] mb-1" style={{ color: C.muted }}>{q}</div>
+              {answer.summary && <p className="text-[16px] leading-relaxed mt-2 mb-4">{answer.summary}</p>}
+
+              {answer.notInMaterial ? (
+                <div
+                  className="text-[13px] rounded-lg px-3 py-2"
+                  style={{ background: C.surfaceAlt, color: C.muted, border: `1px solid ${C.line}` }}
+                >
+                  Not in the shared committee pack — nothing to cite.
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {answer.claims.map((c, i) => (
+                    <div key={i}>
+                      <p className="text-[15px] leading-relaxed">{c.text}</p>
+                      <div className="mt-1.5 flex items-center gap-2">
+                        <ConfidenceBadge confidence={c.confidence} />
+                        <CitationChip
+                          sourceId={c.sourceId}
+                          onClick={() => setOpenCite({ sourceId: c.sourceId, passageId: c.passageId })}
+                        />
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-              <button
-                type="button"
-                onClick={() => {
-                  setAnswer(null);
-                  setQ("");
-                }}
-                className="mt-4 text-[12px] cursor-pointer"
-                style={{ color: C.muted }}
-              >
+                  ))}
+                </div>
+              )}
+
+              <button type="button" onClick={reset} className="mt-4 text-[12px] cursor-pointer" style={{ color: C.muted }}>
                 ← Ask something else
               </button>
             </div>
@@ -223,7 +296,7 @@ export default function BeforeView() {
               className="mt-4 text-[15px] leading-relaxed p-4 rounded-lg"
               style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}
             >
-              {drawer.text}
+              {drawer.text || "This passage isn't in the loaded pack."}
             </p>
           </aside>
         </>
