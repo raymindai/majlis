@@ -1,0 +1,46 @@
+# 06 · Conversation Log
+
+A faithful, cleaned chronological record of the working conversation. (Substance, not verbatim.)
+Session: 2026-06-19 → 2026-06-20.
+
+---
+
+### Turn 1 — 2026-06-19 · Scenario brainstorm
+**User:** shared the role (AI Experience Designer, DGE Abu Dhabi) and the case-study brief; asked for *a set of compelling scenarios the UAE government could use this app for.*
+**Claude:** read both source documents; delivered **7 scenarios** across meeting / decision / public-appearance modes, each with persona, moment, stakes, sources, capabilities, and DGE product line. Recommended **#5/#6 (public-appearance)** for craft ceiling or **#3 (procurement)** for DGE fit. Saved a project memory.
+
+### Turn 2 — 2026-06-20 · Reset
+**User:** set the model to Opus 4.8 (1M); said **"let's start over."**
+**Claude:** asked which kind of restart was meant (fresh scenarios / go deep on one / rethink approach / clean slate).
+
+### Turn 3 — 2026-06-20 · Re-analyze through three lenses
+**User:** *analyze the brief again; focus on the best scenarios by **impact**, **product platform**, and **process presentation format.***
+**Claude:** distilled what the brief is really testing; defined the three lenses; scored a shortlist; recommended **A (public-appearance)** on a **tablet-framed web app**, presented via an **AI-built microsite + embedded demo**.
+
+### Turn 4 — 2026-06-20 · Likelihood + decision trees
+**User:** *likelihood is important; **why** I made decisions is crucial; I want **decision trees** in the process presentation.*
+**Claude:** re-scored with likelihood added → recommendation shifted to **B (procurement)**; rendered the scenario-selection **decision tree**; proposed a **6-tree spine** for the whole presentation.
+
+### Turn 5 — 2026-06-20 · Working style
+**User:** *ask me questions whenever you need to decide for meaningful progressions.*
+**Claude:** saved that as a working preference; asked two gating questions — scenario lock, and presentation format.
+
+### Turn 6 — 2026-06-20 · Decisions + documentation
+**User:** kept **Scenario A** (rationale: usable by *every meeting participant*, not just senior personnel); chose the **AI-built microsite**; then asked to **document the process diligently** and **save the whole conversation as a series of md files.**
+**Claude:** locked D1 (Scenario A) and D2 (microsite); created this `process/` archive (files 00–06); updated memory. Next forks: persona/breadth, capabilities, platform.
+
+### Turn 7 — 2026-06-20 · Persona, capabilities, concept
+**User:** persona = **primary senior-official, secondary any-participant**; hero capabilities = **grounded Q&A + confidence/sourcing**.
+**Claude:** logged D3 + D4; wrote the concept one-pager (`07-concept-onepager.md`) — sharpened persona, the Q&A+confidence hero loop, the AI behavioral contract, the confidence/sourcing model, the AI-state inventory, platform, and scope. Surfaced the next fork: the concrete **meeting context** (recommending a cross-government programme/steering review).
+
+### Turn 8 — 2026-06-20 · Meeting context + dataset
+**User:** chose the **cross-government programme / steering review** context.
+**Claude:** logged D5; instantiated the scenario in `08-scenario-instance.md` — the synthetic *Manarah* digital-services programme, 5 entities, a 5-document source fixture, five designed tensions (confidence contrast, consistency catch, source conflict, sensitivity/refusal, consequential risk), and a demo Q&A script. Surfaced the next fork: the **build approach** (simulated / live Claude / hybrid).
+
+### Turn 9 — 2026-06-20 · Go live + build materials
+**User:** wants the prototype to run **live** ("or close to it") — reasoning that a single meeting is bounded, so there's a ceiling on what can be asked. Asked Claude to **create the meeting materials, including images** (via fal.ai / Nano Banana 2), and to request whatever **API keys** are needed.
+**Claude:** logged D8 (live); explained how the bounded corpus makes live trustworthy; set the stack (Next.js/Vercel/Claude/fal, desktop-first); authored the committee-pack corpus in `content/` (6 docs); wrote the build plan (`09-build-plan.md`); created `.env.local` placeholders and requested `ANTHROPIC_API_KEY` + `FAL_KEY`. Image generation + app scaffold pending keys.
+
+### Turn 10 — 2026-06-20 · Stack + scaffold + journey reframe
+**User:** locked the stack — **Vercel + Supabase + Claude + fal**. Then, before committing to layout, asked to step back and think of the product as **multi-dimensional**, flowing across **before / during / after** the meeting — enumerate the full journey and all candidate features, *then* prioritize, *then* design layout (trying a few designs at that stage).
+**Claude:** scaffolded the Next.js app (TS/Tailwind/App Router) + installed the 4 SDKs; wrote `lib/corpus.ts` (the grounding backbone); created the 10-step build task list. Then reframed the concept around the **before→during→after lifecycle + the institutional-memory loop** (after-commitments become next cycle's prior positions); wrote the journey walkthrough + full feature inventory (`10-journey-and-features.md`) with a recommended build-deep / signature / sketch / cut split. Surfaced the scope-ambition fork. Deferred the visual-direction choice (user wants to see a few designs at layout stage).
