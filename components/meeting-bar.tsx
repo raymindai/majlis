@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Check, ChevronDown, MapPin } from "lucide-react";
+import { Check, ChevronDown, LogOut, MapPin, Play, Video } from "lucide-react";
 import { MEETING_META } from "@/lib/mock";
 import { meetingFieldI18n } from "@/lib/corpus";
 import { C } from "@/components/ui";
@@ -15,8 +15,9 @@ const STAGES = [
 ] as const;
 
 /**
- * The meeting in the header. The status chip doubles as the meeting-state selector:
- * click it to move between Before, During (In session), and After.
+ * The meeting in the header: the name, then one split control that fuses the
+ * status and the presence action. The left half shows the status and opens the
+ * stage selector; the right half is the stage's action (join, leave, replay).
  */
 export default function MeetingBar({ stage }: { stage: "before" | "during" | "after" }) {
   const [open, setOpen] = useState(false);
@@ -24,11 +25,19 @@ export default function MeetingBar({ stage }: { stage: "before" | "during" | "af
   const current = STAGES.find((s) => s.key === stage)!;
   const live = stage === "during";
 
-  const chipStyle = live
-    ? { background: C.flagBg, color: C.unverified, border: `1px solid ${C.flagBorder}` }
+  const statusStyle = live
+    ? { background: C.flagBg, color: C.unverified }
     : stage === "before"
-      ? { background: C.chipBg, color: C.ink, border: `1px solid ${C.line}` }
-      : { background: C.surfaceAlt, color: C.muted, border: `1px solid ${C.line}` };
+      ? { background: C.chipBg, color: C.ink }
+      : { background: C.surfaceAlt, color: C.muted };
+
+  const join =
+    stage === "before"
+      ? { href: "/during", labelKey: "joinCall", Icon: Video, style: { background: C.accent, color: C.onAccent } }
+      : stage === "during"
+        ? { href: "/after", labelKey: "leave", Icon: LogOut, style: { background: C.flagBg, color: C.unverified } }
+        : { href: "/during", labelKey: "replayRecording", Icon: Play, style: { background: C.surfaceAlt, color: C.detail } };
+  const JoinIcon = join.Icon;
 
   return (
     <div className="flex items-center gap-2.5 min-w-0">
@@ -41,18 +50,28 @@ export default function MeetingBar({ stage }: { stage: "before" | "during" | "af
       </div>
 
       <div className="relative">
-        <button
-          type="button"
-          onClick={() => setOpen((o) => !o)}
-          className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[12px] cursor-pointer hover:opacity-90"
-          style={chipStyle}
-          title={tr("changeStatus")}
-        >
-          {live && <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: C.unverified }} />}
-          {tr(current.statusKey)}
-          {stage === "before" && <span className="opacity-80">{tr("inMinutes", { n: MEETING_META.minutesUntil })}</span>}
-          <ChevronDown size={13} strokeWidth={2} className="opacity-80" />
-        </button>
+        <div className="inline-flex items-stretch rounded-lg overflow-hidden" style={{ border: `1px solid ${C.line}` }}>
+          <button
+            type="button"
+            onClick={() => setOpen((o) => !o)}
+            title={tr("changeStatus")}
+            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-[12px] cursor-pointer hover:opacity-90"
+            style={statusStyle}
+          >
+            {live && <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: C.unverified }} />}
+            {tr(current.statusKey)}
+            {stage === "before" && <span className="opacity-80">{tr("inMinutes", { n: MEETING_META.minutesUntil })}</span>}
+            <ChevronDown size={13} strokeWidth={2} className="opacity-80" />
+          </button>
+          <Link
+            href={join.href}
+            className="inline-flex items-center gap-1.5 px-3 text-[12px] font-medium cursor-pointer hover:opacity-90 border-l"
+            style={{ ...join.style, borderColor: C.line }}
+          >
+            <JoinIcon size={14} strokeWidth={2} />
+            <span className="hidden sm:inline">{tr(join.labelKey)}</span>
+          </Link>
+        </div>
 
         {open && (
           <>
