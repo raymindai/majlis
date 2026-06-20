@@ -139,7 +139,7 @@ export default function ChatPanel({ stage }: { stage: "before" | "during" | "aft
                   key={s}
                   type="button"
                   onClick={() => ask(s)}
-                  className="text-left text-[13px] rounded-lg px-3 py-2 cursor-pointer hover:opacity-80"
+                  className="text-left text-[13px] rounded-lg px-3 py-2 cursor-pointer hover:opacity-90 majlis-lift active:scale-[0.98]"
                   style={{ background: C.surfaceAlt, border: `1px solid ${C.line}`, color: C.ink }}
                 >
                   {s}

@@ -132,7 +132,7 @@ export default function AfterView() {
         >
           {minutes ? (
             <>
-              <h1 style={serif} className="text-[24px] leading-snug"><Gloss>{minutes.headline}</Gloss></h1>
+              <h1 style={{ ...serif, letterSpacing: "-0.015em" }} className="text-[24px] leading-snug"><Gloss>{minutes.headline}</Gloss></h1>
               {level >= 2 && <p className="mt-2 text-[15px] leading-relaxed" style={{ color: C.detail }}><Gloss>{minutes.summary}</Gloss></p>}
               {minutes.riskOutlook && (
                 <div className="mt-3 rounded-lg p-3 text-[13px] flex items-start gap-2" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>

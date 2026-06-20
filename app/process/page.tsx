@@ -138,7 +138,7 @@ function Eyebrow({ children }: { children: string }) {
 }
 
 function SectionTitle({ children }: { children: string }) {
-  return <h2 style={serif} className="text-[28px] md:text-[32px] leading-snug">{children}</h2>;
+  return <h2 style={{ ...serif, letterSpacing: "-0.016em" }} className="text-[28px] md:text-[32px] leading-snug">{children}</h2>;
 }
 
 export default function ProcessPage() {
@@ -158,7 +158,7 @@ export default function ProcessPage() {
             <div className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide rounded-full px-2.5 py-1" style={{ background: C.surface, color: C.accent, border: `1px solid ${C.line}` }}>
               <Sparkles size={12} strokeWidth={2.5} /> Case study
             </div>
-            <h1 style={serif} className="text-[52px] md:text-[68px] leading-[1.02] mt-4">Majlis</h1>
+            <h1 style={{ ...serif, letterSpacing: "-0.025em" }} className="text-[52px] md:text-[68px] leading-[1.02] mt-4">Majlis</h1>
             <p className="text-[18px] md:text-[20px] leading-relaxed mt-3 max-w-xl" style={{ color: C.detail }}>
               An AI briefing companion that prepares a senior government official for a high-stakes meeting, across the whole
               lifecycle, with a memory that carries between cycles.

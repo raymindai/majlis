@@ -40,7 +40,7 @@ export default function AboutProgramme() {
       <div className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide" style={{ color: C.accent }}>
         <Layers size={13} strokeWidth={2.25} /> {tr("initiativeInFocus")}
       </div>
-      <div style={serif} className="text-[24px] leading-tight mt-1">{meetingFieldI18n("programme", lang)}</div>
+      <div style={{ ...serif, letterSpacing: "-0.015em" }} className="text-[24px] leading-tight mt-1">{meetingFieldI18n("programme", lang)}</div>
       <p className="text-[13.5px] mt-1.5 leading-relaxed" style={{ color: C.detail }}>{tr("manarahTagline")}</p>
       <p className="text-[13.5px] mt-2 leading-relaxed" style={{ color: C.detail }}>{tr("manarahWhat")}</p>
 
