@@ -4,8 +4,8 @@ import { useState, type ReactNode } from "react";
 import { resolveCitation, type Citation } from "@/lib/mock";
 import { C, StageSpine } from "@/components/ui";
 import { CitationContext } from "@/components/citation-context";
-import { ParticipantContext } from "@/components/participant-context";
-import ParticipantDrawer from "@/components/participant-drawer";
+import { ParticipantContext, type ParticipantPos } from "@/components/participant-context";
+import ParticipantPopover from "@/components/participant-popover";
 import ThemeSwitcher from "@/components/theme-switcher";
 import ChatPanel from "@/components/chat-panel";
 import SelectionAsk from "@/components/selection-ask";
@@ -24,12 +24,14 @@ export default function AppShell({
   children: ReactNode;
 }) {
   const [openCite, setOpenCite] = useState<Citation | null>(null);
-  const [openParticipant, setOpenParticipant] = useState<string | null>(null);
+  const [participant, setParticipant] = useState<{ id: string; pos: ParticipantPos } | null>(null);
   const drawer = openCite ? resolveCitation(openCite.sourceId, openCite.passageId) : null;
+  const openParticipant = (id: string | null, pos?: ParticipantPos) =>
+    setParticipant(id ? { id, pos: pos ?? { x: window.innerWidth - 220, y: 120 } } : null);
 
   return (
     <CitationContext.Provider value={{ open: setOpenCite }}>
-      <ParticipantContext.Provider value={{ open: setOpenParticipant }}>
+      <ParticipantContext.Provider value={{ open: openParticipant }}>
       <div className="h-dvh flex flex-col" style={{ background: C.bg, color: C.ink, fontFamily: "var(--font-inter), system-ui, sans-serif" }}>
         {/* header */}
         <header className="shrink-0 border-b" style={{ borderColor: C.line, background: C.surface }}>
@@ -81,7 +83,7 @@ export default function AppShell({
         </>
       )}
       <SelectionAsk />
-      <ParticipantDrawer id={openParticipant} onClose={() => setOpenParticipant(null)} />
+      <ParticipantPopover id={participant?.id ?? null} pos={participant?.pos ?? null} onClose={() => setParticipant(null)} />
       </ParticipantContext.Provider>
     </CitationContext.Provider>
   );

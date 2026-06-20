@@ -137,7 +137,7 @@ export default function AfterView() {
               <button
                 key={p.id}
                 type="button"
-                onClick={() => openProfile(p.id)}
+                onClick={(e) => openProfile(p.id, { x: e.clientX, y: e.clientY })}
                 className="inline-flex items-center gap-1.5 rounded-full pl-1 pr-2.5 py-1 cursor-pointer hover:opacity-80"
                 style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}
               >

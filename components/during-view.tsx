@@ -136,7 +136,7 @@ export default function DuringView() {
               return (
                 <div key={item.id} className="rounded-xl p-4" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
                   {sp.id ? (
-                    <button type="button" onClick={() => openProfile(sp.id!)} className="flex items-center gap-2.5 text-left cursor-pointer hover:opacity-70">
+                    <button type="button" onClick={(e) => openProfile(sp.id!, { x: e.clientX, y: e.clientY })} className="flex items-center gap-2.5 text-left cursor-pointer hover:opacity-70">
                       <Avatar id={sp.id} name={sp.name} size={28} />
                       <span className="leading-tight">
                         <span className="font-semibold text-[13px]">{sp.name}</span>

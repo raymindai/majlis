@@ -160,7 +160,7 @@ export default function BeforeView() {
               return (
                 <div key={p.id} className="rounded-xl flex flex-col overflow-hidden" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
                   {/* Identity — the person. Click → full profile. */}
-                  <button type="button" onClick={() => openProfile(p.id)} className="group flex items-center gap-3 p-3.5 text-left cursor-pointer hover:bg-[var(--c-surface)]">
+                  <button type="button" onClick={(e) => openProfile(p.id, { x: e.clientX, y: e.clientY })} className="group flex items-center gap-3 p-3.5 text-left cursor-pointer hover:bg-[var(--c-surface)]">
                     <Avatar id={p.id} name={p.name} size={44} />
                     <div className="flex-1 min-w-0">
                       <div className="font-semibold text-[14px] truncate">{p.name}</div>

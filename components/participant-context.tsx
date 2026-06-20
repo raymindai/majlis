@@ -2,7 +2,9 @@
 
 import { createContext, useContext } from "react";
 
-/** Open the participant detail drawer from anywhere (the room, cards, distribution…). */
-export const ParticipantContext = createContext<{ open: (id: string | null) => void }>({ open: () => {} });
+export type ParticipantPos = { x: number; y: number };
+
+/** Open the participant profile popover from anywhere, anchored near the click point. */
+export const ParticipantContext = createContext<{ open: (id: string | null, pos?: ParticipantPos) => void }>({ open: () => {} });
 
 export const useParticipant = () => useContext(ParticipantContext);

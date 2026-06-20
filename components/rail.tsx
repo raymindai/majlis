@@ -152,7 +152,7 @@ export function TheRoom() {
             <li key={p.id}>
               <button
                 type="button"
-                onClick={() => open(p.id)}
+                onClick={(e) => open(p.id, { x: e.clientX, y: e.clientY })}
                 className="flex items-center gap-2.5 w-full text-left -mx-2 px-2 py-1.5 rounded-lg hover:bg-[var(--c-surface-alt)] cursor-pointer"
               >
                 <Avatar id={p.id} name={p.name} size={28} />
