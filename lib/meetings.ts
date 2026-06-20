@@ -11,6 +11,12 @@
 
 export type MeetingStatus = "past" | "today" | "upcoming";
 
+export interface MeetingDetails {
+  purpose: string;
+  points: string[];
+  attendees?: string[]; // entity codes present
+}
+
 export interface MeetingRef {
   id: string;
   title: string;
@@ -20,6 +26,8 @@ export interface MeetingRef {
   kind: string;
   current?: boolean;
   relation?: string; // how it relates to today's meeting
+  summary: string; // shown when the entry is clicked
+  details?: MeetingDetails; // expandable full detail
 }
 
 /** Today's steering committee sits in a string of related meetings. */
@@ -32,6 +40,17 @@ export const MEETINGS: MeetingRef[] = [
     status: "past",
     kind: "Steering",
     relation: "Last cycle: the commitments made here are what today checks against.",
+    summary: "The opening steering committee. Each entity set its Q2 commitments, and SSO was confirmed as a hard cross-entity dependency.",
+    details: {
+      purpose: "Set Q2 commitments across the five entities and lock the governance baseline.",
+      points: [
+        "HSA committed to migrate 10 priority health services by end of Q2.",
+        "EKD committed to launch the unified Parent Portal by June 2026.",
+        "EDD committed to deliver the shared Single Sign-On by end of Q2.",
+        "SSO confirmed as a hard dependency; EDD to flag any slip immediately.",
+      ],
+      attendees: ["HSA", "EKD", "MTA", "PSD", "EDD"],
+    },
   },
   {
     id: "budget-review",
@@ -41,6 +60,16 @@ export const MEETINGS: MeetingRef[] = [
     status: "past",
     kind: "Review",
     relation: "Where the MTA 40-vs-52 figure first surfaced, and it feeds today's reallocation vote.",
+    summary: "A finance review where MTA's forecast diverged from the Charter allocation, the discrepancy that drives today's reallocation vote.",
+    details: {
+      purpose: "Reconcile programme spend against the Charter ahead of the Q2 steering committee.",
+      points: [
+        "MTA forecast AED 52M against a Charter allocation of AED 40M; flagged for reconciliation.",
+        "EKD running well under budget (AED 29M of 45M).",
+        "Reallocation decision deferred to the Q2 steering committee.",
+      ],
+      attendees: ["MTA", "EKD", "EDD"],
+    },
   },
   {
     id: "sso-sync",
@@ -50,6 +79,16 @@ export const MEETINGS: MeetingRef[] = [
     status: "past",
     kind: "Sync",
     relation: "Where EDD's SSO slip was first flagged; it's today's headline blocker.",
+    summary: "A working sync on the shared identity layer. EDD's slip to Q3 was first flagged here, and it now blocks HSA and EKD go-lives.",
+    details: {
+      purpose: "Track SSO integration progress and the go-lives that depend on it.",
+      points: [
+        "EDD reported the SSO slip to end of Q3 (was end of Q2).",
+        "Root cause: the identity-vendor contract amendment is still pending.",
+        "HSA flagged two go-lives now at risk.",
+      ],
+      attendees: ["EDD", "HSA"],
+    },
   },
   {
     id: "q2-steering",
@@ -60,6 +99,16 @@ export const MEETINGS: MeetingRef[] = [
     kind: "Steering",
     current: true,
     relation: "You are here.",
+    summary: "Today's session. Status across the five entities, the cross-entity blockers, and the Q2 budget reallocation decision.",
+    details: {
+      purpose: "Review Q2 status, resolve cross-entity blockers, and decide the budget reallocation.",
+      points: [
+        "Q2 status across the five entities.",
+        "Cross-entity dependencies and blockers, led by the SSO slip.",
+        "Decision: whether to approve the Q2 budget reallocation.",
+      ],
+      attendees: ["HSA", "EKD", "MTA", "PSD", "EDD"],
+    },
   },
   {
     id: "vendor-identity",
@@ -69,6 +118,15 @@ export const MEETINGS: MeetingRef[] = [
     status: "upcoming",
     kind: "Review",
     relation: "EDD's SSO recovery depends on this contract closing.",
+    summary: "An upcoming contract review. EDD's SSO recovery depends on closing the identity-vendor amendment.",
+    details: {
+      purpose: "Close the identity-vendor contract amendment that gates SSO recovery.",
+      points: [
+        "Approve the vendor contract amendment.",
+        "Commit to a firm SSO recovery date.",
+      ],
+      attendees: ["EDD"],
+    },
   },
   {
     id: "digital-council",
@@ -78,6 +136,15 @@ export const MEETINGS: MeetingRef[] = [
     status: "upcoming",
     kind: "Council",
     relation: "Manarah reports up to this; today's decisions land here.",
+    summary: "The council Manarah reports up to. Today's decisions and the programme's status land here.",
+    details: {
+      purpose: "Report Manarah status and risks up to the Abu Dhabi Digital Council.",
+      points: [
+        "Programme status and the live risk register.",
+        "Outcomes carried up from the Q2 steering committee.",
+      ],
+      attendees: ["MTA"],
+    },
   },
 ];
 

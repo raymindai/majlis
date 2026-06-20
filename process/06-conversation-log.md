@@ -49,6 +49,10 @@ Session: 2026-06-19 → 2026-06-20.
 **User:** "let's push it to git first."
 **Claude:** committed corpus + process archive + grounding backbone locally (secrets verified out — `.env.local` gitignored/untracked); created a **private** GitHub repo and pushed `main` → github.com/raymindai/majlis.
 
+### Turn 36 — 2026-06-20 · Clickable meeting series (summary + full details)
+**User:** clicking a meeting-series entry should show its summary, with an option to see full details.
+**Claude:** enriched `MEETINGS` with a `summary` + structured `details` (purpose, key points, attendees) per meeting; made each timeline entry a button that opens a `MeetingPopover` (the shared FloatingWindow) at the click point, showing the summary with a "Full details" toggle (purpose, key points, attendee org-badges). Build clean.
+
 ### Turn 35 — 2026-06-20 · FloatingWindow: source viewer off the right rail; save answers as notes
 **User:** the right sidebar is reserved for the chat; a "note" should appear like the profile popover; once the LLM answers, let the user save the answer as a note. (Also flagged fal recraft v4.1 text-to-vector for vector assets, noted for branding/microsite.)
 **Claude:** extracted a reusable `FloatingWindow` (draggable, resizable, persistent) and routed three surfaces through it: the participant profile, the **source/citation viewer** (moved off the right drawer to a popover at the click point), and **notes**. Added `lib/notes.ts` (localStorage-backed, persists across stages) + `NotesLayer`; every chat answer now has "Save as note", which pins it as a floating window with its confidence + citations intact (draggable, resizable, position remembered). Build clean.

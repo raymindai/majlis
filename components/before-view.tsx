@@ -21,6 +21,7 @@ import { C, Card, CitationChip, ConfidenceBadge, RailLabel, SeverityPill } from 
 import { Avatar, deptFor, MeetingContext, NavList, OrgBadge, StatusTag, TheRoom } from "@/components/rail";
 import { useCitation } from "@/components/citation-context";
 import { useParticipant } from "@/components/participant-context";
+import MeetingPopover from "@/components/meeting-popover";
 import AppShell from "@/components/app-shell";
 
 const serif = { fontFamily: "var(--font-newsreader), Georgia, serif" };
@@ -52,6 +53,7 @@ export default function BeforeView() {
   const { open: openProfile } = useParticipant();
   const [prior, setPrior] = useState<Commitment[]>([]);
   const [checked, setChecked] = useState<Record<number, boolean>>({});
+  const [openMeeting, setOpenMeeting] = useState<{ id: string; pos: { x: number; y: number } } | null>(null);
 
   useEffect(() => {
     const sync = () => {
@@ -213,13 +215,20 @@ export default function BeforeView() {
                   />
                   {i < MEETINGS.length - 1 && <span className="w-px flex-1 my-1" style={{ background: C.line }} />}
                 </div>
-                <div className="flex-1 pb-4 rounded-lg" style={m.current ? { background: C.surfaceAlt, padding: "2px 8px", marginLeft: "-8px" } : undefined}>
-                  <div className="flex items-baseline gap-2 flex-wrap">
-                    <span className="text-[12px] w-20 shrink-0" style={{ color: C.faint }}>{m.when}</span>
-                    <span className="font-semibold text-[14px]" style={{ color: m.current ? C.accent : C.ink }}>{m.title}</span>
-                  </div>
-                  {m.relation && <div className="text-[13px] mt-0.5 ml-[5.5rem]" style={{ color: C.detail }}>{m.relation}</div>}
-                </div>
+                <button
+                  type="button"
+                  onClick={(e) => setOpenMeeting({ id: m.id, pos: { x: e.clientX, y: e.clientY } })}
+                  className={`group flex-1 flex items-start justify-between gap-2 text-left cursor-pointer rounded-lg px-2 -mx-2 pt-1 pb-4 hover:bg-[var(--c-surface-alt)] ${m.current ? "bg-[var(--c-surface-alt)]" : ""}`}
+                >
+                  <span className="min-w-0">
+                    <span className="flex items-baseline gap-2 flex-wrap">
+                      <span className="text-[12px] w-20 shrink-0" style={{ color: C.faint }}>{m.when}</span>
+                      <span className="font-semibold text-[14px]" style={{ color: m.current ? C.accent : C.ink }}>{m.title}</span>
+                    </span>
+                    {m.relation && <span className="block text-[13px] mt-0.5 ml-[5.5rem]" style={{ color: C.detail }}>{m.relation}</span>}
+                  </span>
+                  <ChevronRight size={15} strokeWidth={2} className="shrink-0 mt-1 opacity-0 group-hover:opacity-100 transition-opacity" style={{ color: C.faint }} />
+                </button>
               </li>
             ))}
           </ol>
@@ -256,6 +265,7 @@ export default function BeforeView() {
           </ul>
         </Card>
       </div>
+      <MeetingPopover id={openMeeting?.id ?? null} pos={openMeeting?.pos ?? null} onClose={() => setOpenMeeting(null)} />
     </AppShell>
   );
 }
