@@ -49,6 +49,10 @@ Session: 2026-06-19 → 2026-06-20.
 **User:** "let's push it to git first."
 **Claude:** committed corpus + process archive + grounding backbone locally (secrets verified out — `.env.local` gitignored/untracked); created a **private** GitHub repo and pushed `main` → github.com/raymindai/majlis.
 
+### Turn 48 — 2026-06-20 · Level-of-detail zoom (Headlines / Brief / Full)
+**User:** for a busy official, add a zoom in/out of detail; zoom out shows only top lines, zoom in shows everything.
+**Claude:** added a global level-of-detail control (Headlines / Brief / Full) in the header, persisted to localStorage. Extracted the `C` tokens into a non-client `theme.ts` so `Card` can read the level without breaking the server-rendered microsite, gave `Card` a `minLevel` prop, and added `DetailGate` / `useDetail`. Before now zooms: level 1 = bottom-line lead + decision recommendation + attention one-liners + carried-over; level 2 adds detail, evidence, today's agenda, the room, prep; level 3 adds the series and likely questions. Build clean. (Also in flight: references rework, citations now open the full source document.)
+
 ### Turn 47 — 2026-06-20 · Deploy verified live + attention-card rework
 **User:** the API keys are already in Vercel; the domain is https://majlis-xi.vercel.app/. (Also: the Needs-attention cards repeat the same info, reconsider them.)
 **Claude:** found the Vercel project is GitHub-connected and auto-deploys (no CLI needed); the protected `majlis-*-raymindai.vercel.app` URLs were Vercel Deployment Protection, and `majlis.vercel.app` is an unrelated app. Smoke-tested the real domain **https://majlis-xi.vercel.app**: home 200, /process 200, /api/brief 200 with a valid live-Claude brief, confirming live AI + Supabase work in production. Deploy (#10) done. Reworked the Needs-attention cards: lead with the full department name (badge keeps the mark + code), severity directly under it, sources under an "Evidence" label, and deduped citation chips (no more "EDD Q2 report" twice).

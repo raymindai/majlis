@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { type Citation } from "@/lib/mock";
 import { getSource, SOURCE_META, AUTHORITY_LABEL } from "@/lib/corpus";
@@ -13,6 +13,8 @@ import MeetingPopover from "@/components/meeting-popover";
 import { FloatingWindow, type WinPos } from "@/components/floating-window";
 import NotesLayer from "@/components/notes-layer";
 import { Gloss } from "@/components/gloss";
+import { DetailContext, type DetailLevel } from "@/components/detail-context";
+import DetailControl from "@/components/detail-control";
 import ThemeSwitcher from "@/components/theme-switcher";
 import ChatPanel from "@/components/chat-panel";
 import SelectionAsk from "@/components/selection-ask";
@@ -38,6 +40,15 @@ export default function AppShell({
   // A stack of floating windows. Each click adds one; it stays until the user closes it.
   const [windows, setWindows] = useState<WinItem[]>([]);
   const idRef = useRef(0);
+  const [level, setLevelState] = useState<DetailLevel>(3);
+  useEffect(() => {
+    const saved = typeof window !== "undefined" ? Number(localStorage.getItem("majlis-detail")) : 0;
+    if (saved === 1 || saved === 2 || saved === 3) setLevelState(saved as DetailLevel);
+  }, []);
+  const setLevel = (l: DetailLevel) => {
+    setLevelState(l);
+    if (typeof window !== "undefined") localStorage.setItem("majlis-detail", String(l));
+  };
 
   function open(kind: "participant", payload: string, pos?: WinPos): void;
   function open(kind: "meeting", payload: string, pos?: WinPos): void;
@@ -54,6 +65,7 @@ export default function AppShell({
   const closeWin = (instanceId: string) => setWindows((ws) => ws.filter((w) => w.instanceId !== instanceId));
 
   return (
+    <DetailContext.Provider value={{ level, setLevel }}>
     <CitationContext.Provider value={{ open: (c, pos) => { if (c) open("source", c, pos); } }}>
       <ParticipantContext.Provider value={{ open: (id, pos) => { if (id) open("participant", id, pos); } }}>
         <OpenMeetingContext.Provider value={{ open: (id, pos) => { if (id) open("meeting", id, pos); } }}>
@@ -66,8 +78,9 @@ export default function AppShell({
                   <StageSpine active={stage} />
                 </div>
                 <div className="flex items-center gap-4">
-                  {meta && <div className="text-[12px] text-right leading-tight" style={{ color: C.muted }}>{meta}</div>}
-                  <Link href="/process" className="text-[12px] hover:opacity-70 hidden sm:block" style={{ color: C.muted }}>Case study</Link>
+                  {meta && <div className="text-[12px] text-right leading-tight hidden md:block" style={{ color: C.muted }}>{meta}</div>}
+                  <DetailControl />
+                  <Link href="/process" className="text-[12px] hover:opacity-70 hidden lg:block" style={{ color: C.muted }}>Case study</Link>
                   <ThemeSwitcher />
                 </div>
               </div>
@@ -142,5 +155,6 @@ export default function AppShell({
         </OpenMeetingContext.Provider>
       </ParticipantContext.Provider>
     </CitationContext.Provider>
+    </DetailContext.Provider>
   );
 }

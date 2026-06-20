@@ -1,32 +1,14 @@
+"use client";
+
 import Link from "next/link";
+import { C } from "@/components/theme";
+import { useDetail, type DetailLevel } from "@/components/detail-context";
 import type { ReactNode } from "react";
 import { CircleAlert, CircleCheck, CircleDashed, FileText, type LucideIcon, OctagonAlert, TriangleAlert } from "lucide-react";
 import { sourceLabel, type Confidence } from "@/lib/corpus";
 import { Tip } from "@/components/tip";
 
-/** All colours resolve through CSS variables (set per theme in globals.css). */
-export const C = {
-  bg: "var(--c-bg)",
-  surface: "var(--c-surface)",
-  surfaceAlt: "var(--c-surface-alt)",
-  ink: "var(--c-ink)",
-  detail: "var(--c-detail)",
-  muted: "var(--c-muted)",
-  faint: "var(--c-faint)",
-  line: "var(--c-line)",
-  accent: "var(--c-accent)",
-  onAccent: "var(--c-on-accent)",
-  confirmed: "var(--c-confirmed)",
-  likely: "var(--c-likely)",
-  unverified: "var(--c-unverified)",
-  flagBg: "var(--c-flag-bg)",
-  flagBorder: "var(--c-flag-border)",
-  priorBg: "var(--c-prior-bg)",
-  priorBorder: "var(--c-prior-border)",
-  priorInk: "var(--c-prior-ink)",
-  chipBg: "var(--c-chip-bg)",
-  shadow: "var(--c-shadow)",
-};
+export { C };
 
 export const confColor: Record<Confidence, string> = {
   confirmed: C.confirmed,
@@ -173,15 +155,19 @@ export function Card({
   aside,
   span = 1,
   icon,
+  minLevel,
   children,
 }: {
   label?: string;
   aside?: ReactNode;
   span?: 1 | 2;
   icon?: LucideIcon;
+  minLevel?: DetailLevel;
   children: ReactNode;
 }) {
+  const { level } = useDetail();
   const id = label ? label.toLowerCase().replace(/[^a-z0-9]+/g, "-") : undefined;
+  if (minLevel && level < minLevel) return null;
   return (
     <section
       id={id}

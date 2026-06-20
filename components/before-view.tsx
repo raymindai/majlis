@@ -27,6 +27,7 @@ import { Avatar, deptFor, MeetingContext, NavList, OrgBadge, StatusTag, TheRoom 
 import { useCitation } from "@/components/citation-context";
 import { useParticipant } from "@/components/participant-context";
 import { useOpenMeeting } from "@/components/meeting-context";
+import { useDetail } from "@/components/detail-context";
 import { Gloss } from "@/components/gloss";
 import AppShell from "@/components/app-shell";
 
@@ -47,6 +48,7 @@ export default function BeforeView() {
   const { open } = useCitation();
   const { open: openProfile } = useParticipant();
   const { open: openMeeting } = useOpenMeeting();
+  const { level } = useDetail();
   const [prior, setPrior] = useState<Commitment[]>([]);
   const [checked, setChecked] = useState<Record<number, boolean>>({});
   const [brief, setBrief] = useState<Brief>(MOCK_BRIEF);
@@ -151,13 +153,14 @@ export default function BeforeView() {
           }
         >
           <h1 style={serif} className="text-[30px] leading-tight"><Gloss>{bl.lead}</Gloss></h1>
-          <p className="mt-3 text-[16px] leading-relaxed" style={{ color: C.detail }}><Gloss>{bl.detail}</Gloss></p>
+          {level >= 2 && <p className="mt-3 text-[16px] leading-relaxed" style={{ color: C.detail }}><Gloss>{bl.detail}</Gloss></p>}
           <div className="mt-4 flex flex-wrap items-center gap-2">
             <ConfidenceBadge confidence={bl.confidence} />
-            {bl.citations.map((c, i) => (
-              <CitationChip key={i} sourceId={c.sourceId} onClick={(pos) => open(c, pos)} />
-            ))}
-            {bl.conflict && (
+            {level >= 2 &&
+              bl.citations.map((c, i) => (
+                <CitationChip key={i} sourceId={c.sourceId} onClick={(pos) => open(c, pos)} />
+              ))}
+            {level >= 2 && bl.conflict && (
               <>
                 <span
                   className="inline-flex items-center gap-1.5 text-[11px] rounded-full px-2 py-0.5"
@@ -172,10 +175,12 @@ export default function BeforeView() {
               </>
             )}
           </div>
-          <div className="mt-3 inline-flex items-center gap-1.5 text-[11px]" style={{ color: C.faint }}>
-            <Sparkles size={12} strokeWidth={2} />
-            {live ? "Synthesised by Majlis from the committee pack" : "Sample brief, regenerating from the pack"}
-          </div>
+          {level >= 2 && (
+            <div className="mt-3 inline-flex items-center gap-1.5 text-[11px]" style={{ color: C.faint }}>
+              <Sparkles size={12} strokeWidth={2} />
+              {live ? "Synthesised by Majlis from the committee pack" : "Sample brief, regenerating from the pack"}
+            </div>
+          )}
         </Card>
 
         <Card label="Your decision" span={2} icon={Gavel}>
@@ -184,22 +189,26 @@ export default function BeforeView() {
             <div className="text-[11px] font-semibold mb-1" style={{ color: C.accent }}>Recommendation</div>
             <p className="text-[14px] leading-snug"><Gloss>{brief.decision.recommendation}</Gloss></p>
           </div>
-          <div className="mt-3 text-[13px]" style={{ color: C.muted }}>Hinges on → <Gloss>{brief.decision.hingesOn.join(", ")}</Gloss></div>
-          {brief.decision.options.length > 0 && (
-            <div className="mt-4">
-              <div className="text-[11px] font-semibold mb-2" style={{ color: C.faint }}>Your options</div>
-              <ul className="space-y-2">
-                {brief.decision.options.map((o, i) => (
-                  <li key={i} className="flex items-start gap-2.5 text-[13px]">
-                    <span className="mt-1.5 h-1.5 w-1.5 rounded-full shrink-0" style={{ background: C.faint }} />
-                    <span>
-                      <span className="font-medium"><Gloss>{o.label}</Gloss>.</span>{" "}
-                      <span style={{ color: C.detail }}><Gloss>{o.consequence}</Gloss></span>
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+          {level >= 2 && (
+            <>
+              <div className="mt-3 text-[13px]" style={{ color: C.muted }}>Hinges on → <Gloss>{brief.decision.hingesOn.join(", ")}</Gloss></div>
+              {brief.decision.options.length > 0 && (
+                <div className="mt-4">
+                  <div className="text-[11px] font-semibold mb-2" style={{ color: C.faint }}>Your options</div>
+                  <ul className="space-y-2">
+                    {brief.decision.options.map((o, i) => (
+                      <li key={i} className="flex items-start gap-2.5 text-[13px]">
+                        <span className="mt-1.5 h-1.5 w-1.5 rounded-full shrink-0" style={{ background: C.faint }} />
+                        <span>
+                          <span className="font-medium"><Gloss>{o.label}</Gloss>.</span>{" "}
+                          <span style={{ color: C.detail }}><Gloss>{o.consequence}</Gloss></span>
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </>
           )}
         </Card>
 
@@ -220,15 +229,17 @@ export default function BeforeView() {
                   {/* The issue. */}
                   <p className="text-[13px] leading-snug mt-3"><Gloss>{a.line}</Gloss></p>
                   {/* Evidence: how grounded, and in what. */}
-                  <div className="mt-3 pt-3 border-t" style={{ borderColor: C.line }}>
-                    <div className="text-[11px] font-semibold mb-1.5" style={{ color: C.faint }}>Evidence</div>
-                    <div className="flex flex-wrap items-center gap-1.5">
-                      <ConfidenceBadge confidence={a.confidence} />
-                      {sources.map((c, i) => (
-                        <CitationChip key={i} sourceId={c.sourceId} onClick={(pos) => open(c, pos)} />
-                      ))}
+                  {level >= 2 && (
+                    <div className="mt-3 pt-3 border-t" style={{ borderColor: C.line }}>
+                      <div className="text-[11px] font-semibold mb-1.5" style={{ color: C.faint }}>Evidence</div>
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <ConfidenceBadge confidence={a.confidence} />
+                        {sources.map((c, i) => (
+                          <CitationChip key={i} sourceId={c.sourceId} onClick={(pos) => open(c, pos)} />
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               );
             })}
@@ -238,7 +249,7 @@ export default function BeforeView() {
           )}
         </Card>
 
-        <Card label="Today's agenda" span={2} icon={CalendarClock}>
+        <Card label="Today's agenda" span={2} icon={CalendarClock} minLevel={2}>
           <ol className="space-y-3">
             {brief.agenda.map((a, i) => (
               <li key={i} className="flex items-start gap-3">
@@ -252,7 +263,7 @@ export default function BeforeView() {
           </ol>
         </Card>
 
-        <Card label="Who's in the room" span={2} icon={Users} aside={<span className="text-[12px]" style={{ color: C.muted }}>tap a person for their full profile</span>}>
+        <Card label="Who's in the room" span={2} icon={Users} minLevel={2} aside={<span className="text-[12px]" style={{ color: C.muted }}>tap a person for their full profile</span>}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {PARTICIPANTS.map((p) => {
               const dept = deptFor(p.entity);
@@ -297,7 +308,7 @@ export default function BeforeView() {
           </div>
         </Card>
 
-        <Card label="Meeting series" span={2} icon={CalendarRange}>
+        <Card label="Meeting series" span={2} icon={CalendarRange} minLevel={3}>
           <div className="text-[12px] mb-4" style={{ color: C.muted }}>Today&rsquo;s steering committee sits in a string of related meetings.</div>
           <ol>
             {MEETINGS.map((m, i) => (
@@ -328,7 +339,7 @@ export default function BeforeView() {
           </ol>
         </Card>
 
-        <Card label="Prep checklist" icon={ListChecks}>
+        <Card label="Prep checklist" icon={ListChecks} minLevel={2}>
           <ul className="space-y-2.5">
             {brief.prep.map((p, i) => (
               <li key={i} className="flex items-start gap-2.5">
@@ -355,7 +366,7 @@ export default function BeforeView() {
           </ul>
         </Card>
 
-        <Card label="Likely questions" icon={MessageCircleQuestion}>
+        <Card label="Likely questions" icon={MessageCircleQuestion} minLevel={3}>
           <ul className="space-y-3">
             {brief.likelyQuestions.map((x, i) => (
               <li key={i}>

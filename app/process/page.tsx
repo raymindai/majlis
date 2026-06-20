@@ -10,7 +10,7 @@ import {
   Sparkles,
   Users,
 } from "lucide-react";
-import { C } from "@/components/ui";
+import { C } from "@/components/theme";
 
 const serif = { fontFamily: "var(--font-newsreader), Georgia, serif" };
 
