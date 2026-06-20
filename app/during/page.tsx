@@ -1,5 +1,10 @@
+import Desk from "@/components/desk";
 import DuringView from "@/components/during-view";
 
 export default function Page() {
-  return <DuringView />;
+  return (
+    <Desk>
+      <DuringView />
+    </Desk>
+  );
 }

@@ -203,7 +203,7 @@ export default function DuringView() {
                             type="button"
                             disabled={capturedIds.has(`c-${item.id}`)}
                             onClick={() =>
-                              addCommitment({ id: `c-${item.id}`, entity: obs.commitment!.entity, text: obs.commitment!.text, due: obs.commitment!.due, confidence: "confirmed", capturedAt: "during" })
+                              addCommitment({ id: `c-${item.id}`, entity: obs.commitment!.entity, text: obs.commitment!.text, due: obs.commitment!.due, confidence: "confirmed", capturedAt: "during", citation: obs.citation ?? undefined })
                             }
                             className="text-[12px] rounded-lg px-2.5 py-1 cursor-pointer disabled:opacity-50"
                             style={{ background: C.chipBg, color: C.ink }}

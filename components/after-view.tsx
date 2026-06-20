@@ -6,9 +6,10 @@ import { Database, FileText, Gavel, Handshake, ListChecks, Send, Sparkles } from
 import { loadState, resetMeeting, writeToMemory, type MeetingState } from "@/lib/store";
 import { MEETING_META } from "@/lib/mock";
 import { PARTICIPANTS } from "@/lib/meetings";
-import { C, Card, ConfidenceBadge, RailLabel } from "@/components/ui";
+import { C, Card, CitationChip, ConfidenceBadge, RailLabel } from "@/components/ui";
 import { Avatar, MeetingContext, NavList, TheRoom } from "@/components/rail";
 import { useParticipant } from "@/components/participant-context";
+import { useCitation } from "@/components/citation-context";
 import { Gloss } from "@/components/gloss";
 import AppShell from "@/components/app-shell";
 
@@ -24,6 +25,7 @@ const NAV = [
 
 export default function AfterView() {
   const { open: openProfile } = useParticipant();
+  const { open: openSource } = useCitation();
   const [state, setState] = useState<MeetingState>({ commitments: [], writtenToMemory: false });
   const [sent, setSent] = useState(false);
   const [minutes, setMinutes] = useState<{ headline: string; summary: string; distributionNote: string } | null>(null);
@@ -126,7 +128,10 @@ export default function AfterView() {
               {decisions.map((d) => (
                 <li key={d.id} className="rounded-lg p-4" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
                   <p className="text-[15px]"><Gloss>{d.text}</Gloss></p>
-                  <div className="mt-1.5"><ConfidenceBadge confidence={d.confidence} /></div>
+                  <div className="mt-1.5 flex items-center gap-2">
+                    <ConfidenceBadge confidence={d.confidence} />
+                    {d.citation && <CitationChip sourceId={d.citation.sourceId} onClick={(pos) => openSource(d.citation!, pos)} />}
+                  </div>
                 </li>
               ))}
             </ul>
@@ -142,7 +147,10 @@ export default function AfterView() {
                   <span className="text-[12px]" style={{ color: C.muted }}>due {c.due}</span>
                 </div>
                 <p className="text-[14px] mt-0.5"><Gloss>{c.text}</Gloss></p>
-                <div className="mt-1.5"><ConfidenceBadge confidence={c.confidence} /></div>
+                <div className="mt-1.5 flex items-center gap-2">
+                  <ConfidenceBadge confidence={c.confidence} />
+                  {c.citation && <CitationChip sourceId={c.citation.sourceId} onClick={(pos) => openSource(c.citation!, pos)} />}
+                </div>
               </li>
             ))}
           </ul>

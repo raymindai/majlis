@@ -12,6 +12,8 @@ export interface Commitment {
   due: string;
   confidence: Confidence;
   capturedAt: "during";
+  /** The document passage the commitment was grounded in, when the moment had one. */
+  citation?: { sourceId: string; passageId: string };
 }
 
 export interface MeetingState {
@@ -62,6 +64,7 @@ async function persistCommitments(commitments: Commitment[]) {
     due: c.due,
     confidence: c.confidence,
     captured_at: c.capturedAt,
+    source_ref: c.citation ?? null,
     written_to_memory: true,
   }));
   const { error } = await db.from("commitments").upsert(rows, { onConflict: "id" });

@@ -5,6 +5,7 @@ import {
   CalendarClock,
   CalendarRange,
   ChevronRight,
+  FileText,
   Gavel,
   History,
   ListChecks,
@@ -21,6 +22,7 @@ import { MEETING_META } from "@/lib/mock";
 import { MEETINGS, PARTICIPANTS } from "@/lib/meetings";
 import { loadState, type Commitment } from "@/lib/store";
 import { type Brief, BRIEF_CACHE_KEY, MOCK_BRIEF } from "@/lib/brief";
+import { SOURCES, SOURCE_META, AUTHORITY_LABEL } from "@/lib/corpus";
 import { askMajlis } from "@/components/ask-bus";
 import { C, Card, CitationChip, ConfidenceBadge, RailLabel, SeverityPill } from "@/components/ui";
 import { Avatar, deptFor, MeetingContext, NavList, OrgBadge, StatusTag, TheRoom } from "@/components/rail";
@@ -42,6 +44,7 @@ const NAV = [
   { label: "Meeting series", icon: CalendarRange },
   { label: "Prep checklist", icon: ListChecks },
   { label: "Likely questions", icon: MessageCircleQuestion },
+  { label: "Committee pack", icon: FileText },
 ];
 
 export default function BeforeView() {
@@ -380,6 +383,30 @@ export default function BeforeView() {
               </li>
             ))}
           </ul>
+        </Card>
+
+        <Card label="Committee pack" span={2} icon={FileText} minLevel={3} aside={<span className="text-[12px]" style={{ color: C.muted }}>{SOURCES.length} documents, the only material Majlis uses</span>}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+            {SOURCES.map((s) => {
+              const m = SOURCE_META[s.id];
+              return (
+                <button
+                  key={s.id}
+                  type="button"
+                  onClick={(e) => open({ sourceId: s.id, passageId: s.passages[0].id }, { x: e.clientX, y: e.clientY })}
+                  className="flex items-start gap-2.5 text-left rounded-xl p-3 cursor-pointer hover:bg-[var(--c-surface)]"
+                  style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}
+                >
+                  <FileText size={16} strokeWidth={2} style={{ color: C.faint, marginTop: 1 }} className="shrink-0" />
+                  <div className="min-w-0">
+                    <div className="text-[13px] font-semibold leading-tight">{s.title}</div>
+                    <div className="text-[11px] mt-0.5" style={{ color: C.muted }}>{[m?.docType, m?.issuer, s.date ?? "undated"].filter(Boolean).join(", ")}</div>
+                    <div className="text-[11px] mt-1" style={{ color: C.faint }}>{AUTHORITY_LABEL[s.authority]}</div>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
         </Card>
       </div>
     </AppShell>
