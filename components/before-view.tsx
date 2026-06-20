@@ -184,7 +184,7 @@ export default function BeforeView() {
 
         <Card labelKey="yourDecision" span={2} icon={Gavel}>
           <div style={serif} className="text-[20px] leading-snug"><Gloss>{brief.decision.text}</Gloss></div>
-          <div className="mt-4 pl-3.5 border-l-2" style={{ borderColor: C.accent }}>
+          <div className="mt-4 pt-4 border-t" style={{ borderColor: C.line }}>
             <div className="text-[11px] font-semibold mb-1" style={{ color: C.accent }}>{tr("recommendation")}</div>
             <p className="text-[14px] leading-snug"><Gloss>{brief.decision.recommendation}</Gloss></p>
             {brief.decision.rationale && (
