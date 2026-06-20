@@ -65,6 +65,23 @@ Legend: ✅ locked · 🔶 open · 👤 user call · 🤖 Claude recommendation
 - **Why not photoreal:** avoids the uncanny valley + authenticity concerns; a consistent stylized set reads more premium and honestly synthetic.
 - **Build:** generation script → `public/avatars/<id>.png`, wired into the participant cards with the monogram as fallback.
 
+## D12 — References are actual documents · ✅ 👤-requested
+- **Date:** 2026-06-20
+- **Decision:** make references real, not labels. The committee pack (9 documents) is browsable in Before (a "Committee pack" card), and every citation opens the full source document with the cited passage highlighted. The pack is seeded into Supabase (`corpus_documents`, migration `0002`). A commitment captured in During carries the citation it was grounded in (`commitments.source_ref`, migration `0003`) and shows it in After.
+- **Why:** a briefing tool the chair must defend on audit needs provenance the user can open and read, not just a chip that names a source.
+
+## D13 — Workspace architecture: `<Desk>` above the views · ✅ 🤖-found
+- **Date:** 2026-06-20
+- **Problem:** the citation / participant / meeting / detail providers and the floating-window manager lived *inside* `AppShell`, but each stage view consumes those contexts one level up (a view renders `AppShell`). So a view's opener bound to the default no-op: only the rail opened windows; card chips, card avatars, and meeting rows were silently dead.
+- **Decision:** lift the workspace into a new `<Desk>` wrapper *above* the views (pages render `<Desk><View/></Desk>`). `AppShell` is now layout-only and opens the "For reviewers" window via a small `AboutContext`.
+- **Consequence:** references and profiles open from the main content, not just the rail; one window manager serves all three stages. Verified in production (home / during / after / process all 200).
+
+## D14 — Deepen During and After around the chair · ✅ 👤-requested
+- **Date:** 2026-06-20
+- **During:** a "Decision on the table" card reuses the brief's recommended decision (the question, what it hinges on, the options with consequences, Majlis's recommendation), tracks how many entity inputs have been heard, and when the chair rules lets the chair *record the decision* (with its source) into the minutes. Same decision Before recommended, closing Before → During → After.
+- **After:** the live minutes now also yield a one-line **risk outlook** and **"Your follow-ups"** (2 to 4 things the chair personally must chase before the next cycle); **"Copy minutes"** exports the whole record as plain text.
+- **Why:** the chair is a busy senior official; both stages needed to answer "what do I do now" and "what changed," not just transcribe.
+
 ## Earlier framing decisions (context)
 - **AI is the product, not a feature** — the scenario must make the AI's judgment the experience. 🤖
 - **Scope down to 1–2 capabilities built deeply.** 🤖
@@ -73,5 +90,5 @@ Legend: ✅ locked · 🔶 open · 👤 user call · 🤖 Claude recommendation
 
 ## Pending decisions (next forks)
 - 🔶 **D7 — Product name** (working title: "Majlis").
-- **Stack:** Next.js + Vercel + Supabase + live Claude + fal — locked.
-- **Keys:** Anthropic in place; fal + Supabase still needed (imagery + DB / the loop).
+- **Stack:** Next.js + Vercel + Supabase + live Claude + fal — locked and live.
+- **Keys:** Anthropic, fal, and Supabase all in place. Corpus, audit log (`qa_log`), and the commitment loop (`commitments`) are seeded and persisting. Deployed at `https://majlis-xi.vercel.app`.
