@@ -61,7 +61,7 @@ function AudioBars() {
 }
 
 /** Reveals text word by word, as if streamed live, pausing at punctuation; signals completion. */
-function StreamText({ text, onDone, speed = 120 }: { text: string; onDone?: () => void; speed?: number }) {
+function StreamText({ text, onDone, speed = 175 }: { text: string; onDone?: () => void; speed?: number }) {
   const words = useMemo(() => text.split(" "), [text]);
   const [n, setN] = useState(1);
   const done = useRef(false);
@@ -97,6 +97,7 @@ export default function DuringView() {
   const [observations, setObservations] = useState<Record<string, Obs | "loading">>({});
   const [transcribed, setTranscribed] = useState<Set<string>>(() => new Set());
   const [noteShown, setNoteShown] = useState<Set<string>>(() => new Set());
+  const [sugShown, setSugShown] = useState<Set<string>>(() => new Set());
   const [brief, setBrief] = useState<Brief>(MOCK_BRIEF);
   const requested = useRef<Set<string>>(new Set());
 
@@ -158,6 +159,19 @@ export default function DuringView() {
   const entitiesHeard = shown.filter((f) => f.speaker !== "Chair").length;
   const chairSpoke = revealed >= FEED.length;
   const decisionRecorded = capturedIds.has(decisionId);
+
+  // "End of agenda" only after the final speaker's transcript and insight finish streaming.
+  const lastId = FEED[FEED.length - 1].id;
+  const lastObs = observations[lastId];
+  const lastNoteText = lastObs && lastObs !== "loading" ? (lastObs.stance !== "neutral" ? lastObs.note : level >= 3 ? lastObs.note : "") : "";
+  const lastHasSug = !!(lastObs && lastObs !== "loading" && lastObs.suggestedQuestion) && level >= 2;
+  const lastStreamed =
+    revealed >= FEED.length &&
+    transcribed.has(lastId) &&
+    requested.current.has(lastId) &&
+    lastObs !== "loading" &&
+    (!lastNoteText || noteShown.has(lastId)) &&
+    (!lastHasSug || sugShown.has(lastId));
 
   const leftRail = (
     <div className="space-y-6">
@@ -230,6 +244,9 @@ export default function DuringView() {
               const noteText = obs && obs !== "loading" ? (obs.stance !== "neutral" ? obs.note : level >= 3 ? obs.note : "") : "";
               const noteDone = !noteText || noteShown.has(item.id);
               const addNoteDone = () => setNoteShown((s) => { const n = new Set(s); n.add(item.id); return n; });
+              const hasSug = obs && obs !== "loading" && !!obs.suggestedQuestion && level >= 2;
+              const sugDone = !hasSug || sugShown.has(item.id);
+              const addSugDone = () => setSugShown((s) => { const n = new Set(s); n.add(item.id); return n; });
               return (
                 <div key={item.id} className="rounded-xl p-4" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
                   <div className="flex items-center justify-between gap-2">
@@ -289,7 +306,7 @@ export default function DuringView() {
                               <span style={{ color: obs.stance === "contradicts" ? C.unverified : C.ink, fontWeight: 500 }}>
                                 {obs.stance === "contradicts" ? `${tr("inconsistency")}: ` : `${tr("confirmedColon")}: `}
                               </span>
-                              <span style={{ color: C.detail }}>{noteDone ? <Gloss>{obs.note}</Gloss> : <StreamText text={obs.note} speed={45} onDone={addNoteDone} />}</span>{" "}
+                              <span style={{ color: C.detail }}>{noteDone ? <Gloss>{obs.note}</Gloss> : <StreamText text={obs.note} speed={85} onDone={addNoteDone} />}</span>{" "}
                               {noteDone && obs.citation && (
                                 <span className="inline-block align-middle">
                                   <CitationChip sourceId={obs.citation.sourceId} onClick={(pos) => open(obs.citation!, pos)} />
@@ -299,17 +316,17 @@ export default function DuringView() {
                           </div>
                         </div>
                       ) : (
-                        obs.note && level >= 3 && <p className="mt-3 text-[13px]" style={{ color: C.detail }}>{noteDone ? <Gloss>{obs.note}</Gloss> : <StreamText text={obs.note} speed={45} onDone={addNoteDone} />}</p>
+                        obs.note && level >= 3 && <p className="mt-3 text-[13px]" style={{ color: C.detail }}>{noteDone ? <Gloss>{obs.note}</Gloss> : <StreamText text={obs.note} speed={85} onDone={addNoteDone} />}</p>
                       )}
 
                       {noteDone && obs.suggestedQuestion && level >= 2 && (
                         <button type="button" onClick={() => askMajlis(obs.suggestedQuestion!)} className="mt-2 flex items-start gap-1.5 text-left text-[12px] cursor-pointer hover:opacity-70" style={{ color: C.accent }}>
                           <MessageSquareQuote size={13} strokeWidth={2} className="mt-0.5 shrink-0" />
-                          <span><span className="font-medium">{tr("suggested")}:</span> <span style={{ color: C.detail }}><Gloss>{obs.suggestedQuestion}</Gloss></span></span>
+                          <span><span className="font-medium">{tr("suggested")}:</span> <span style={{ color: C.detail }}>{sugShown.has(item.id) ? <Gloss>{obs.suggestedQuestion}</Gloss> : <StreamText text={obs.suggestedQuestion!} speed={85} onDone={addSugDone} />}</span></span>
                         </button>
                       )}
 
-                      {noteDone && obs.commitment && (
+                      {noteDone && sugDone && obs.commitment && (
                         <div className="mt-3">
                           <button
                             type="button"
@@ -334,9 +351,9 @@ export default function DuringView() {
             <button type="button" onClick={() => setRevealed((r) => r + 1)} className="mt-4 text-[13px] rounded-lg px-3 py-2 cursor-pointer" style={{ background: C.ink, color: C.bg }}>
               {tr("nextSpeaker")} →
             </button>
-          ) : (
-            <div className="mt-4 text-[12px]" style={{ color: C.muted }}>{tr("endOfAgenda")}</div>
-          )}
+          ) : lastStreamed ? (
+            <div className="mt-4 text-[12px] majlis-fade-up" style={{ color: C.muted }}>{tr("endOfAgenda")}</div>
+          ) : null}
         </Card>
 
         <Card
@@ -345,51 +362,52 @@ export default function DuringView() {
           icon={Gavel}
           aside={
             <span className="text-[12px]" style={{ color: chairSpoke ? C.confirmed : C.muted }}>
-              {chairSpoke ? "Decided" : `${entitiesHeard} of ${entitiesTotal} inputs heard`}
+              {chairSpoke ? tr("decided") : tr("inputsHeard", { n: entitiesHeard, m: entitiesTotal })}
             </span>
           }
         >
-          <p className="text-[15px] font-medium leading-snug"><Gloss>{brief.decision.text}</Gloss></p>
-          {brief.decision.hingesOn.length > 0 && (
-            <p className="mt-1.5 text-[12px]" style={{ color: C.muted }}>Hinges on: <Gloss>{brief.decision.hingesOn.join("; ")}</Gloss></p>
-          )}
+          <p className="text-[16px] font-medium leading-snug"><Gloss>{brief.decision.text}</Gloss></p>
 
-          <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-2">
-            {brief.decision.options.map((o) => (
-              <div key={o.label} className="rounded-lg p-3" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
-                <div className="text-[13px] font-semibold"><Gloss>{o.label}</Gloss></div>
-                <div className="text-[12px] mt-0.5" style={{ color: C.muted }}><Gloss>{o.consequence}</Gloss></div>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-3 rounded-lg p-3 text-[13px] flex items-start gap-2" style={{ background: C.chipBg }}>
-            <Sparkles size={14} strokeWidth={2} style={{ color: C.accent, marginTop: 1 }} className="shrink-0" />
-            <span style={{ color: C.detail }}>
-              <span className="font-medium" style={{ color: C.ink }}>Majlis recommends: </span><Gloss>{brief.decision.recommendation}</Gloss>
-              {brief.decision.rationale && <span className="block mt-1.5"><Gloss>{brief.decision.rationale}</Gloss></span>}
+          {/* Live view stays glanceable: the recommendation and the choices, not the full essay (that is in Before). */}
+          <div className="mt-3 flex items-start gap-2 text-[14px] leading-snug">
+            <Sparkles size={15} strokeWidth={2} style={{ color: C.accent, marginTop: 2 }} className="shrink-0" />
+            <span>
+              <span className="font-semibold" style={{ color: C.accent }}>{tr("majlisRecommends")}: </span>
+              <span style={{ color: C.ink }}><Gloss>{brief.decision.recommendation}</Gloss></span>
             </span>
           </div>
 
-          <div className="mt-3 pt-3 border-t flex items-center gap-3 flex-wrap" style={{ borderColor: C.line }}>
+          {brief.decision.options.length > 0 && (
+            <div className="mt-3">
+              <div className="text-[11px] font-semibold mb-1.5" style={{ color: C.faint }}>{tr("yourOptions")}</div>
+              <div className="space-y-1">
+                {brief.decision.options.map((o) => (
+                  <div key={o.label} className="flex items-start gap-2 text-[13px]" style={{ color: C.detail }}>
+                    <span className="mt-[7px] h-1 w-1 rounded-full shrink-0" style={{ background: C.faint }} />
+                    <span><Gloss>{o.label}</Gloss></span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div className="mt-4 pt-3 border-t flex items-center gap-3 flex-wrap" style={{ borderColor: C.line }}>
             {!chairSpoke ? (
-              <span className="text-[12px]" style={{ color: C.muted }}>
-                {flagsRaised > 0 ? `${flagsRaised} inconsistency flagged so far. ` : ""}Majlis is gathering the inputs the vote depends on.
-              </span>
+              <span className="text-[12px]" style={{ color: C.muted }}>{tr("gatheringInputs")}</span>
             ) : decisionRecorded ? (
               <span className="inline-flex items-center gap-1.5 text-[13px]" style={{ color: C.confirmed }}>
-                <CircleCheck size={15} strokeWidth={2.25} /> Decision recorded, it will appear in the minutes.
+                <CircleCheck size={15} strokeWidth={2.25} /> {tr("decisionRecorded")}
               </span>
             ) : (
               <>
-                <span className="text-[13px]" style={{ color: C.ink }}>The chair ruled: <span style={{ color: C.detail }}>&ldquo;<Gloss>{chairText}</Gloss>&rdquo;</span></span>
+                <span className="text-[13px]" style={{ color: C.ink }}>{tr("chairRuled")}: <span style={{ color: C.detail }}>&ldquo;<Gloss>{chairText}</Gloss>&rdquo;</span></span>
                 <button
                   type="button"
                   onClick={() => addCommitment({ id: decisionId, entity: "Committee", text: chairText, due: "Next session", confidence: "confirmed", capturedAt: "during", citation: brief.bottomLine.citations[0] })}
                   className="text-[12px] rounded-lg px-2.5 py-1 cursor-pointer"
                   style={{ background: C.accent, color: C.onAccent }}
                 >
-                  Record decision
+                  {tr("recordDecision")}
                 </button>
               </>
             )}
