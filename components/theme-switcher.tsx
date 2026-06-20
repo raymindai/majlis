@@ -5,7 +5,6 @@ import { C } from "@/components/ui";
 
 const THEMES = [
   { key: "", label: "Light" },
-  { key: "dossier", label: "Dossier" },
   { key: "dark", label: "Dark" },
 ];
 
@@ -13,7 +12,7 @@ export default function ThemeSwitcher() {
   const [theme, setTheme] = useState("");
 
   useEffect(() => {
-    const saved = window.localStorage.getItem("majlis-theme") || "";
+    const saved = window.localStorage.getItem("majlis-theme") === "dark" ? "dark" : "";
     setTheme(saved);
     document.documentElement.dataset.theme = saved;
   }, []);

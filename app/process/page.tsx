@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import {
   ArrowRight,
   CircleCheck,
@@ -95,6 +96,9 @@ export default function ProcessPage() {
   return (
     <div className="min-h-dvh" style={{ background: C.bg, color: C.ink, fontFamily: "var(--font-inter), system-ui, sans-serif" }}>
       <div className="mx-auto max-w-3xl px-6 py-16 md:py-24">
+        <div className="relative w-full aspect-[16/7] rounded-2xl overflow-hidden mb-10" style={{ border: `1px solid ${C.line}`, boxShadow: C.shadow }}>
+          <Image src="/manarah-hero.jpg" alt="The Manarah programme" fill sizes="(max-width: 768px) 100vw, 768px" className="object-cover" priority />
+        </div>
         {/* Hero */}
         <div className="text-[12px] font-semibold" style={{ color: C.muted }}>Case study</div>
         <h1 style={serif} className="text-[44px] md:text-[56px] leading-[1.05] mt-3">Majlis</h1>

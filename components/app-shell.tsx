@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import Link from "next/link";
+import { Info } from "lucide-react";
 import { type Citation } from "@/lib/mock";
 import { getSource, SOURCE_META, AUTHORITY_LABEL } from "@/lib/corpus";
 import { C, StageSpine } from "@/components/ui";
@@ -15,6 +15,8 @@ import NotesLayer from "@/components/notes-layer";
 import { Gloss } from "@/components/gloss";
 import { DetailContext, type DetailLevel } from "@/components/detail-context";
 import DetailControl from "@/components/detail-control";
+import UserMenu from "@/components/user-menu";
+import AboutWindow from "@/components/about-window";
 import ThemeSwitcher from "@/components/theme-switcher";
 import ChatPanel from "@/components/chat-panel";
 import SelectionAsk from "@/components/selection-ask";
@@ -49,6 +51,7 @@ export default function AppShell({
     setLevelState(l);
     if (typeof window !== "undefined") localStorage.setItem("majlis-detail", String(l));
   };
+  const [aboutOpen, setAboutOpen] = useState(false);
 
   function open(kind: "participant", payload: string, pos?: WinPos): void;
   function open(kind: "meeting", payload: string, pos?: WinPos): void;
@@ -81,11 +84,15 @@ export default function AppShell({
                   <span style={serif} className="text-xl">Majlis</span>
                   <StageSpine active={stage} />
                 </div>
-                <div className="flex items-center gap-4">
-                  {meta && <div className="text-[12px] text-right leading-tight hidden md:block" style={{ color: C.muted }}>{meta}</div>}
+                <div className="flex items-center gap-3">
+                  {meta && <div className="text-[12px] text-right leading-tight hidden xl:block" style={{ color: C.muted }}>{meta}</div>}
                   <DetailControl />
-                  <Link href="/process" className="text-[12px] hover:opacity-70 hidden lg:block" style={{ color: C.muted }}>Case study</Link>
+                  <button type="button" onClick={() => setAboutOpen(true)} className="inline-flex items-center gap-1.5 text-[12px] cursor-pointer hover:opacity-70" style={{ color: C.muted }} title="What this is and how to use it">
+                    <Info size={15} strokeWidth={2} />
+                    <span className="hidden lg:inline">For reviewers</span>
+                  </button>
                   <ThemeSwitcher />
+                  <UserMenu />
                 </div>
               </div>
             </header>
@@ -157,6 +164,7 @@ export default function AppShell({
 
           <SelectionAsk />
           <NotesLayer />
+          <AboutWindow open={aboutOpen} onClose={() => setAboutOpen(false)} />
         </OpenMeetingContext.Provider>
       </ParticipantContext.Provider>
     </CitationContext.Provider>
