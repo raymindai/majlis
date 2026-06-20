@@ -2,25 +2,26 @@
 
 :root {
   /* Institutional skin (default) */
-  --c-bg: #f6f2e9;
+  --c-bg: #f4f0e6;
   --c-surface: #ffffff;
-  --c-surface-alt: #fcfaf4;
-  --c-ink: #14233a;
-  --c-detail: #33404f;
+  --c-surface-alt: #faf7f0;
+  --c-ink: #16243a;
+  --c-detail: #34404f;
   --c-muted: #5b6573;
-  --c-faint: #9a8c70;
-  --c-line: #e4dccb;
-  --c-accent: #b08d4f;
+  --c-faint: #948a76;
+  --c-line: #e6ddcc;
+  --c-accent: #9a7b3f;
   --c-on-accent: #ffffff;
   --c-confirmed: #2f6b4f;
-  --c-likely: #b5852f;
-  --c-unverified: #a23b2d;
-  --c-flag-bg: #fbf1ec;
-  --c-flag-border: #e7c9be;
-  --c-prior-bg: #f0f4ef;
-  --c-prior-border: #cbd9cb;
-  --c-prior-ink: #3f7a5b;
-  --c-chip-bg: #efe8d8;
+  --c-likely: #b07d28;
+  --c-unverified: #a8392b;
+  --c-flag-bg: #fbf0eb;
+  --c-flag-border: #eccdc2;
+  --c-prior-bg: #eef3ed;
+  --c-prior-border: #ccdacb;
+  --c-prior-ink: #3a6b50;
+  --c-chip-bg: #efe7d7;
+  --c-shadow: 0 1px 2px rgba(22, 36, 58, 0.05), 0 4px 16px rgba(22, 36, 58, 0.05);
 }
 
 [data-theme="dossier"] {
@@ -43,28 +44,30 @@
   --c-prior-border: #cdd8c6;
   --c-prior-ink: #4a6b55;
   --c-chip-bg: #efe7d8;
+  --c-shadow: 0 1px 2px rgba(33, 28, 22, 0.05), 0 4px 16px rgba(33, 28, 22, 0.05);
 }
 
 [data-theme="dark"] {
-  --c-bg: #0e1117;
+  --c-bg: #0d1016;
   --c-surface: #161b24;
-  --c-surface-alt: #1b2230;
-  --c-ink: #e6eaf2;
-  --c-detail: #c2cad8;
-  --c-muted: #95a0b4;
-  --c-faint: #6b7488;
-  --c-line: #28303f;
-  --c-accent: #d2ad6e;
-  --c-on-accent: #0e1117;
-  --c-confirmed: #4ade80;
-  --c-likely: #fbbf24;
-  --c-unverified: #f87171;
-  --c-flag-bg: #2a1a1e;
-  --c-flag-border: #5a2a30;
-  --c-prior-bg: #15241c;
-  --c-prior-border: #2b4a38;
-  --c-prior-ink: #8fd3a8;
-  --c-chip-bg: #20283a;
+  --c-surface-alt: #1c2330;
+  --c-ink: #e8ecf4;
+  --c-detail: #c4ccda;
+  --c-muted: #97a2b6;
+  --c-faint: #6c7589;
+  --c-line: #29313f;
+  --c-accent: #d4b072;
+  --c-on-accent: #0d1016;
+  --c-confirmed: #54d98c;
+  --c-likely: #f0b441;
+  --c-unverified: #f6796f;
+  --c-flag-bg: #271519;
+  --c-flag-border: #54272d;
+  --c-prior-bg: #12241b;
+  --c-prior-border: #284a37;
+  --c-prior-ink: #84d6a4;
+  --c-chip-bg: #212a3a;
+  --c-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 6px 20px rgba(0, 0, 0, 0.3);
 }
 
 @theme inline {
@@ -76,6 +79,25 @@ body {
   background: var(--c-bg);
   color: var(--c-ink);
   font-family: var(--font-inter), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--c-accent) 22%, transparent);
+}
+
+:focus-visible {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+button,
+a,
+input,
+[role="button"] {
+  transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease, box-shadow 0.15s ease;
 }
 
 * {
@@ -83,7 +105,6 @@ body {
   scrollbar-width: thin;
   scrollbar-color: var(--c-line) transparent;
 }
-
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;

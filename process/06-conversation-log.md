@@ -49,6 +49,10 @@ Session: 2026-06-19 → 2026-06-20.
 **User:** "let's push it to git first."
 **Claude:** committed corpus + process archive + grounding backbone locally (secrets verified out — `.env.local` gitignored/untracked); created a **private** GitHub repo and pushed `main` → github.com/raymindai/majlis.
 
+### Turn 24 — 2026-06-20 · Craft elevation + Ask-on-selection
+**User:** elevate overall craft/refinement/sophistication (audience = high officials; clear in every way); and add "Ask Majlis" via select-text → right-click context menu.
+**Claude:** elevated the design system — real **Lucide icons** (replacing unicode glyphs), soft theme-aware **card elevation**, refined palette/type, focus-visible rings, selection colour, micro-interaction transitions. Added **Ask-Majlis-on-selection**: select text + right-click → a menu sends it to the persistent chat (`ask-bus` event + `SelectionAsk`). Build clean; committed (2 commits). Next: the queued feature expansion — meeting series + relations + participant profiles (Before); live-recording + suggested questions (During).
+
 ### Turn 23 — 2026-06-20 · Design pass (no caps, pills, scrollbars) + new direction
 **User (design):** improve element clarity; drop all-caps headers; stylize scrollbars. **User (new direction):** Before should show the *series* of meetings (not just one) + their relations; richer participant profiles so you ask the right people the right questions; During = live recording that generates insights / suggested questions.
 **Claude:** design pass — sentence-case headers with an accent tick (no all-caps anywhere), confidence + severity as tinted pills ("Blocker"/"At risk"), styled theme-aware scrollbars. Build clean; committed. Next: a meeting portfolio + relations + participant profiles in Before; live-recording + suggested-questions in During.

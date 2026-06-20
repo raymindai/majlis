@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { CircleAlert, CircleCheck, CircleDashed, FileText, type LucideIcon, OctagonAlert, TriangleAlert } from "lucide-react";
 import type { Confidence } from "@/lib/corpus";
 
 /** All colours resolve through CSS variables (set per theme in globals.css). */
@@ -23,6 +24,7 @@ export const C = {
   priorBorder: "var(--c-prior-border)",
   priorInk: "var(--c-prior-ink)",
   chipBg: "var(--c-chip-bg)",
+  shadow: "var(--c-shadow)",
 };
 
 export const confColor: Record<Confidence, string> = {
@@ -34,6 +36,11 @@ export const confLabel: Record<Confidence, string> = {
   confirmed: "Confirmed",
   likely: "Likely",
   unverified: "Unverified",
+};
+const confIcon: Record<Confidence, LucideIcon> = {
+  confirmed: CircleCheck,
+  likely: CircleDashed,
+  unverified: CircleAlert,
 };
 
 export const severityColor: Record<string, string> = {
@@ -49,15 +56,16 @@ export const severityGlyph: Record<string, string> = {
   "at-risk": "▲",
 };
 
-const tint = (color: string, pct = 14) => `color-mix(in srgb, ${color} ${pct}%, transparent)`;
+const tint = (color: string, pct = 13) => `color-mix(in srgb, ${color} ${pct}%, transparent)`;
 
-/** A small tinted status tag — communicates state at a glance, no all-caps. */
-export function Pill({ color, children }: { color: string; children: ReactNode }) {
+/** A small tinted status tag with an icon — communicates state at a glance. */
+export function Pill({ color, icon: Icon, children }: { color: string; icon?: LucideIcon; children: ReactNode }) {
   return (
     <span
-      className="inline-flex items-center gap-1.5 text-[11px] font-medium rounded-full px-2 py-0.5 whitespace-nowrap"
-      style={{ background: tint(color), color }}
+      className="inline-flex items-center gap-1 text-[11px] font-medium rounded-full py-0.5 whitespace-nowrap"
+      style={{ background: tint(color), color, paddingLeft: Icon ? "0.45rem" : "0.6rem", paddingRight: "0.6rem" }}
     >
+      {Icon && <Icon size={12} strokeWidth={2.25} className="shrink-0" />}
       {children}
     </span>
   );
@@ -65,8 +73,7 @@ export function Pill({ color, children }: { color: string; children: ReactNode }
 
 export function ConfidenceBadge({ confidence }: { confidence: Confidence }) {
   return (
-    <Pill color={confColor[confidence]}>
-      <span className="h-1.5 w-1.5 rounded-full" style={{ background: confColor[confidence] }} />
+    <Pill color={confColor[confidence]} icon={confIcon[confidence]}>
       {confLabel[confidence]}
     </Pill>
   );
@@ -74,8 +81,7 @@ export function ConfidenceBadge({ confidence }: { confidence: Confidence }) {
 
 export function SeverityPill({ severity }: { severity: string }) {
   return (
-    <Pill color={severityColor[severity]}>
-      <span aria-hidden className="text-[9px]">{severityGlyph[severity]}</span>
+    <Pill color={severityColor[severity]} icon={severity === "blocker" ? OctagonAlert : TriangleAlert}>
       {severityLabel[severity]}
     </Pill>
   );
@@ -86,10 +92,11 @@ export function CitationChip({ sourceId, onClick }: { sourceId: string; onClick?
     <button
       type="button"
       onClick={onClick}
-      className="inline-flex items-center gap-1 text-[11px] rounded border px-1.5 py-0.5 transition-opacity cursor-pointer hover:opacity-70"
+      className="inline-flex items-center gap-1 text-[11px] rounded-md border px-1.5 py-0.5 cursor-pointer hover:opacity-70"
       style={{ borderColor: C.line, color: C.muted, background: C.surface }}
     >
-      {sourceId} <span style={{ color: C.accent }}>›</span>
+      <FileText size={11} strokeWidth={2} style={{ color: C.faint }} />
+      {sourceId}
     </button>
   );
 }
@@ -101,17 +108,17 @@ export function StageSpine({ active }: { active: "before" | "during" | "after" }
     { key: "after", label: "After", href: "/after" },
   ] as const;
   return (
-    <div className="flex items-center gap-1.5 text-[13px]">
+    <div className="flex items-center gap-2 text-[13px]">
       {stages.map((s, i) => (
-        <span key={s.key} className="flex items-center gap-1.5">
+        <span key={s.key} className="flex items-center gap-2">
           <Link
             href={s.href}
-            className="hover:underline"
+            className="hover:opacity-70"
             style={{ color: s.key === active ? C.ink : C.faint, fontWeight: s.key === active ? 600 : 400 }}
           >
             {s.label}
           </Link>
-          {i < 2 && <span style={{ color: C.line }}>›</span>}
+          {i < 2 && <span style={{ color: C.line }}>/</span>}
         </span>
       ))}
     </div>
@@ -120,14 +127,14 @@ export function StageSpine({ active }: { active: "before" | "during" | "after" }
 
 /** Small left-rail group label — sentence case, no all-caps. */
 export function RailLabel({ children }: { children: ReactNode }) {
-  return <div className="text-[11px] font-semibold mb-2" style={{ color: C.faint }}>{children}</div>;
+  return <div className="text-[11px] font-semibold mb-2.5" style={{ color: C.faint }}>{children}</div>;
 }
 
 function Header({ label, aside }: { label: string; aside?: ReactNode }) {
   return (
-    <div className="flex items-center gap-2 mb-3 pb-2.5 border-b" style={{ borderColor: C.line }}>
-      <span aria-hidden className="inline-block w-1 h-3.5 rounded-full shrink-0" style={{ background: C.accent }} />
-      <h2 className="text-[13px] font-semibold" style={{ color: C.ink }}>{label}</h2>
+    <div className="flex items-center gap-2.5 mb-4 pb-3 border-b" style={{ borderColor: C.line }}>
+      <span aria-hidden className="inline-block w-[3px] h-4 rounded-full shrink-0" style={{ background: C.accent }} />
+      <h2 className="text-[13px] font-semibold tracking-[-0.01em]" style={{ color: C.ink }}>{label}</h2>
       {aside && <div className="ml-auto">{aside}</div>}
     </div>
   );
@@ -142,8 +149,8 @@ export function Section({ label, aside, children }: { label: string; aside?: Rea
   );
 }
 
-/** A distinct card with its own surface, border, and labelled header.
- *  `span={2}` makes it full-width in the center grid. */
+/** A distinct card with its own surface, hairline border, soft elevation, and a
+ *  labelled header. `span={2}` makes it full-width in the center grid. */
 export function Card({
   label,
   aside,
@@ -159,8 +166,8 @@ export function Card({
   return (
     <section
       id={id}
-      className={`rounded-xl p-5 scroll-mt-4 ${span === 2 ? "lg:col-span-2" : ""}`}
-      style={{ background: C.surface, border: `1px solid ${C.line}` }}
+      className={`rounded-2xl p-6 scroll-mt-4 ${span === 2 ? "lg:col-span-2" : ""}`}
+      style={{ background: C.surface, border: `1px solid ${C.line}`, boxShadow: C.shadow }}
     >
       {label && <Header label={label} aside={aside} />}
       {children}
