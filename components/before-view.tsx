@@ -39,12 +39,12 @@ const NAV = [
   { label: "The bottom line", icon: Target },
   { label: "Your decision", icon: Gavel },
   { label: "Needs attention", icon: TriangleAlert },
-  { label: "Today's agenda", icon: CalendarClock },
-  { label: "Who's in the room", icon: Users },
-  { label: "Meeting series", icon: CalendarRange },
-  { label: "Prep checklist", icon: ListChecks },
-  { label: "Likely questions", icon: MessageCircleQuestion },
-  { label: "Committee pack", icon: FileText },
+  { label: "Today's agenda", icon: CalendarClock, min: 2 },
+  { label: "Who's in the room", icon: Users, min: 2 },
+  { label: "Meeting series", icon: CalendarRange, min: 3 },
+  { label: "Prep checklist", icon: ListChecks, min: 2 },
+  { label: "Likely questions", icon: MessageCircleQuestion, min: 3 },
+  { label: "Committee pack", icon: FileText, min: 3 },
 ];
 
 export default function BeforeView() {

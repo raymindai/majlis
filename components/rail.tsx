@@ -8,6 +8,7 @@ import { MEETINGS, PARTICIPANTS } from "@/lib/meetings";
 import { MEETING_META } from "@/lib/mock";
 import { C, RailLabel } from "@/components/ui";
 import { useParticipant } from "@/components/participant-context";
+import { useDetail } from "@/components/detail-context";
 import { Tip } from "@/components/tip";
 import { Gloss } from "@/components/gloss";
 
@@ -129,10 +130,13 @@ export function MeetingContext() {
   );
 }
 
-export function NavList({ items }: { items: { label: string; icon: LucideIcon }[] }) {
+export function NavList({ items }: { items: { label: string; icon: LucideIcon; min?: number }[] }) {
+  // The table of contents tracks the zoom: only list sections visible at this level.
+  const { level } = useDetail();
+  const shown = items.filter((n) => !n.min || level >= n.min);
   return (
     <nav className="-mx-2 space-y-0.5">
-      {items.map((n) => {
+      {shown.map((n) => {
         const Icon = n.icon;
         return (
           <a
@@ -152,6 +156,9 @@ export function NavList({ items }: { items: { label: string; icon: LucideIcon }[
 
 export function TheRoom() {
   const { open } = useParticipant();
+  const { level } = useDetail();
+  // The room is reference detail; at the Headlines zoom the rail stays minimal.
+  if (level < 2) return null;
   return (
     <div>
       <RailLabel>The room</RailLabel>

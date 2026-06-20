@@ -18,11 +18,11 @@ const serif = { fontFamily: "var(--font-newsreader), Georgia, serif" };
 
 const NAV = [
   { label: "Decisions", icon: Gavel },
-  { label: "New commitments", icon: Handshake },
-  { label: "Action items", icon: ListChecks },
+  { label: "New commitments", icon: Handshake, min: 2 },
+  { label: "Action items", icon: ListChecks, min: 2 },
   { label: "Your follow-ups", icon: UserRoundCheck },
-  { label: "Distribution", icon: Send },
-  { label: "Institutional memory", icon: Database },
+  { label: "Distribution", icon: Send, min: 3 },
+  { label: "Institutional memory", icon: Database, min: 2 },
 ];
 
 export default function AfterView() {
