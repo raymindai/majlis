@@ -7,7 +7,7 @@ import { C } from "@/components/ui";
 export default function LanguageSwitcher() {
   const { lang, setLang, t } = useLang();
   return (
-    <div className="flex items-center rounded-full p-0.5" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }} title={t("language")}>
+    <div className="flex items-center rounded-full p-0.5 h-[26px]" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }} title={t("language")}>
       {LANGS.map((l) => (
         <button
           key={l.code}

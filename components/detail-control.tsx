@@ -18,7 +18,7 @@ export default function DetailControl() {
   const { level, setLevel } = useDetail();
   const { t: tr } = useLang();
   return (
-    <div className="inline-flex items-center gap-1 rounded-lg p-0.5" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
+    <div className="inline-flex items-center gap-1 rounded-lg p-0.5 h-[26px]" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
       {LEVELS.map((l) => {
         const Icon = l.icon;
         const on = level === l.v;
