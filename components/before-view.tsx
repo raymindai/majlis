@@ -261,7 +261,7 @@ export default function BeforeView() {
                             </div>
                           </div>
                           {a.action && (
-                            <div className="mt-3 -mx-3.5 -mb-3.5 px-3.5 py-3 border-t" style={{ borderColor: C.line, background: C.surface }}>
+                            <div className="mt-3 -mx-3.5 -mb-3.5 px-3.5 py-3 border-t flex-1" style={{ borderColor: C.line, background: C.surface }}>
                               <div className="text-[11px] font-semibold mb-1" style={{ color: C.accent }}>{tr("recommendedAction")}</div>
                               <p className="text-[13px] leading-snug" style={{ color: C.detail }}><Gloss>{a.action}</Gloss></p>
                             </div>
@@ -282,21 +282,15 @@ export default function BeforeView() {
                   <span className="text-[11px]" style={{ color: C.faint }}>{brief.steady.length} {tr(brief.steady.length === 1 ? "entity" : "entities")}</span>
                 </div>
                 <div className="grid grid-cols-[repeat(auto-fit,minmax(15rem,1fr))] gap-3">
-                  {brief.steady.map((s) => {
-                    const dept = deptFor(s.entity);
-                    return (
-                      <div key={s.entity} className="rounded-xl p-3 flex items-start gap-2.5" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
-                        <OrgBadge code={s.entity} size={28} />
-                        <div className="min-w-0">
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <span className="font-semibold text-[13px]">{deptNameI18n(s.entity, lang) ?? s.entity}</span>
-                            {dept && <StatusTag status={dept.status} />}
-                          </div>
-                          <p className="text-[12px] mt-0.5" style={{ color: C.muted }}><Gloss>{s.line}</Gloss></p>
-                        </div>
+                  {brief.steady.map((s) => (
+                    <div key={s.entity} className="rounded-xl p-3 flex items-start gap-2.5" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
+                      <OrgBadge code={s.entity} size={28} />
+                      <div className="min-w-0">
+                        <div className="font-semibold text-[13px]">{deptNameI18n(s.entity, lang) ?? s.entity}</div>
+                        <p className="text-[12px] mt-0.5" style={{ color: C.muted }}><Gloss>{s.line}</Gloss></p>
                       </div>
-                    );
-                  })}
+                    </div>
+                  ))}
                 </div>
               </div>
             )}
