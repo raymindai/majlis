@@ -99,7 +99,7 @@ export function FloatingWindow({
     <div
       ref={setNode}
       onMouseDown={() => setZ(++WIN_Z)}
-      className="fixed rounded-2xl flex flex-col"
+      className="fixed rounded-2xl flex flex-col majlis-pop"
       style={{
         top: box.top,
         left: box.left,

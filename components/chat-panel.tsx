@@ -230,7 +230,7 @@ export default function ChatPanel({ stage }: { stage: "before" | "during" | "aft
           >
             <StickyNote size={13} strokeWidth={2} /> {tr("note")}
           </button>
-          <button type="submit" disabled={loading} className="text-[14px] px-2 py-1 rounded cursor-pointer disabled:opacity-50" style={{ color: C.accent }}>
+          <button type="submit" disabled={loading} className="text-[14px] px-2 py-1 rounded cursor-pointer disabled:opacity-50 transition active:scale-90" style={{ color: C.accent }}>
             ↵
           </button>
         </div>

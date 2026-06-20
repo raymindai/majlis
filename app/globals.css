@@ -116,3 +116,19 @@ input,
 @media (prefers-reduced-motion: reduce) {
   .majlis-fade-up { animation: none; }
 }
+
+/* Interaction polish: popover entrance + hover lift */
+@keyframes majlis-pop {
+  from { opacity: 0; transform: scale(0.97) translateY(4px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+.majlis-pop { animation: majlis-pop 0.2s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+.majlis-lift { transition: transform 0.18s ease, box-shadow 0.18s ease; }
+.majlis-lift:hover { transform: translateY(-2px); }
+
+@media (prefers-reduced-motion: reduce) {
+  .majlis-pop { animation: none; }
+  .majlis-lift { transition: none; }
+  .majlis-lift:hover { transform: none; }
+}

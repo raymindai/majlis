@@ -31,7 +31,7 @@ export default function UserMenu() {
         <>
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
           <div
-            className="absolute right-0 mt-2 w-60 rounded-xl p-1.5 z-50"
+            className="absolute right-0 mt-2 w-60 rounded-xl p-1.5 z-50 majlis-pop"
             style={{ background: C.surface, border: `1px solid ${C.line}`, boxShadow: "0 12px 40px rgba(0,0,0,0.18), 0 3px 10px rgba(0,0,0,0.12)" }}
           >
             <div className="px-2.5 py-2 flex items-center gap-2.5">

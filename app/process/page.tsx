@@ -15,6 +15,7 @@ import {
   Users,
 } from "lucide-react";
 import { C } from "@/components/theme";
+import Reveal from "@/components/reveal";
 
 const serif = { fontFamily: "var(--font-newsreader), var(--font-arabic), Georgia, serif" };
 
@@ -145,7 +146,7 @@ export default function ProcessPage() {
     <div className="min-h-dvh" style={{ background: C.bg, color: C.ink, fontFamily: "var(--font-inter), var(--font-arabic), system-ui, sans-serif" }}>
       <div className="mx-auto max-w-3xl px-6 py-12 md:py-16">
         {/* Hero, a branded gradient rather than a stock photo */}
-        <header className="relative overflow-hidden rounded-3xl p-8 md:p-12" style={{ border: `1px solid ${C.line}`, background: `linear-gradient(135deg, ${C.chipBg}, ${C.surface} 72%)`, boxShadow: C.shadow }}>
+        <header className="relative overflow-hidden rounded-3xl p-8 md:p-12 majlis-fade-up" style={{ border: `1px solid ${C.line}`, background: `linear-gradient(135deg, ${C.chipBg}, ${C.surface} 72%)`, boxShadow: C.shadow }}>
           <svg aria-hidden className="absolute -right-12 -top-12 opacity-[0.06]" width="300" height="300" viewBox="0 0 100 100" style={{ color: C.accent }}>
             <g fill="none" stroke="currentColor" strokeWidth="1.4">
               <rect x="18" y="18" width="64" height="64" />
@@ -179,8 +180,8 @@ export default function ProcessPage() {
 
         {/* Stat strip */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">
-          {STATS.map((s) => (
-            <div key={s.k} className="rounded-xl p-4" style={{ background: C.surface, border: `1px solid ${C.line}` }}>
+          {STATS.map((s, i) => (
+            <div key={s.k} className="rounded-xl p-4 majlis-fade-up" style={{ background: C.surface, border: `1px solid ${C.line}`, animationDelay: `${i * 70}ms` }}>
               <div className="text-[18px] font-semibold leading-tight" style={{ color: C.ink }}>{s.k}</div>
               <div className="text-[12px] mt-1 leading-snug" style={{ color: C.muted }}>{s.v}</div>
             </div>
@@ -188,7 +189,7 @@ export default function ProcessPage() {
         </div>
 
         {/* The case */}
-        <section className="mt-20">
+        <Reveal className="mt-20"><section>
           <Eyebrow>The case</Eyebrow>
           <SectionTitle>A bounded moment, made trustworthy</SectionTitle>
           <p className="text-[16px] leading-relaxed mt-4" style={{ color: C.detail }}>
@@ -197,10 +198,10 @@ export default function ProcessPage() {
             contradicts an official report. The official has eighteen minutes. The product has to surface what matters,
             show its work, and be honest about what it does not know.
           </p>
-        </section>
+        </section></Reveal>
 
         {/* The process */}
-        <section className="mt-20">
+        <Reveal className="mt-20"><section>
           <Eyebrow>How it was made</Eyebrow>
           <SectionTitle>The process</SectionTitle>
           <p className="text-[15px] leading-relaxed mt-3" style={{ color: C.muted }}>
@@ -229,10 +230,10 @@ export default function ProcessPage() {
               })}
             </ol>
           </div>
-        </section>
+        </section></Reveal>
 
         {/* The decision spine */}
-        <section className="mt-20">
+        <Reveal className="mt-20"><section>
           <Eyebrow>How I decided</Eyebrow>
           <SectionTitle>The decision spine</SectionTitle>
           <p className="text-[15px] leading-relaxed mt-3 mb-8" style={{ color: C.muted }}>
@@ -259,17 +260,17 @@ export default function ProcessPage() {
               </li>
             ))}
           </ol>
-        </section>
+        </section></Reveal>
 
         {/* The experience */}
-        <section className="mt-20">
+        <Reveal className="mt-20"><section>
           <Eyebrow>The experience</Eyebrow>
           <SectionTitle>One loop, three stages</SectionTitle>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-6">
             {LIFECYCLE.map((s) => {
               const Icon = s.icon;
               return (
-                <Link key={s.stage} href={s.href} className="rounded-2xl p-5 block hover:opacity-90" style={{ background: C.surface, border: `1px solid ${C.line}`, boxShadow: C.shadow }}>
+                <Link key={s.stage} href={s.href} className="rounded-2xl p-5 block majlis-lift" style={{ background: C.surface, border: `1px solid ${C.line}`, boxShadow: C.shadow }}>
                   <Icon size={18} strokeWidth={2} style={{ color: C.accent }} />
                   <div className="font-semibold text-[15px] mt-3">{s.stage}</div>
                   <p className="text-[13px] leading-snug mt-1.5" style={{ color: C.detail }}>{s.line}</p>
@@ -278,10 +279,10 @@ export default function ProcessPage() {
               );
             })}
           </div>
-        </section>
+        </section></Reveal>
 
         {/* The AI craft */}
-        <section className="mt-20">
+        <Reveal className="mt-20"><section>
           <Eyebrow>The AI craft</Eyebrow>
           <SectionTitle>What makes it trustworthy</SectionTitle>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-6">
@@ -296,10 +297,10 @@ export default function ProcessPage() {
               );
             })}
           </div>
-        </section>
+        </section></Reveal>
 
         {/* Honest next */}
-        <section className="mt-20">
+        <Reveal className="mt-20"><section>
           <Eyebrow>If I had longer</Eyebrow>
           <SectionTitle>What I would do next</SectionTitle>
           <ul className="mt-5 space-y-2.5">
@@ -315,7 +316,7 @@ export default function ProcessPage() {
               </li>
             ))}
           </ul>
-        </section>
+        </section></Reveal>
 
         <div className="mt-20 pt-8 border-t flex flex-wrap items-center justify-between gap-4" style={{ borderColor: C.line }}>
           <span className="text-[13px]" style={{ color: C.muted }}>Majlis, a five-day prototype. Synthetic data throughout.</span>

@@ -45,7 +45,7 @@ export default function ReviewerGuide() {
     <div className="fixed bottom-4 left-4 z-[70] flex flex-col items-start gap-2">
       {open && (
         <div
-          className="w-[min(400px,calc(100vw-2rem))] max-h-[78vh] rounded-2xl overflow-hidden flex flex-col"
+          className="w-[min(400px,calc(100vw-2rem))] max-h-[78vh] rounded-2xl overflow-hidden flex flex-col majlis-pop"
           style={{ background: C.surface, border: `1.5px solid ${C.accent}`, boxShadow: "0 24px 60px rgba(0,0,0,0.3)" }}
         >
           {/* accent ribbon: the signal that this is a guide and not a document window */}

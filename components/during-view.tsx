@@ -348,7 +348,7 @@ export default function DuringView() {
             })}
           </div>
           {revealed < FEED.length ? (
-            <button type="button" onClick={() => setRevealed((r) => r + 1)} className="mt-4 text-[13px] rounded-lg px-3 py-2 cursor-pointer" style={{ background: C.ink, color: C.bg }}>
+            <button type="button" onClick={() => setRevealed((r) => r + 1)} className="mt-4 text-[13px] rounded-lg px-3 py-2 cursor-pointer transition active:scale-95 hover:opacity-90" style={{ background: C.ink, color: C.bg }}>
               {tr("nextSpeaker")} →
             </button>
           ) : lastStreamed ? (

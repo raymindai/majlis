@@ -76,7 +76,7 @@ export default function MeetingBar({ stage }: { stage: "before" | "during" | "af
           <>
             <div className="fixed inset-0 z-[90]" onClick={() => setOpen(false)} />
             <div
-              className="absolute top-full mt-1.5 z-[91] w-56 rounded-xl p-1 ltr:left-0 rtl:right-0"
+              className="absolute top-full mt-1.5 z-[91] w-56 rounded-xl p-1 ltr:left-0 rtl:right-0 majlis-pop"
               style={{ background: C.surface, border: `1px solid ${C.line}`, boxShadow: "0 16px 40px rgba(0,0,0,0.22)" }}
             >
               <div className="px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-wide" style={{ color: C.faint }}>{tr("meetingStatus")}</div>

@@ -449,7 +449,7 @@ export default function BeforeView() {
                   key={s.id}
                   type="button"
                   onClick={(e) => open({ sourceId: s.id, passageId: s.passages[0].id }, { x: e.clientX, y: e.clientY })}
-                  className="flex items-start gap-2.5 text-left rounded-xl p-3 cursor-pointer hover:bg-[var(--c-surface)]"
+                  className="flex items-start gap-2.5 text-left rounded-xl p-3 cursor-pointer hover:bg-[var(--c-surface)] majlis-lift"
                   style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}
                 >
                   <FileText size={16} strokeWidth={2} style={{ color: C.faint, marginTop: 1 }} className="shrink-0" />
