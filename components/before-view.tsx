@@ -178,6 +178,12 @@ export default function BeforeView() {
           <div className="mt-3 rounded-xl p-3.5" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
             <div className="text-[11px] font-semibold mb-1" style={{ color: C.accent }}>Recommendation</div>
             <p className="text-[14px] leading-snug"><Gloss>{brief.decision.recommendation}</Gloss></p>
+            {brief.decision.rationale && (
+              <p className="text-[13px] leading-relaxed mt-2.5 pt-2.5 border-t" style={{ borderColor: C.line, color: C.detail }}>
+                <span className="font-medium" style={{ color: C.ink }}>Why: </span>
+                <Gloss>{brief.decision.rationale}</Gloss>
+              </p>
+            )}
           </div>
           {level >= 2 && (
             <>

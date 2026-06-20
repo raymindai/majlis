@@ -32,7 +32,8 @@ export const BriefSchema = z.object({
   }),
   decision: z.object({
     text: z.string().describe("the decision the chair must make today, one sentence"),
-    recommendation: z.string().describe("the recommended call and the one-line reason for it"),
+    recommendation: z.string().describe("the recommended call, one clear sentence"),
+    rationale: z.string().describe("2 to 3 sentences of reasoning behind the recommendation, grounded in the pack: why this call over the alternatives, and what risk it manages"),
     hingesOn: z.array(z.string()).describe("the facts the decision depends on"),
     options: z
       .array(z.object({ label: z.string(), consequence: z.string() }))
@@ -69,7 +70,7 @@ Rules:
 - Use ONLY the pack. Never use outside knowledge. Ground every factual claim in a passage, citing its exact sourceId and passageId (e.g. sourceId "Q2-EKD", passageId "slip").
 - Confidence on each claim: "confirmed" (a current, authoritative source: the Q2 reports, the Risk Register, the Minutes), "likely" (supported but caveated, e.g. the Charter baseline which later reports may supersede), "unverified" (informal, undated, or conflicting across sources, e.g. the PMO note; figures that disagree).
 - Lead with the single dominant judgment. Rank the exceptions most urgent first. Where two sources conflict, flag it and mark it unverified, never silently pick one.
-- The decision section must give a clear recommendation and the consequence of each option the chair could take.
+- The decision section must give a clear recommendation, the reasoning behind it (why this call over the alternatives, and what risk it manages), and the consequence of each option the chair could take.
 - Tone: terse, precise, deferential, audit-aware. No filler. Never use em-dashes or middle-dot separators; use commas, colons, or short sentences.
 
 COMMITTEE PACK, the only material you may use:

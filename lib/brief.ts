@@ -19,6 +19,7 @@ export interface Brief {
   decision: {
     text: string;
     recommendation: string;
+    rationale: string;
     hingesOn: string[];
     options: { label: string; consequence: string }[];
   };
@@ -43,6 +44,8 @@ export const MOCK_BRIEF: Brief = {
   decision: {
     text: DECISION.text,
     recommendation: "Defer the reallocation until MTA reconciles its figure, and press EDD for a firm SSO recovery date.",
+    rationale:
+      "The reallocation rests on MTA's spend forecast, and that figure conflicts across sources (AED 52M against the Charter's 40M), so voting now would move money on an unreconciled number that is hard to defend on audit. The SSO blocker is the binding constraint on two go-lives, so a firm recovery date matters more this session than the budget split.",
     hingesOn: DECISION.hingesOn,
     options: [
       { label: "Defer the reallocation", consequence: "Avoids voting on an unreconciled figure; the budget question returns next session." },

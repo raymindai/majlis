@@ -266,7 +266,10 @@ export default function DuringView() {
 
           <div className="mt-3 rounded-lg p-3 text-[13px] flex items-start gap-2" style={{ background: C.chipBg }}>
             <Sparkles size={14} strokeWidth={2} style={{ color: C.accent, marginTop: 1 }} className="shrink-0" />
-            <span style={{ color: C.detail }}><span className="font-medium" style={{ color: C.ink }}>Majlis recommends: </span><Gloss>{brief.decision.recommendation}</Gloss></span>
+            <span style={{ color: C.detail }}>
+              <span className="font-medium" style={{ color: C.ink }}>Majlis recommends: </span><Gloss>{brief.decision.recommendation}</Gloss>
+              {brief.decision.rationale && <span className="block mt-1.5"><Gloss>{brief.decision.rationale}</Gloss></span>}
+            </span>
           </div>
 
           <div className="mt-3 pt-3 border-t flex items-center gap-3 flex-wrap" style={{ borderColor: C.line }}>
