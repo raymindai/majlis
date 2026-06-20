@@ -60,8 +60,8 @@ function AudioBars() {
   );
 }
 
-/** Reveals the utterance word by word, as if transcribed live, then signals completion. */
-function TranscribingQuote({ text, onDone }: { text: string; onDone: () => void }) {
+/** Reveals text word by word, as if streamed live, pausing at punctuation; signals completion. */
+function StreamText({ text, onDone, speed = 120 }: { text: string; onDone?: () => void; speed?: number }) {
   const words = useMemo(() => text.split(" "), [text]);
   const [n, setN] = useState(1);
   const done = useRef(false);
@@ -69,14 +69,16 @@ function TranscribingQuote({ text, onDone }: { text: string; onDone: () => void 
     if (n >= words.length) {
       if (!done.current) {
         done.current = true;
-        onDone();
+        onDone?.();
       }
       return;
     }
-    const t = setTimeout(() => setN((x) => x + 1), 70);
+    const last = words[n - 1] ?? "";
+    const extra = /[.!?]$/.test(last) ? speed * 2.4 : /[,;:]$/.test(last) ? speed * 1.4 : 0;
+    const t = setTimeout(() => setN((x) => x + 1), speed + extra);
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [n, words.length]);
+  }, [n, words.length, speed]);
   return (
     <>
       {words.slice(0, n).join(" ")}
@@ -94,6 +96,7 @@ export default function DuringView() {
   const [captured, setCaptured] = useState<Commitment[]>([]);
   const [observations, setObservations] = useState<Record<string, Obs | "loading">>({});
   const [transcribed, setTranscribed] = useState<Set<string>>(() => new Set());
+  const [noteShown, setNoteShown] = useState<Set<string>>(() => new Set());
   const [brief, setBrief] = useState<Brief>(MOCK_BRIEF);
   const requested = useRef<Set<string>>(new Set());
 
@@ -224,6 +227,9 @@ export default function DuringView() {
               const sp = speakerOf(item.speaker);
               const obs = observations[item.id];
               const typing = !transcribed.has(item.id);
+              const noteText = obs && obs !== "loading" ? (obs.stance !== "neutral" ? obs.note : level >= 3 ? obs.note : "") : "";
+              const noteDone = !noteText || noteShown.has(item.id);
+              const addNoteDone = () => setNoteShown((s) => { const n = new Set(s); n.add(item.id); return n; });
               return (
                 <div key={item.id} className="rounded-xl p-4" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
                   <div className="flex items-center justify-between gap-2">
@@ -251,7 +257,7 @@ export default function DuringView() {
                   <p className="text-[15px] mt-2 leading-relaxed">
                     &ldquo;
                     {typing ? (
-                      <TranscribingQuote text={item.text} onDone={() => setTranscribed((s) => { const n = new Set(s); n.add(item.id); return n; })} />
+                      <StreamText text={item.text} onDone={() => setTranscribed((s) => { const n = new Set(s); n.add(item.id); return n; })} />
                     ) : (
                       <Gloss>{item.text}</Gloss>
                     )}
@@ -283,8 +289,8 @@ export default function DuringView() {
                               <span style={{ color: obs.stance === "contradicts" ? C.unverified : C.ink, fontWeight: 500 }}>
                                 {obs.stance === "contradicts" ? `${tr("inconsistency")}: ` : `${tr("confirmedColon")}: `}
                               </span>
-                              <span style={{ color: C.detail }}><Gloss>{obs.note}</Gloss></span>{" "}
-                              {obs.citation && (
+                              <span style={{ color: C.detail }}>{noteDone ? <Gloss>{obs.note}</Gloss> : <StreamText text={obs.note} speed={45} onDone={addNoteDone} />}</span>{" "}
+                              {noteDone && obs.citation && (
                                 <span className="inline-block align-middle">
                                   <CitationChip sourceId={obs.citation.sourceId} onClick={(pos) => open(obs.citation!, pos)} />
                                 </span>
@@ -293,17 +299,17 @@ export default function DuringView() {
                           </div>
                         </div>
                       ) : (
-                        obs.note && level >= 3 && <p className="mt-3 text-[13px]" style={{ color: C.detail }}><Gloss>{obs.note}</Gloss></p>
+                        obs.note && level >= 3 && <p className="mt-3 text-[13px]" style={{ color: C.detail }}>{noteDone ? <Gloss>{obs.note}</Gloss> : <StreamText text={obs.note} speed={45} onDone={addNoteDone} />}</p>
                       )}
 
-                      {obs.suggestedQuestion && level >= 2 && (
+                      {noteDone && obs.suggestedQuestion && level >= 2 && (
                         <button type="button" onClick={() => askMajlis(obs.suggestedQuestion!)} className="mt-2 flex items-start gap-1.5 text-left text-[12px] cursor-pointer hover:opacity-70" style={{ color: C.accent }}>
                           <MessageSquareQuote size={13} strokeWidth={2} className="mt-0.5 shrink-0" />
                           <span><span className="font-medium">{tr("suggested")}:</span> <span style={{ color: C.detail }}><Gloss>{obs.suggestedQuestion}</Gloss></span></span>
                         </button>
                       )}
 
-                      {obs.commitment && (
+                      {noteDone && obs.commitment && (
                         <div className="mt-3">
                           <button
                             type="button"
