@@ -242,11 +242,9 @@ export default function BeforeView() {
                       const sources = a.citations.filter((c, i, arr) => arr.findIndex((x) => x.sourceId === c.sourceId) === i);
                       return (
                         <div key={a.entity} className="rounded-xl p-3.5 flex flex-col" style={tint}>
-                          <div className="flex items-start gap-2.5">
-                            <OrgBadge code={a.entity} size={34} />
-                            <div className="min-w-0 flex-1">
-                              <div className="font-semibold text-[14px] leading-tight">{deptNameI18n(a.entity, lang) ?? a.entity}</div>
-                            </div>
+                          <div className="flex items-center gap-2.5">
+                            <OrgBadge code={a.entity} size={30} />
+                            <div className="font-semibold text-[14px] leading-tight min-w-0 flex-1">{deptNameI18n(a.entity, lang) ?? a.entity}</div>
                           </div>
                           <p className="text-[13px] leading-snug mt-3"><Gloss>{a.line}</Gloss></p>
                           {a.action && (
