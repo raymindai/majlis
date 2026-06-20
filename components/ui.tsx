@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { CircleAlert, CircleCheck, CircleDashed, FileText, type LucideIcon, OctagonAlert, TriangleAlert } from "lucide-react";
-import { getSource, sourceLabel, type Confidence } from "@/lib/corpus";
+import { sourceLabel, type Confidence } from "@/lib/corpus";
 import { Tip } from "@/components/tip";
 
 /** All colours resolve through CSS variables (set per theme in globals.css). */
@@ -101,20 +101,16 @@ export function SeverityPill({ severity }: { severity: string }) {
 }
 
 export function CitationChip({ sourceId, onClick }: { sourceId: string; onClick?: (pos: { x: number; y: number }) => void }) {
-  const s = getSource(sourceId);
-  const tip = s ? `${s.title}${s.date ? `, ${s.date}` : ", undated"}. Click to read it.` : "Open the source";
   return (
-    <Tip as="span" content={tip} className="inline-flex">
-      <button
-        type="button"
-        onClick={(e) => onClick?.({ x: e.clientX, y: e.clientY })}
-        className="inline-flex items-center gap-1 text-[11px] rounded-md border px-1.5 py-0.5 cursor-pointer hover:opacity-70"
-        style={{ borderColor: C.line, color: C.muted, background: C.surface }}
-      >
-        <FileText size={11} strokeWidth={2} style={{ color: C.faint }} />
-        {sourceLabel(sourceId)}
-      </button>
-    </Tip>
+    <button
+      type="button"
+      onClick={(e) => onClick?.({ x: e.clientX, y: e.clientY })}
+      className="inline-flex items-center gap-1 text-[11px] rounded-md border px-1.5 py-0.5 cursor-pointer hover:opacity-70"
+      style={{ borderColor: C.line, color: C.muted, background: C.surface }}
+    >
+      <FileText size={11} strokeWidth={2} style={{ color: C.faint }} />
+      {sourceLabel(sourceId)}
+    </button>
   );
 }
 

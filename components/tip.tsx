@@ -1,12 +1,14 @@
 "use client";
 
-import { useState, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 
+let SEQ = 0;
+
 /**
- * A reliable hover tooltip: rendered to a portal at a fixed position, so it shows
- * instantly and is never clipped by an overflow-hidden parent. Used for acronyms
- * and for the augmented meaning behind chips and pills.
+ * Click-to-reveal tooltip: hovering only shows the help cursor; clicking toggles a
+ * portal-rendered tooltip (never clipped). Only one is open at a time; it closes on
+ * an outside click, scroll, or Escape. Used for acronyms and for chip/pill meanings.
  */
 export function Tip({
   content,
@@ -22,13 +24,40 @@ export function Tip({
   as?: "span" | "abbr";
 }) {
   const [pos, setPos] = useState<{ x: number; y: number } | null>(null);
-  const show = (e: React.MouseEvent) => {
+  const idRef = useRef(0);
+
+  const toggle = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (pos) {
+      setPos(null);
+      return;
+    }
+    idRef.current = ++SEQ;
+    window.dispatchEvent(new CustomEvent("majlis-tip", { detail: idRef.current }));
     const r = (e.currentTarget as HTMLElement).getBoundingClientRect();
     setPos({ x: r.left + r.width / 2, y: r.top });
   };
+
+  useEffect(() => {
+    if (!pos) return;
+    const close = () => setPos(null);
+    const onOther = (e: Event) => { if ((e as CustomEvent).detail !== idRef.current) setPos(null); };
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setPos(null); };
+    window.addEventListener("click", close);
+    window.addEventListener("scroll", close, true);
+    window.addEventListener("keydown", onKey);
+    window.addEventListener("majlis-tip", onOther);
+    return () => {
+      window.removeEventListener("click", close);
+      window.removeEventListener("scroll", close, true);
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("majlis-tip", onOther);
+    };
+  }, [pos]);
+
   const Tag = as;
   return (
-    <Tag onMouseEnter={show} onMouseLeave={() => setPos(null)} className={className} style={style}>
+    <Tag onClick={toggle} className={className} style={style}>
       {children}
       {pos &&
         typeof document !== "undefined" &&
@@ -43,7 +72,7 @@ export function Tip({
               color: "var(--c-bg)",
               fontSize: "12px",
               lineHeight: 1.35,
-              padding: "5px 9px",
+              padding: "6px 10px",
               borderRadius: "7px",
               maxWidth: "240px",
               width: "max-content",
