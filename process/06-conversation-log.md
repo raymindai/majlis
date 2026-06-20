@@ -49,6 +49,13 @@ Session: 2026-06-19 → 2026-06-20.
 **User:** "let's push it to git first."
 **Claude:** committed corpus + process archive + grounding backbone locally (secrets verified out — `.env.local` gitignored/untracked); created a **private** GitHub repo and pushed `main` → github.com/raymindai/majlis.
 
+### Turn 30 — 2026-06-20 · Rail + named participants on During & After
+**Claude:** carried the shared rail (MeetingContext + agenda/minutes nav + clickable room) to During and After. During: transcript speakers now show name + face + role and open the profile drawer; the agenda rail lists who speaks, by name. After: minutes nav is icon-led; distribution shows named recipient chips with faces, each opening the profile; Card headers icon-aligned with the nav. Build clean. Real names + click-through now reflected across all three stages. Next: Supabase persistence (the loop + a Q&A audit log); then contextual augmentation.
+
+### Turn 29 — 2026-06-20 · Participant detail system + shared rail + icon-aligned cards
+**User:** do (1) rail on During/After + (2) Supabase first; participants need real names + click-through to details (engagement, contacts) reflected everywhere; information needs context to be understandable; align the icons between the sidebar and the main content.
+**Claude:** built the participant/room system (coupled to the rail, so built together): enriched `PARTICIPANTS` (full names, entity, contacts, `reportsVia`, engagement history, track-record pledges, meetings attended); a shared **`ParticipantDrawer`** opened from anywhere via `ParticipantContext`; extracted the elevated rail into **`components/rail.tsx`** (`MeetingContext`, `NavList`, `TheRoom` — faces clickable → drawer); refactored Before onto it; made every participant card open the drawer. Aligned icons: `Card`/`Section` now take an `icon` that matches the sidebar nav entry (icon replaces the accent tick). Fixed the last all-caps label ("Source"). Build clean. Next: same rail + named speakers/recipients on During/After; then Supabase; then contextual augmentation.
+
 ### Turn 28 — 2026-06-20 · fal avatars generated + wired
 **Claude:** wrote `scripts/generate-avatars.mjs` and ran it against **fal `nano-banana-pro`** → 5 dignified, lightly-stylised editorial portraits (PSD = anonymous silhouette for "restricted"), resized to 384px. Verified them (viewed), then wired via `next/image` (monogram fallback) into the participant cards and "The room" sidebar list — replacing the initials. Build clean; committed. Followed the UX/service procedure: D11 (intent + style) → generate → verify → wire.
 

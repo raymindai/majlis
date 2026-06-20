@@ -2,16 +2,27 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { Database, Gavel, Handshake, ListChecks, Send } from "lucide-react";
 import { loadState, resetMeeting, writeToMemory, type MeetingState } from "@/lib/store";
 import { MEETING_META } from "@/lib/mock";
+import { PARTICIPANTS } from "@/lib/meetings";
 import { C, Card, ConfidenceBadge, RailLabel } from "@/components/ui";
+import { Avatar, MeetingContext, NavList, TheRoom } from "@/components/rail";
+import { useParticipant } from "@/components/participant-context";
 import AppShell from "@/components/app-shell";
 
 const serif = { fontFamily: "var(--font-newsreader), Georgia, serif" };
-const PARTICIPANTS = ["HSA", "EKD", "MTA", "PSD", "EDD"];
-const NAV = ["Decisions", "New commitments", "Action items", "Distribution", "Institutional memory"];
+
+const NAV = [
+  { label: "Decisions", icon: Gavel },
+  { label: "New commitments", icon: Handshake },
+  { label: "Action items", icon: ListChecks },
+  { label: "Distribution", icon: Send },
+  { label: "Institutional memory", icon: Database },
+];
 
 export default function AfterView() {
+  const { open: openProfile } = useParticipant();
   const [state, setState] = useState<MeetingState>({ commitments: [], writtenToMemory: false });
   const [sent, setSent] = useState(false);
 
@@ -28,16 +39,12 @@ export default function AfterView() {
 
   const leftRail = (
     <div className="space-y-6">
+      <MeetingContext />
       <div>
         <RailLabel>Minutes</RailLabel>
-        <nav className="space-y-1 text-[13px]">
-          {NAV.map((s) => (
-            <a key={s} href={`#${s.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`} className="block hover:opacity-70" style={{ color: C.muted }}>
-              {s}
-            </a>
-          ))}
-        </nav>
+        <NavList items={NAV} />
       </div>
+      <TheRoom />
       <button type="button" onClick={resetMeeting} className="text-[12px] cursor-pointer hover:opacity-70" style={{ color: C.muted }}>
         Reset demo
       </button>
@@ -75,7 +82,7 @@ export default function AfterView() {
         </div>
 
         {decisions.length > 0 && (
-          <Card label="Decisions">
+          <Card label="Decisions" icon={Gavel}>
             <ul className="space-y-2">
               {decisions.map((d) => (
                 <li key={d.id} className="rounded-lg p-4" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
@@ -87,7 +94,7 @@ export default function AfterView() {
           </Card>
         )}
 
-        <Card label="New commitments">
+        <Card label="New commitments" icon={Handshake}>
           <ul className="space-y-2">
             {commitments.map((c) => (
               <li key={c.id} className="rounded-lg p-4" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
@@ -102,7 +109,7 @@ export default function AfterView() {
           </ul>
         </Card>
 
-        <Card label="Action items" span={2}>
+        <Card label="Action items" span={2} icon={ListChecks}>
           <table className="w-full text-[13px]">
             <thead>
               <tr style={{ color: C.faint }}>
@@ -123,20 +130,34 @@ export default function AfterView() {
           </table>
         </Card>
 
-        <Card label="Distribution">
-          <div className="text-[13px]" style={{ color: C.muted }}>To: {PARTICIPANTS.join(" · ")}</div>
+        <Card label="Distribution" icon={Send}>
+          <div className="text-[11px] font-semibold mb-2.5" style={{ color: C.faint }}>Recipients</div>
+          <div className="flex flex-wrap gap-2">
+            {PARTICIPANTS.map((p) => (
+              <button
+                key={p.id}
+                type="button"
+                onClick={() => openProfile(p.id)}
+                className="inline-flex items-center gap-1.5 rounded-full pl-1 pr-2.5 py-1 cursor-pointer hover:opacity-80"
+                style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}
+              >
+                <Avatar id={p.id} name={p.name} size={20} />
+                <span className="text-[12px]">{p.name}</span>
+              </button>
+            ))}
+          </div>
           <button
             type="button"
             onClick={() => setSent(true)}
             disabled={sent}
-            className="mt-3 text-[13px] rounded-lg px-3 py-2 cursor-pointer disabled:opacity-70"
+            className="mt-4 text-[13px] rounded-lg px-3 py-2 cursor-pointer disabled:opacity-70"
             style={sent ? { background: C.surfaceAlt, color: C.muted } : { background: C.accent, color: C.onAccent }}
           >
             {sent ? "✓ Minutes sent to participants" : "Send minutes to participants"}
           </button>
         </Card>
 
-        <Card label="Institutional memory" span={2}>
+        <Card label="Institutional memory" span={2} icon={Database}>
           {state.writtenToMemory ? (
             <div className="rounded-xl p-4" style={{ background: C.priorBg, border: `1px solid ${C.priorBorder}` }}>
               <div className="font-medium text-[14px]" style={{ color: C.priorInk }}>✓ Written to institutional memory</div>

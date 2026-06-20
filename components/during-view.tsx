@@ -2,12 +2,15 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { CircleCheck, MessageSquareQuote, TriangleAlert } from "lucide-react";
+import { AudioLines, CircleCheck, ClipboardCheck, Lightbulb, MessageSquareQuote, TriangleAlert } from "lucide-react";
 import { addCommitment, loadState, type Commitment } from "@/lib/store";
-import { ATTENTION, MEETING_META } from "@/lib/mock";
+import { MEETING_META } from "@/lib/mock";
+import { PARTICIPANTS } from "@/lib/meetings";
 import { askMajlis } from "@/components/ask-bus";
-import { C, Card, CitationChip, RailLabel, severityColor, severityGlyph } from "@/components/ui";
+import { C, Card, CitationChip, RailLabel } from "@/components/ui";
+import { Avatar, MeetingContext, TheRoom } from "@/components/rail";
 import { useCitation } from "@/components/citation-context";
+import { useParticipant } from "@/components/participant-context";
 import AppShell from "@/components/app-shell";
 
 type Cite = { sourceId: string; passageId: string };
@@ -52,8 +55,17 @@ const FEED: FeedItem[] = [
   },
 ];
 
+/** Resolve a transcript speaker code to a name (+ profile id when it's a participant). */
+function speakerOf(code: string): { name: string; id?: string; role?: string } {
+  const p = PARTICIPANTS.find((x) => x.id === code);
+  if (p) return { name: p.name, id: p.id, role: p.role };
+  if (code === "Chair") return { name: "You", role: "Chair · Programme Director-General" };
+  return { name: code };
+}
+
 export default function DuringView() {
   const { open } = useCitation();
+  const { open: openProfile } = useParticipant();
   const [revealed, setRevealed] = useState(1);
   const [captured, setCaptured] = useState<Commitment[]>([]);
 
@@ -72,32 +84,26 @@ export default function DuringView() {
 
   const leftRail = (
     <div className="space-y-6">
+      <MeetingContext />
       <div>
-        <RailLabel>Agenda</RailLabel>
-        <ol className="space-y-1 text-[13px]">
-          {FEED.map((f, i) => (
-            <li key={f.id} className="flex items-center gap-2" style={{ color: i < revealed ? C.ink : C.faint, fontWeight: i === revealed - 1 ? 600 : 400 }}>
-              <span aria-hidden style={{ color: i < revealed ? C.confirmed : C.line }}>{i < revealed ? "•" : "○"}</span>
-              {f.speaker}
-            </li>
-          ))}
+        <RailLabel>Agenda — who speaks</RailLabel>
+        <ol className="space-y-1.5 text-[13px]">
+          {FEED.map((f, i) => {
+            const sp = speakerOf(f.speaker);
+            return (
+              <li key={f.id} className="flex items-center gap-2" style={{ color: i < revealed ? C.ink : C.faint, fontWeight: i === revealed - 1 ? 600 : 400 }}>
+                <span aria-hidden className="text-[9px]" style={{ color: i < revealed ? C.confirmed : C.line }}>{i < revealed ? "●" : "○"}</span>
+                <span className="truncate">{sp.name}</span>
+              </li>
+            );
+          })}
         </ol>
       </div>
       <div className="text-[12px] space-y-1" style={{ color: C.muted }}>
         <div>Captured: <span className="font-semibold" style={{ color: C.ink }}>{captured.length}</span></div>
         <div>Flags raised: <span className="font-semibold" style={{ color: flagsRaised ? C.unverified : C.ink }}>{flagsRaised}</span></div>
       </div>
-      <div>
-        <RailLabel>Watch-list</RailLabel>
-        <ul className="space-y-1.5 text-[12px]">
-          {ATTENTION.map((a) => (
-            <li key={a.id} className="flex items-start gap-1.5">
-              <span aria-hidden style={{ color: severityColor[a.severity] }}>{severityGlyph[a.severity]}</span>
-              <span className="font-semibold">{a.id}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
+      <TheRoom />
     </div>
   );
 
@@ -116,6 +122,7 @@ export default function DuringView() {
         <Card
           label="Live transcript"
           span={2}
+          icon={AudioLines}
           aside={
             <span className="inline-flex items-center gap-1.5 text-[12px]" style={{ color: C.unverified }}>
               <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: C.unverified }} />
@@ -124,51 +131,67 @@ export default function DuringView() {
           }
         >
           <div className="space-y-3">
-            {shown.map((item) => (
-              <div key={item.id} className="rounded-xl p-4" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
-                <span className="font-semibold text-[13px]">{item.speaker}</span>
-                <p className="text-[15px] mt-1 leading-relaxed">&ldquo;{item.text}&rdquo;</p>
-                {item.note && (
-                  <div className="mt-3 rounded-lg p-3 text-[13px]" style={item.note.kind === "flag" ? { background: C.flagBg, border: `1px solid ${C.flagBorder}` } : { background: C.surface, border: `1px solid ${C.line}` }}>
-                    <div className="flex items-start gap-2">
-                      {item.note.kind === "flag" ? (
-                        <TriangleAlert size={14} strokeWidth={2.25} style={{ color: C.unverified, marginTop: 1 }} className="shrink-0" />
-                      ) : (
-                        <CircleCheck size={14} strokeWidth={2.25} style={{ color: C.confirmed, marginTop: 1 }} className="shrink-0" />
-                      )}
-                      <div>
-                        <span style={{ color: item.note.kind === "flag" ? C.unverified : C.ink, fontWeight: 500 }}>
-                          {item.note.kind === "flag" ? "Inconsistency — " : "Confirmed — "}
-                        </span>
-                        <span style={{ color: C.detail }}>{item.note.text}</span>{" "}
-                        <span className="inline-block align-middle">
-                          <CitationChip sourceId={item.note.cite.sourceId} onClick={() => open(item.note!.cite)} />
-                        </span>
+            {shown.map((item) => {
+              const sp = speakerOf(item.speaker);
+              return (
+                <div key={item.id} className="rounded-xl p-4" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
+                  {sp.id ? (
+                    <button type="button" onClick={() => openProfile(sp.id!)} className="flex items-center gap-2.5 text-left cursor-pointer hover:opacity-70">
+                      <Avatar id={sp.id} name={sp.name} size={28} />
+                      <span className="leading-tight">
+                        <span className="font-semibold text-[13px]">{sp.name}</span>
+                        {sp.role && <span className="block text-[11px]" style={{ color: C.muted }}>{sp.role}</span>}
+                      </span>
+                    </button>
+                  ) : (
+                    <span className="leading-tight">
+                      <span className="font-semibold text-[13px]">{sp.name}</span>
+                      {sp.role && <span className="block text-[11px]" style={{ color: C.muted }}>{sp.role}</span>}
+                    </span>
+                  )}
+                  <p className="text-[15px] mt-2 leading-relaxed">&ldquo;{item.text}&rdquo;</p>
+                  {item.note && (
+                    <div className="mt-3 rounded-lg p-3 text-[13px]" style={item.note.kind === "flag" ? { background: C.flagBg, border: `1px solid ${C.flagBorder}` } : { background: C.surface, border: `1px solid ${C.line}` }}>
+                      <div className="flex items-start gap-2">
+                        {item.note.kind === "flag" ? (
+                          <TriangleAlert size={14} strokeWidth={2.25} style={{ color: C.unverified, marginTop: 1 }} className="shrink-0" />
+                        ) : (
+                          <CircleCheck size={14} strokeWidth={2.25} style={{ color: C.confirmed, marginTop: 1 }} className="shrink-0" />
+                        )}
+                        <div>
+                          <span style={{ color: item.note.kind === "flag" ? C.unverified : C.ink, fontWeight: 500 }}>
+                            {item.note.kind === "flag" ? "Inconsistency — " : "Confirmed — "}
+                          </span>
+                          <span style={{ color: C.detail }}>{item.note.text}</span>{" "}
+                          <span className="inline-block align-middle">
+                            <CitationChip sourceId={item.note.cite.sourceId} onClick={() => open(item.note!.cite)} />
+                          </span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                )}
-                {item.suggest && (
-                  <button type="button" onClick={() => askMajlis(item.suggest!)} className="mt-2 flex items-start gap-1.5 text-left text-[12px] cursor-pointer hover:opacity-70" style={{ color: C.accent }}>
-                    <MessageSquareQuote size={13} strokeWidth={2} className="mt-0.5 shrink-0" />
-                    <span><span className="font-medium">Suggested:</span> <span style={{ color: C.detail }}>{item.suggest}</span></span>
-                  </button>
-                )}
-                {item.capture && (
-                  <div className="mt-3">
-                    <button
-                      type="button"
-                      disabled={capturedIds.has(item.capture.id)}
-                      onClick={() => addCommitment(item.capture!)}
-                      className="text-[12px] rounded-lg px-2.5 py-1 cursor-pointer disabled:opacity-50"
-                      style={{ background: C.chipBg, color: C.ink }}
-                    >
-                      {capturedIds.has(item.capture.id) ? "✓ Captured" : "+ Capture commitment"}
+                  )}
+                  {item.suggest && (
+                    <button type="button" onClick={() => askMajlis(item.suggest!)} className="mt-2 flex items-start gap-1.5 text-left text-[12px] cursor-pointer hover:opacity-70" style={{ color: C.accent }}>
+                      <MessageSquareQuote size={13} strokeWidth={2} className="mt-0.5 shrink-0" />
+                      <span><span className="font-medium">Suggested:</span> <span style={{ color: C.detail }}>{item.suggest}</span></span>
                     </button>
-                  </div>
-                )}
-              </div>
-            ))}
+                  )}
+                  {item.capture && (
+                    <div className="mt-3">
+                      <button
+                        type="button"
+                        disabled={capturedIds.has(item.capture.id)}
+                        onClick={() => addCommitment(item.capture!)}
+                        className="text-[12px] rounded-lg px-2.5 py-1 cursor-pointer disabled:opacity-50"
+                        style={{ background: C.chipBg, color: C.ink }}
+                      >
+                        {capturedIds.has(item.capture.id) ? "✓ Captured" : "+ Capture commitment"}
+                      </button>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
           {revealed < FEED.length ? (
             <button type="button" onClick={() => setRevealed((r) => r + 1)} className="mt-4 text-[13px] rounded-lg px-3 py-2 cursor-pointer" style={{ background: C.ink, color: C.bg }}>
@@ -179,7 +202,7 @@ export default function DuringView() {
           )}
         </Card>
 
-        <Card label="Insights & suggested questions">
+        <Card label="Insights & suggested questions" icon={Lightbulb}>
           {insights.length === 0 && suggestions.length === 0 ? (
             <div className="text-[13px]" style={{ color: C.muted }}>Majlis surfaces insights and questions as the meeting progresses.</div>
           ) : (
@@ -213,7 +236,7 @@ export default function DuringView() {
           )}
         </Card>
 
-        <Card label="Captured this meeting" aside={captured.length > 0 ? <Link href="/after" className="text-[12px] hover:opacity-70" style={{ color: C.accent }}>To minutes →</Link> : undefined}>
+        <Card label="Captured this meeting" icon={ClipboardCheck} aside={captured.length > 0 ? <Link href="/after" className="text-[12px] hover:opacity-70" style={{ color: C.accent }}>To minutes →</Link> : undefined}>
           {captured.length === 0 ? (
             <div className="text-[13px]" style={{ color: C.muted }}>Commitments and decisions you log appear here, then flow into the minutes.</div>
           ) : (
