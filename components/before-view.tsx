@@ -13,6 +13,7 @@ import {
   Loader2,
   MessageCircleQuestion,
   MessageSquareQuote,
+  OctagonAlert,
   RefreshCw,
   Sparkles,
   Target,
@@ -24,7 +25,7 @@ import { loadState, type Commitment } from "@/lib/store";
 import { type Brief, BRIEF_CACHE_KEY, MOCK_BRIEF } from "@/lib/brief";
 import { SOURCES, SOURCE_META, AUTHORITY_LABEL, deptNameI18n } from "@/lib/corpus";
 import { askMajlis } from "@/components/ask-bus";
-import { C, Card, CitationChip, ConfidenceBadge, RailLabel, SeverityPill } from "@/components/ui";
+import { C, Card, CitationChip, ConfidenceBadge, RailLabel, severityColor } from "@/components/ui";
 import { Avatar, deptFor, MeetingContext, NavList, OrgBadge, StatusTag, TheRoom } from "@/components/rail";
 import { useCitation } from "@/components/citation-context";
 import { useParticipant } from "@/components/participant-context";
@@ -227,9 +228,14 @@ export default function BeforeView() {
                   : { background: C.surfaceAlt, border: `1px solid ${C.line}` };
               return (
                 <div key={sev}>
-                  <div className="flex items-center gap-2 mb-2.5">
-                    <SeverityPill severity={sev} />
-                    <span className="text-[11px]" style={{ color: C.faint }}>{items.length} {items.length === 1 ? "entity" : "entities"}</span>
+                  <div className="flex items-center gap-2 mb-3">
+                    {sev === "blocker" ? (
+                      <OctagonAlert size={15} strokeWidth={2.25} style={{ color: severityColor[sev] }} className="shrink-0" />
+                    ) : (
+                      <TriangleAlert size={15} strokeWidth={2.25} style={{ color: severityColor[sev] }} className="shrink-0" />
+                    )}
+                    <h3 className="text-[13px] font-semibold" style={{ color: C.ink }}>{tr(sev === "blocker" ? "blocker" : "atRisk")}</h3>
+                    <span className="text-[11px]" style={{ color: C.faint }}>{items.length} {tr(items.length === 1 ? "entity" : "entities")}</span>
                   </div>
                   <div className="grid grid-cols-[repeat(auto-fit,minmax(16rem,1fr))] gap-3">
                     {items.map((a) => {
@@ -274,11 +280,10 @@ export default function BeforeView() {
 
             {brief.steady.length > 0 && (
               <div className="pt-4 border-t" style={{ borderColor: C.line }}>
-                <div className="flex items-center gap-2 mb-2.5">
-                  <span className="inline-flex items-center gap-1.5 text-[11px] font-medium rounded-full px-2 py-0.5" style={{ background: C.surfaceAlt, color: C.confirmed, border: `1px solid ${C.line}` }}>
-                    <CircleCheck size={12} strokeWidth={2.25} /> {tr("onTrack")}
-                  </span>
-                  <span className="text-[11px]" style={{ color: C.faint }}>{brief.steady.length} {brief.steady.length === 1 ? "entity" : "entities"}</span>
+                <div className="flex items-center gap-2 mb-3">
+                  <CircleCheck size={15} strokeWidth={2.25} style={{ color: C.confirmed }} className="shrink-0" />
+                  <h3 className="text-[13px] font-semibold" style={{ color: C.ink }}>{tr("onTrack")}</h3>
+                  <span className="text-[11px]" style={{ color: C.faint }}>{brief.steady.length} {tr(brief.steady.length === 1 ? "entity" : "entities")}</span>
                 </div>
                 <div className="grid grid-cols-[repeat(auto-fit,minmax(15rem,1fr))] gap-3">
                   {brief.steady.map((s) => {
