@@ -241,14 +241,14 @@ export default function BeforeView() {
                     {items.map((a) => {
                       const sources = a.citations.filter((c, i, arr) => arr.findIndex((x) => x.sourceId === c.sourceId) === i);
                       return (
-                        <div key={a.entity} className="rounded-xl p-3.5 flex flex-col" style={tint}>
+                        <div key={a.entity} className="rounded-xl p-3.5 flex flex-col overflow-hidden" style={tint}>
                           <div className="flex items-center gap-2.5">
                             <OrgBadge code={a.entity} size={30} />
                             <div className="font-semibold text-[14px] leading-tight min-w-0 flex-1">{deptNameI18n(a.entity, lang) ?? a.entity}</div>
                           </div>
                           <p className="text-[13px] leading-snug mt-3"><Gloss>{a.line}</Gloss></p>
                           {/* Evidence stays visible at every zoom: the claim is always linked to its source. */}
-                          <div className="mt-3 pt-3 border-t space-y-2" style={{ borderColor: C.line }}>
+                          <div className="mt-3 space-y-2">
                             <div className="flex flex-wrap items-center gap-1.5">
                               <span className="text-[11px] font-semibold" style={{ color: C.faint }}>{tr("confidence")}</span>
                               <ConfidenceBadge confidence={a.confidence} />
@@ -261,10 +261,8 @@ export default function BeforeView() {
                             </div>
                           </div>
                           {a.action && (
-                            <div className="mt-3 pt-3 border-t" style={{ borderColor: C.line }}>
-                              <div className="text-[11px] font-semibold mb-1 inline-flex items-center gap-1" style={{ color: C.accent }}>
-                                <Sparkles size={11} strokeWidth={2.5} /> {tr("recommendedAction")}
-                              </div>
+                            <div className="mt-3 -mx-3.5 -mb-3.5 px-3.5 py-3 border-t" style={{ borderColor: C.line, background: C.surface }}>
+                              <div className="text-[11px] font-semibold mb-1" style={{ color: C.accent }}>{tr("recommendedAction")}</div>
                               <p className="text-[13px] leading-snug" style={{ color: C.detail }}><Gloss>{a.action}</Gloss></p>
                             </div>
                           )}
