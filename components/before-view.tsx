@@ -247,14 +247,6 @@ export default function BeforeView() {
                             <div className="font-semibold text-[14px] leading-tight min-w-0 flex-1">{deptNameI18n(a.entity, lang) ?? a.entity}</div>
                           </div>
                           <p className="text-[13px] leading-snug mt-3"><Gloss>{a.line}</Gloss></p>
-                          {a.action && (
-                            <div className="mt-3.5 pl-3 border-l-2" style={{ borderColor: C.accent }}>
-                              <div className="text-[11px] font-semibold mb-1 inline-flex items-center gap-1" style={{ color: C.accent }}>
-                                <Sparkles size={11} strokeWidth={2.5} /> {tr("recommendedAction")}
-                              </div>
-                              <p className="text-[13px] leading-snug" style={{ color: C.detail }}><Gloss>{a.action}</Gloss></p>
-                            </div>
-                          )}
                           {/* Evidence stays visible at every zoom: the claim is always linked to its source. */}
                           <div className="mt-3 pt-3 border-t space-y-2" style={{ borderColor: C.line }}>
                             <div className="flex flex-wrap items-center gap-1.5">
@@ -268,6 +260,14 @@ export default function BeforeView() {
                               ))}
                             </div>
                           </div>
+                          {a.action && (
+                            <div className="mt-3 pt-3 border-t" style={{ borderColor: C.line }}>
+                              <div className="text-[11px] font-semibold mb-1 inline-flex items-center gap-1" style={{ color: C.accent }}>
+                                <Sparkles size={11} strokeWidth={2.5} /> {tr("recommendedAction")}
+                              </div>
+                              <p className="text-[13px] leading-snug" style={{ color: C.detail }}><Gloss>{a.action}</Gloss></p>
+                            </div>
+                          )}
                         </div>
                       );
                     })}
