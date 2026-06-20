@@ -32,20 +32,21 @@ import { useOpenMeeting } from "@/components/meeting-context";
 import { useDetail } from "@/components/detail-context";
 import { useLang } from "@/components/lang-context";
 import { Gloss } from "@/components/gloss";
+import RailCalendar from "@/components/rail-calendar";
 import AppShell from "@/components/app-shell";
 
 const serif = { fontFamily: "var(--font-newsreader), var(--font-arabic), Georgia, serif" };
 
 const NAV = [
-  { label: "The bottom line", icon: Target },
-  { label: "Your decision", icon: Gavel },
-  { label: "Needs attention", icon: TriangleAlert },
-  { label: "Today's agenda", icon: CalendarClock, min: 2 },
-  { label: "Who's in the room", icon: Users, min: 2 },
-  { label: "Meeting series", icon: CalendarRange, min: 3 },
-  { label: "Prep checklist", icon: ListChecks, min: 2 },
-  { label: "Likely questions", icon: MessageCircleQuestion, min: 3 },
-  { label: "Committee pack", icon: FileText, min: 3 },
+  { key: "bottomLine", icon: Target },
+  { key: "yourDecision", icon: Gavel },
+  { key: "needsAttention", icon: TriangleAlert },
+  { key: "todaysAgenda", icon: CalendarClock, min: 2 },
+  { key: "whoInRoom", icon: Users, min: 2 },
+  { key: "meetingSeries", icon: CalendarRange, min: 3 },
+  { key: "prepChecklist", icon: ListChecks, min: 2 },
+  { key: "likelyQuestions", icon: MessageCircleQuestion, min: 3 },
+  { key: "committeePack", icon: FileText, min: 3 },
 ];
 
 export default function BeforeView() {
@@ -110,9 +111,10 @@ export default function BeforeView() {
     <div className="space-y-6">
       <MeetingContext />
       <div>
-        <RailLabel>In this brief</RailLabel>
+        <RailLabel>{tr("inThisBrief")}</RailLabel>
         <NavList items={NAV} />
       </div>
+      <RailCalendar />
       <TheRoom />
     </div>
   );
@@ -139,20 +141,20 @@ export default function BeforeView() {
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
         {prior.length > 0 && (
-          <Card label="Carried over, verify these were kept" span={2} icon={History}>
-            <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-1.5">
+          <Card labelKey="carriedOver" span={2} icon={History}>
+            <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2.5">
               {prior.map((c) => (
-                <li key={c.id} className="text-[13px] flex items-baseline gap-2">
-                  <span className="font-semibold"><Gloss>{c.entity}</Gloss></span>
-                  <span>{c.text}</span>
-                  <span className="ml-auto whitespace-nowrap" style={{ color: C.muted }}>was due {c.due}</span>
+                <li key={c.id} className="text-[13px] leading-snug">
+                  <span className="font-semibold"><Gloss>{c.entity}</Gloss></span>{" "}
+                  <Gloss>{c.text}</Gloss>{" "}
+                  <span className="whitespace-nowrap" style={{ color: C.muted }}>({tr("wasDue")} {c.due})</span>
                 </li>
               ))}
             </ul>
           </Card>
         )}
 
-        <Card label="The bottom line" span={2} icon={Target}>
+        <Card labelKey="bottomLine" span={2} icon={Target}>
           <h1 style={serif} className="text-[30px] leading-tight"><Gloss>{bl.lead}</Gloss></h1>
           {level >= 2 && <p className="mt-3 text-[16px] leading-relaxed" style={{ color: C.detail }}><Gloss>{bl.detail}</Gloss></p>}
           <div className="mt-4 flex flex-wrap items-center gap-2">
@@ -179,7 +181,7 @@ export default function BeforeView() {
           </div>
         </Card>
 
-        <Card label="Your decision" span={2} icon={Gavel}>
+        <Card labelKey="yourDecision" span={2} icon={Gavel}>
           <div style={serif} className="text-[20px] leading-snug"><Gloss>{brief.decision.text}</Gloss></div>
           <div className="mt-3 rounded-xl p-3.5" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
             <div className="text-[11px] font-semibold mb-1" style={{ color: C.accent }}>{tr("recommendation")}</div>
@@ -193,10 +195,10 @@ export default function BeforeView() {
           </div>
           {level >= 2 && (
             <>
-              <div className="mt-3 text-[13px]" style={{ color: C.muted }}>Hinges on → <Gloss>{brief.decision.hingesOn.join(", ")}</Gloss></div>
+              <div className="mt-3 text-[13px]" style={{ color: C.muted }}>{tr("hingesOn")} → <Gloss>{brief.decision.hingesOn.join(", ")}</Gloss></div>
               {brief.decision.options.length > 0 && (
                 <div className="mt-4">
-                  <div className="text-[11px] font-semibold mb-2" style={{ color: C.faint }}>Your options</div>
+                  <div className="text-[11px] font-semibold mb-2" style={{ color: C.faint }}>{tr("yourOptions")}</div>
                   <ul className="space-y-2">
                     {brief.decision.options.map((o, i) => (
                       <li key={i} className="flex items-start gap-2.5 text-[13px]">
@@ -214,7 +216,7 @@ export default function BeforeView() {
           )}
         </Card>
 
-        <Card label="Needs attention" span={2} icon={TriangleAlert} aside={<span className="text-[12px]" style={{ color: C.muted }}>{tr("needAction", { n: brief.attention.length, m: PARTICIPANTS.length })}</span>}>
+        <Card labelKey="needsAttention" span={2} icon={TriangleAlert} aside={<span className="text-[12px]" style={{ color: C.muted }}>{tr("needAction", { n: brief.attention.length, m: PARTICIPANTS.length })}</span>}>
           <div className="space-y-5">
             {(["blocker", "at-risk"] as const).map((sev) => {
               const items = brief.attention.filter((a) => a.severity === sev);
@@ -300,7 +302,7 @@ export default function BeforeView() {
           </div>
         </Card>
 
-        <Card label="Today's agenda" span={2} icon={CalendarClock} minLevel={2}>
+        <Card labelKey="todaysAgenda" span={2} icon={CalendarClock} minLevel={2}>
           <ol className="space-y-3">
             {brief.agenda.map((a, i) => (
               <li key={i} className="flex items-start gap-3">
@@ -314,7 +316,7 @@ export default function BeforeView() {
           </ol>
         </Card>
 
-        <Card label="Who's in the room" span={2} icon={Users} minLevel={2} aside={<span className="text-[12px]" style={{ color: C.muted }}>tap a person for their full profile</span>}>
+        <Card labelKey="whoInRoom" span={2} icon={Users} minLevel={2} aside={<span className="text-[12px]" style={{ color: C.muted }}>{tr("tapPerson")}</span>}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {PARTICIPANTS.map((p) => {
               const dept = deptFor(p.entity);
@@ -359,7 +361,7 @@ export default function BeforeView() {
           </div>
         </Card>
 
-        <Card label="Meeting series" span={2} icon={CalendarRange} minLevel={3}>
+        <Card labelKey="meetingSeries" span={2} icon={CalendarRange} minLevel={3}>
           <div className="text-[12px] mb-4" style={{ color: C.muted }}>Today&rsquo;s steering committee sits in a string of related meetings.</div>
           <ol>
             {MEETINGS.map((m, i) => (
@@ -390,7 +392,7 @@ export default function BeforeView() {
           </ol>
         </Card>
 
-        <Card label="Prep checklist" icon={ListChecks} minLevel={2}>
+        <Card labelKey="prepChecklist" icon={ListChecks} minLevel={2}>
           <ul className="space-y-2.5">
             {brief.prep.map((p, i) => (
               <li key={i} className="flex items-start gap-2.5">
@@ -417,7 +419,7 @@ export default function BeforeView() {
           </ul>
         </Card>
 
-        <Card label="Likely questions" icon={MessageCircleQuestion} minLevel={3}>
+        <Card labelKey="likelyQuestions" icon={MessageCircleQuestion} minLevel={3}>
           <ul className="space-y-3">
             {brief.likelyQuestions.map((x, i) => (
               <li key={i}>
@@ -433,7 +435,7 @@ export default function BeforeView() {
           </ul>
         </Card>
 
-        <Card label="Committee pack" span={2} icon={FileText} minLevel={3} aside={<span className="text-[12px]" style={{ color: C.muted }}>{SOURCES.length} documents, the only material Majlis uses</span>}>
+        <Card labelKey="committeePack" span={2} icon={FileText} minLevel={3} aside={<span className="text-[12px]" style={{ color: C.muted }}>{SOURCES.length} {tr("documents")}</span>}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
             {SOURCES.map((s) => {
               const m = SOURCE_META[s.id];

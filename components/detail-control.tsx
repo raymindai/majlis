@@ -1,6 +1,6 @@
 "use client";
 
-import { AlignJustify, Equal, type LucideIcon, Minus, Search } from "lucide-react";
+import { AlignJustify, Equal, type LucideIcon, Minus } from "lucide-react";
 import { useDetail, type DetailLevel } from "@/components/detail-context";
 import { useLang } from "@/components/lang-context";
 import { C } from "@/components/ui";
@@ -18,8 +18,7 @@ export default function DetailControl() {
   const { level, setLevel } = useDetail();
   const { t: tr } = useLang();
   return (
-    <div className="inline-flex items-center gap-1 rounded-lg p-0.5 pl-1.5" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
-      <Search size={12} strokeWidth={2.5} style={{ color: C.faint }} className="shrink-0" aria-hidden />
+    <div className="inline-flex items-center gap-1 rounded-lg p-0.5" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
       {LEVELS.map((l) => {
         const Icon = l.icon;
         const on = level === l.v;

@@ -9,6 +9,7 @@ import { MEETING_META } from "@/lib/mock";
 import { C, RailLabel, TierTag } from "@/components/ui";
 import { useParticipant } from "@/components/participant-context";
 import { useDetail } from "@/components/detail-context";
+import { useLang } from "@/components/lang-context";
 import { Tip } from "@/components/tip";
 import { Gloss } from "@/components/gloss";
 
@@ -124,25 +125,28 @@ export function PersonRow({ id, size = 28, sub }: { id: string; size?: number; s
 
 export function MeetingContext() {
   const idx = MEETINGS.findIndex((m) => m.current) + 1;
+  const { t: tr } = useLang();
   // The header carries the session, room, and time. Here the rail frames the wider
   // programme the session sits inside, so the two complement rather than repeat.
   return (
     <div className="rounded-xl p-3" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
-      <div className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: C.accent }}>Programme</div>
+      <div className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: C.accent }}>{tr("programme")}</div>
       <div className="text-[13px] font-semibold leading-tight mt-1">{MEETING_META.programme}</div>
       <div className="text-[11px] mt-0.5 leading-snug" style={{ color: C.muted }}>{MEETING_META.subtitle}</div>
       <div className="mt-2 pt-2 border-t text-[11px] space-y-0.5" style={{ borderColor: C.line, color: C.faint }}>
-        <div>Session {idx} of {MEETINGS.length} in the series</div>
-        <div>{ENTITIES.length} entities, AED {Math.round(MEETING_META.totalBudgetAED / 1e6)}M programme</div>
+        <div>{tr("sessionOf", { n: idx, m: MEETINGS.length })}</div>
+        <div>{tr("entitiesScale", { n: ENTITIES.length, b: Math.round(MEETING_META.totalBudgetAED / 1e6) })}</div>
       </div>
     </div>
   );
 }
 
-export function NavList({ items }: { items: { label: string; icon: LucideIcon; min?: number }[] }) {
+export function NavList({ items }: { items: { label?: string; key?: string; icon: LucideIcon; min?: number }[] }) {
   // The table of contents tracks the zoom: list only the sections visible at this
   // level, and tier each item so a Headlines, Brief, or Full section reads differently.
+  // The anchor is keyed to the stable English key so in-page links keep working in RTL.
   const { level } = useDetail();
+  const { t: tr } = useLang();
   const shown = items.filter((n) => !n.min || level >= n.min);
   return (
     <nav className="-mx-2 space-y-0.5">
@@ -150,15 +154,17 @@ export function NavList({ items }: { items: { label: string; icon: LucideIcon; m
         const Icon = n.icon;
         const tier = n.min ?? 1;
         const tone = tier >= 3 ? C.faint : tier === 2 ? C.muted : C.detail;
+        const label = n.key ? tr(n.key) : (n.label ?? "");
+        const anchor = slug(n.key ?? n.label ?? "");
         return (
           <a
-            key={n.label}
-            href={`#${slug(n.label)}`}
+            key={n.key ?? n.label}
+            href={`#${anchor}`}
             className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg text-[13px] hover:bg-[var(--c-surface-alt)]"
             style={{ color: tone, fontWeight: tier === 1 ? 500 : 400 }}
           >
             <Icon size={15} strokeWidth={2} style={{ color: tier === 1 ? C.accent : C.faint }} className="shrink-0" />
-            <span className="flex-1 truncate">{n.label}</span>
+            <span className="flex-1 truncate">{label}</span>
             <TierTag min={n.min} />
           </a>
         );
@@ -169,10 +175,11 @@ export function NavList({ items }: { items: { label: string; icon: LucideIcon; m
 
 export function TheRoom() {
   const { open } = useParticipant();
+  const { t: tr } = useLang();
   // Participants stay visible at every zoom level; the room is always worth seeing.
   return (
     <div>
-      <RailLabel>The room</RailLabel>
+      <RailLabel>{tr("theRoom")}</RailLabel>
       <ul className="space-y-0.5">
         {PARTICIPANTS.map((p) => {
           const dept = deptFor(p.entity);

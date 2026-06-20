@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { C } from "@/components/theme";
 import { useDetail, type DetailLevel } from "@/components/detail-context";
+import { useLang } from "@/components/lang-context";
 import type { ReactNode } from "react";
 import { CircleAlert, CircleCheck, CircleDashed, FileText, type LucideIcon, OctagonAlert, TriangleAlert } from "lucide-react";
 import { sourceLabel, type Confidence } from "@/lib/corpus";
@@ -55,39 +56,33 @@ export function Pill({ color, icon: Icon, tip, children }: { color: string; icon
   return <span className={cls} style={style}>{inner}</span>;
 }
 
-const confDef: Record<Confidence, string> = {
-  confirmed: "Backed by a current, authoritative source.",
-  likely: "Supported but caveated; a later source may supersede it.",
-  unverified: "Informal, undated, or conflicting across sources.",
-};
-
 export function ConfidenceBadge({ confidence }: { confidence: Confidence }) {
+  const { t: tr } = useLang();
   return (
-    <Pill color={confColor[confidence]} icon={confIcon[confidence]} tip={confDef[confidence]}>
-      {confLabel[confidence]}
+    <Pill color={confColor[confidence]} icon={confIcon[confidence]} tip={tr(`confDef_${confidence}`)}>
+      {tr(confidence)}
     </Pill>
   );
 }
 
-const sevDef: Record<string, string> = {
-  blocker: "Blocks other entities' delivery; needs resolving now.",
-  "at-risk": "May slip; watch it closely.",
-};
+const SEV_KEY: Record<string, string> = { blocker: "blocker", "at-risk": "atRisk" };
 
 export function SeverityPill({ severity }: { severity: string }) {
+  const { t: tr } = useLang();
   return (
-    <Pill color={severityColor[severity]} icon={severity === "blocker" ? OctagonAlert : TriangleAlert} tip={sevDef[severity]}>
-      {severityLabel[severity]}
+    <Pill color={severityColor[severity]} icon={severity === "blocker" ? OctagonAlert : TriangleAlert} tip={tr(`sevDef_${SEV_KEY[severity] ?? "blocker"}`)}>
+      {tr(SEV_KEY[severity] ?? severity)}
     </Pill>
   );
 }
 
 export function CitationChip({ sourceId, onClick }: { sourceId: string; onClick?: (pos: { x: number; y: number }) => void }) {
+  const { t: tr } = useLang();
   return (
     <button
       type="button"
       onClick={(e) => onClick?.({ x: e.clientX, y: e.clientY })}
-      title="Open the source document"
+      title={tr("openSource")}
       className="inline-flex items-center gap-1 text-[11px] rounded-md px-1.5 py-0.5 cursor-pointer transition hover:brightness-95"
       style={{ color: C.accent, background: C.chipBg, border: `1px solid ${C.line}` }}
     >
@@ -128,14 +123,15 @@ export function RailLabel({ children }: { children: ReactNode }) {
 
 /** A tiny tag marking which zoom tier reveals an item, so Headlines/Brief/Full items read differently. */
 export function TierTag({ min }: { min?: number }) {
+  const { t: tr } = useLang();
   if (!min || min <= 1) return null;
   return (
     <span
       className="text-[9px] font-semibold uppercase tracking-wide rounded px-1 py-[1px] shrink-0"
       style={{ color: C.faint, background: C.surfaceAlt, border: `1px solid ${C.line}` }}
-      title={min >= 3 ? "Shown at the Full zoom" : "Shown from the Brief zoom"}
+      title={min >= 3 ? tr("tierFullTip") : tr("tierBriefTip")}
     >
-      {min >= 3 ? "Full" : "Brief"}
+      {min >= 3 ? tr("full") : tr("brief")}
     </span>
   );
 }
@@ -168,6 +164,8 @@ export function Section({ label, aside, icon, children }: { label: string; aside
  *  labelled header. `span={2}` makes it full-width in the center grid. */
 export function Card({
   label,
+  labelKey,
+  anchorId,
   aside,
   span = 1,
   icon,
@@ -175,6 +173,8 @@ export function Card({
   children,
 }: {
   label?: string;
+  labelKey?: string;
+  anchorId?: string;
   aside?: ReactNode;
   span?: 1 | 2;
   icon?: LucideIcon;
@@ -182,7 +182,11 @@ export function Card({
   children: ReactNode;
 }) {
   const { level } = useDetail();
-  const id = label ? label.toLowerCase().replace(/[^a-z0-9]+/g, "-") : undefined;
+  const { t: tr } = useLang();
+  const displayLabel = labelKey ? tr(labelKey) : label;
+  // The anchor stays keyed to the stable English key, so in-page links keep working in RTL.
+  const anchorBase = anchorId ?? labelKey ?? label;
+  const id = anchorBase ? anchorBase.toLowerCase().replace(/[^a-z0-9]+/g, "-") : undefined;
   if (minLevel && level < minLevel) return null;
   return (
     <section
@@ -190,7 +194,7 @@ export function Card({
       className={`rounded-2xl p-6 scroll-mt-4 ${span === 2 ? "lg:col-span-2" : ""}`}
       style={{ background: C.surface, border: `1px solid ${C.line}`, boxShadow: C.shadow }}
     >
-      {label && <Header label={label} aside={aside} icon={icon} min={minLevel} />}
+      {displayLabel && <Header label={displayLabel} aside={aside} icon={icon} min={minLevel} />}
       {children}
     </section>
   );

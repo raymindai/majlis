@@ -14,6 +14,7 @@ import { useParticipant } from "@/components/participant-context";
 import { useDetail } from "@/components/detail-context";
 import { useLang } from "@/components/lang-context";
 import { Gloss } from "@/components/gloss";
+import RailCalendar from "@/components/rail-calendar";
 import AppShell from "@/components/app-shell";
 
 type Cite = { sourceId: string; passageId: string };
@@ -47,7 +48,7 @@ export default function DuringView() {
   const { open } = useCitation();
   const { open: openProfile } = useParticipant();
   const { level } = useDetail();
-  const { lang } = useLang();
+  const { lang, t: tr } = useLang();
   const [revealed, setRevealed] = useState(1);
   const [captured, setCaptured] = useState<Commitment[]>([]);
   const [observations, setObservations] = useState<Record<string, Obs | "loading">>({});
@@ -116,7 +117,7 @@ export default function DuringView() {
     <div className="space-y-6">
       <MeetingContext />
       <div>
-        <RailLabel>Speaking order</RailLabel>
+        <RailLabel>{tr("speakingOrder")}</RailLabel>
         <ol className="space-y-1.5 text-[13px]">
           {FEED.map((f, i) => {
             const sp = speakerOf(f.speaker);
@@ -130,9 +131,10 @@ export default function DuringView() {
         </ol>
       </div>
       <div className="text-[12px] space-y-1" style={{ color: C.muted }}>
-        <div>Captured: <span className="font-semibold" style={{ color: C.ink }}>{captured.length}</span></div>
-        <div>Flags raised: <span className="font-semibold" style={{ color: flagsRaised ? C.unverified : C.ink }}>{flagsRaised}</span></div>
+        <div>{tr("captured")}: <span className="font-semibold" style={{ color: C.ink }}>{captured.length}</span></div>
+        <div>{tr("flagsRaised")}: <span className="font-semibold" style={{ color: flagsRaised ? C.unverified : C.ink }}>{flagsRaised}</span></div>
       </div>
+      <RailCalendar />
       <TheRoom />
     </div>
   );
@@ -141,13 +143,13 @@ export default function DuringView() {
     <AppShell stage="during" leftRail={leftRail}>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
         <Card
-          label="Live transcript"
+          labelKey="liveTranscript"
           span={2}
           icon={AudioLines}
           aside={
             <span className="inline-flex items-center gap-1.5 text-[12px]" style={{ color: C.unverified }}>
               <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: C.unverified }} />
-              Majlis is listening
+              {tr("majlisListening")}
             </span>
           }
         >
@@ -235,15 +237,15 @@ export default function DuringView() {
           </div>
           {revealed < FEED.length ? (
             <button type="button" onClick={() => setRevealed((r) => r + 1)} className="mt-4 text-[13px] rounded-lg px-3 py-2 cursor-pointer" style={{ background: C.ink, color: C.bg }}>
-              Next speaker →
+              {tr("nextSpeaker")} →
             </button>
           ) : (
-            <div className="mt-4 text-[12px]" style={{ color: C.muted }}>End of agenda.</div>
+            <div className="mt-4 text-[12px]" style={{ color: C.muted }}>{tr("endOfAgenda")}</div>
           )}
         </Card>
 
         <Card
-          label="Decision on the table"
+          labelKey="decisionOnTable"
           span={2}
           icon={Gavel}
           aside={
@@ -299,7 +301,7 @@ export default function DuringView() {
           </div>
         </Card>
 
-        <Card label="Insights & suggested questions" icon={Lightbulb} minLevel={2}>
+        <Card labelKey="insights" icon={Lightbulb} minLevel={2}>
           {insights.length === 0 && suggestions.length === 0 ? (
             <div className="text-[13px]" style={{ color: C.muted }}>Majlis surfaces insights and questions as the meeting progresses.</div>
           ) : (
@@ -333,7 +335,7 @@ export default function DuringView() {
           )}
         </Card>
 
-        <Card label="Captured this meeting" icon={ClipboardCheck} aside={captured.length > 0 ? <Link href="/after" className="text-[12px] hover:opacity-70" style={{ color: C.accent }}>To minutes →</Link> : undefined}>
+        <Card labelKey="capturedThisMeeting" icon={ClipboardCheck} aside={captured.length > 0 ? <Link href="/after" className="text-[12px] hover:opacity-70" style={{ color: C.accent }}>{tr("toMinutes")} →</Link> : undefined}>
           {captured.length === 0 ? (
             <div className="text-[13px]" style={{ color: C.muted }}>Commitments and decisions you log appear here, then flow into the minutes.</div>
           ) : (

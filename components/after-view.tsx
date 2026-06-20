@@ -7,6 +7,7 @@ import { loadState, resetMeeting, writeToMemory, type MeetingState } from "@/lib
 import { PARTICIPANTS } from "@/lib/meetings";
 import { C, Card, CitationChip, ConfidenceBadge, RailLabel } from "@/components/ui";
 import { Avatar, MeetingContext, NavList, TheRoom } from "@/components/rail";
+import RailCalendar from "@/components/rail-calendar";
 import { useParticipant } from "@/components/participant-context";
 import { useCitation } from "@/components/citation-context";
 import { useDetail } from "@/components/detail-context";
@@ -17,19 +18,19 @@ import AppShell from "@/components/app-shell";
 const serif = { fontFamily: "var(--font-newsreader), var(--font-arabic), Georgia, serif" };
 
 const NAV = [
-  { label: "Decisions", icon: Gavel },
-  { label: "New commitments", icon: Handshake, min: 2 },
-  { label: "Action items", icon: ListChecks, min: 2 },
-  { label: "Your follow-ups", icon: UserRoundCheck },
-  { label: "Distribution", icon: Send, min: 3 },
-  { label: "Institutional memory", icon: Database, min: 2 },
+  { key: "decisions", icon: Gavel },
+  { key: "newCommitments", icon: Handshake, min: 2 },
+  { key: "actionItems", icon: ListChecks, min: 2 },
+  { key: "yourFollowUps", icon: UserRoundCheck },
+  { key: "distribution", icon: Send, min: 3 },
+  { key: "institutionalMemory", icon: Database, min: 2 },
 ];
 
 export default function AfterView() {
   const { open: openProfile } = useParticipant();
   const { open: openSource } = useCitation();
   const { level } = useDetail();
-  const { lang } = useLang();
+  const { lang, t: tr } = useLang();
   const [state, setState] = useState<MeetingState>({ commitments: [], writtenToMemory: false });
   const [sent, setSent] = useState(false);
   const [minutes, setMinutes] = useState<{ headline: string; summary: string; riskOutlook?: string; chairFollowUps?: string[]; distributionNote: string } | null>(null);
@@ -90,9 +91,10 @@ export default function AfterView() {
     <div className="space-y-6">
       <MeetingContext />
       <div>
-        <RailLabel>Minutes</RailLabel>
+        <RailLabel>{tr("minutes")}</RailLabel>
         <NavList items={NAV} />
       </div>
+      <RailCalendar />
       <TheRoom />
       <button type="button" onClick={resetMeeting} className="text-[12px] cursor-pointer hover:opacity-70" style={{ color: C.muted }}>
         Reset demo
@@ -119,7 +121,7 @@ export default function AfterView() {
     <AppShell stage="after" leftRail={leftRail}>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
         <Card
-          label="Minutes"
+          labelKey="minutes"
           span={2}
           icon={FileText}
           aside={minutes && (
@@ -150,7 +152,7 @@ export default function AfterView() {
         </Card>
 
         {decisions.length > 0 && (
-          <Card label="Decisions" icon={Gavel}>
+          <Card labelKey="decisions" icon={Gavel}>
             <ul className="space-y-2">
               {decisions.map((d) => (
                 <li key={d.id} className="rounded-lg p-4" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
@@ -165,7 +167,7 @@ export default function AfterView() {
           </Card>
         )}
 
-        <Card label="New commitments" icon={Handshake} minLevel={2}>
+        <Card labelKey="newCommitments" icon={Handshake} minLevel={2}>
           <ul className="space-y-2">
             {commitments.map((c) => (
               <li key={c.id} className="rounded-lg p-4" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
@@ -183,7 +185,7 @@ export default function AfterView() {
           </ul>
         </Card>
 
-        <Card label="Action items" span={2} icon={ListChecks} minLevel={2}>
+        <Card labelKey="actionItems" span={2} icon={ListChecks} minLevel={2}>
           <table className="w-full text-[13px]">
             <thead>
               <tr style={{ color: C.faint }}>
@@ -205,7 +207,7 @@ export default function AfterView() {
         </Card>
 
         {minutes?.chairFollowUps && minutes.chairFollowUps.length > 0 && (
-          <Card label="Your follow-ups" span={2} icon={UserRoundCheck} aside={<span className="text-[12px]" style={{ color: C.muted }}>What needs you, before the next cycle</span>}>
+          <Card labelKey="yourFollowUps" span={2} icon={UserRoundCheck} aside={<span className="text-[12px]" style={{ color: C.muted }}>{tr("followUpsAside")}</span>}>
             <ul className="space-y-2.5">
               {minutes.chairFollowUps.map((f, i) => (
                 <li key={i} className="flex items-start gap-2.5 text-[14px]">
@@ -217,7 +219,7 @@ export default function AfterView() {
           </Card>
         )}
 
-        <Card label="Distribution" icon={Send} minLevel={3}>
+        <Card labelKey="distribution" icon={Send} minLevel={3}>
           {minutes?.distributionNote && (
             <div className="text-[13px] leading-snug mb-3 rounded-lg p-3" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}`, color: C.detail }}>
               <Gloss>{minutes.distributionNote}</Gloss>
@@ -249,7 +251,7 @@ export default function AfterView() {
           </button>
         </Card>
 
-        <Card label="Institutional memory" span={2} icon={Database} minLevel={2}>
+        <Card labelKey="institutionalMemory" span={2} icon={Database} minLevel={2}>
           {state.writtenToMemory ? (
             <div className="rounded-xl p-4" style={{ background: C.priorBg, border: `1px solid ${C.priorBorder}` }}>
               <div className="font-medium text-[14px]" style={{ color: C.priorInk }}>✓ Written to institutional memory</div>

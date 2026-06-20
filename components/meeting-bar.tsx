@@ -26,7 +26,7 @@ export default function MeetingBar({ stage }: { stage: "before" | "during" | "af
   const chipStyle = live
     ? { background: C.flagBg, color: C.unverified, border: `1px solid ${C.flagBorder}` }
     : stage === "before"
-      ? { background: C.chipBg, color: C.ink }
+      ? { background: C.chipBg, color: C.ink, border: `1px solid ${C.line}` }
       : { background: C.surfaceAlt, color: C.muted, border: `1px solid ${C.line}` };
 
   return (
