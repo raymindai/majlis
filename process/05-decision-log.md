@@ -89,6 +89,15 @@ Legend: ✅ locked · 🔶 open · 👤 user call · 🤖 Claude recommendation
 - **Reviewer's guide:** "For reviewers" moved out of the header to a fixed bottom-left panel with its own accent-ribbon chrome, deliberately not a draggable window, so it reads as a guide laid over the product. Replaced the old AboutWindow/AboutContext.
 - **Zoom reaches the rail:** the "In this brief" table of contents and "The room" now follow the zoom level too, so the sidebar stays honest about what is on screen.
 
+## D16 — Reviewer-led navigation, legible zoom, status-grouped status, sources everywhere · ✅ 👤-requested
+- **Date:** 2026-06-20
+- **Stage nav as a reviewer surface:** Before/During/After moved from the header into a persistent bottom-left reviewer dock (visible even when the guide is collapsed), framing stage-jumping honestly as a reviewer/demo convenience. The header meeting-status chip is also a stage selector (Before, During / In session, After), so the status doubles as the control that changes it.
+- **Zoom made legible:** the detail control now reads as zoom (magnifier + line-density glyphs); rail items and content cards are tiered with a small Brief/Full tag so different zoom-level items look different; participants stay visible at every level.
+- **Status-grouped attention:** Needs-attention cards are grouped and tinted by status (Blocker, At risk), and the prose "Also ... on track" line became an "On track" group of cards.
+- **Sources everywhere:** citations are no longer hidden at the Headlines zoom and the chips read clearly as clickable source links (accent, dotted underline). A deliberate trade of Headlines minimalism for always-visible provenance, per the reviewer's emphasis that grounded sources must be obvious.
+- **Brief-level Regenerate:** moved off the bottom-line card to a brief toolbar with the synthesis attribution, since it regenerates the whole brief.
+- **Ask Majlis identity:** branded header (gradient, a fal-generated backdrop, a girih star, a Majlis AI mark); the chat input can also save typed text as a note instead of asking.
+
 ## Earlier framing decisions (context)
 - **AI is the product, not a feature** — the scenario must make the AI's judgment the experience. 🤖
 - **Scope down to 1–2 capabilities built deeply.** 🤖
