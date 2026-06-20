@@ -1,8 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { MessageSquareQuote } from "lucide-react";
 import { ATTENTION, BOTTOM_LINE, DECISION, MEETING_META, STEADY } from "@/lib/mock";
+import { MEETINGS, PARTICIPANTS } from "@/lib/meetings";
 import { loadState, type Commitment } from "@/lib/store";
+import { askMajlis } from "@/components/ask-bus";
 import { C, Card, CitationChip, ConfidenceBadge, RailLabel, SeverityPill, severityColor, severityGlyph } from "@/components/ui";
 import { useCitation } from "@/components/citation-context";
 import AppShell from "@/components/app-shell";
@@ -21,7 +24,16 @@ const LIKELY_QS = [
   { q: "Is EKD on track?", line: "It missed the June portal commitment; the July catch-up is unverified." },
 ];
 
-const NAV = ["The bottom line", "Your decision", "Needs attention", "Prep checklist", "Likely questions"];
+const NAV = ["The bottom line", "Your decision", "Needs attention", "Who's in the room", "Meeting series", "Prep checklist", "Likely questions"];
+
+const statusColor: Record<string, string> = { "on-track": C.confirmed, "at-risk": C.likely, slipped: C.unverified, restricted: C.faint };
+const statusLabel: Record<string, string> = { "on-track": "On track", "at-risk": "At risk", slipped: "Slipped", restricted: "Restricted" };
+
+function initials(name: string) {
+  const parts = name.replace(/\(.*?\)/g, "").trim().split(/\s+/).filter(Boolean);
+  if (!parts.length) return "—";
+  return (parts[0][0] + (parts.length > 1 ? parts[parts.length - 1][0] : "")).toUpperCase();
+}
 
 export default function BeforeView() {
   const { open } = useCitation();
@@ -44,7 +56,7 @@ export default function BeforeView() {
         <RailLabel>Sections</RailLabel>
         <nav className="space-y-1 text-[13px]">
           {NAV.map((s) => (
-            <a key={s} href={`#${s.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`} className="block hover:underline" style={{ color: C.muted }}>
+            <a key={s} href={`#${s.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`} className="block hover:opacity-70" style={{ color: C.muted }}>
               {s}
             </a>
           ))}
@@ -125,7 +137,7 @@ export default function BeforeView() {
         <Card label="Needs attention" span={2} aside={<span className="text-[12px]" style={{ color: C.muted }}>3 of 5 need action</span>}>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             {ATTENTION.map((a) => (
-              <div key={a.id} className="rounded-lg p-3" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
+              <div key={a.id} className="rounded-xl p-3.5" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="font-semibold text-[14px]">{a.id}</span>
                   <SeverityPill severity={a.severity} />
@@ -142,6 +154,69 @@ export default function BeforeView() {
             ))}
           </div>
           <div className="mt-3 text-[12px]" style={{ color: C.muted }}>Also: {STEADY.map((s) => `${s.id} — ${s.line}`).join("  ·  ")}</div>
+        </Card>
+
+        <Card label="Who's in the room" span={2} aside={<span className="text-[12px]" style={{ color: C.muted }}>ask the right person</span>}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {PARTICIPANTS.map((p) => (
+              <div key={p.id} className="rounded-xl p-3.5 flex gap-3" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
+                <div
+                  className="h-9 w-9 rounded-full flex items-center justify-center text-[12px] font-semibold shrink-0"
+                  style={{ background: `color-mix(in srgb, ${C.accent} 16%, transparent)`, color: C.accent }}
+                >
+                  {initials(p.name)}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="font-semibold text-[14px]">{p.name}</span>
+                    {p.status && (
+                      <span className="inline-flex items-center gap-1 text-[11px]" style={{ color: statusColor[p.status] }}>
+                        <span className="h-1.5 w-1.5 rounded-full" style={{ background: statusColor[p.status] }} />
+                        {statusLabel[p.status]}
+                      </span>
+                    )}
+                  </div>
+                  <div className="text-[12px]" style={{ color: C.muted }}>{p.role} · {p.entity}</div>
+                  <div className="text-[12px] mt-1" style={{ color: C.detail }}>Owns: {p.owns}</div>
+                  {p.ask && (
+                    <button
+                      type="button"
+                      onClick={() => askMajlis(`On ${p.entity}: ${p.ask}`)}
+                      className="mt-2 flex items-start gap-1.5 text-left text-[12px] cursor-pointer hover:opacity-70"
+                      style={{ color: C.accent }}
+                    >
+                      <MessageSquareQuote size={13} strokeWidth={2} className="mt-0.5 shrink-0" />
+                      <span><span className="font-medium">Ask them:</span> <span style={{ color: C.detail }}>{p.ask}</span></span>
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+
+        <Card label="Meeting series" span={2}>
+          <div className="text-[12px] mb-4" style={{ color: C.muted }}>Today&rsquo;s steering committee sits in a string of related meetings.</div>
+          <ol>
+            {MEETINGS.map((m, i) => (
+              <li key={m.id} className="flex gap-3">
+                <div className="flex flex-col items-center">
+                  <span
+                    className="h-2.5 w-2.5 rounded-full mt-1.5 shrink-0"
+                    style={{ background: m.current ? C.accent : m.status === "past" ? C.muted : "transparent", border: m.current ? "none" : `1.5px solid ${C.line}` }}
+                  />
+                  {i < MEETINGS.length - 1 && <span className="w-px flex-1 my-1" style={{ background: C.line }} />}
+                </div>
+                <div className="flex-1 pb-4 rounded-lg" style={m.current ? { background: C.surfaceAlt, padding: "2px 8px", marginLeft: "-8px" } : undefined}>
+                  <div className="flex items-baseline gap-2 flex-wrap">
+                    <span className="text-[12px] w-20 shrink-0" style={{ color: C.faint }}>{m.when}</span>
+                    <span className="font-semibold text-[14px]" style={{ color: m.current ? C.accent : C.ink }}>{m.title}</span>
+                  </div>
+                  {m.relation && <div className="text-[13px] mt-0.5 ml-[5.5rem]" style={{ color: C.detail }}>{m.relation}</div>}
+                </div>
+              </li>
+            ))}
+          </ol>
         </Card>
 
         <Card label="Prep checklist">

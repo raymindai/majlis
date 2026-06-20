@@ -49,6 +49,9 @@ Session: 2026-06-19 → 2026-06-20.
 **User:** "let's push it to git first."
 **Claude:** committed corpus + process archive + grounding backbone locally (secrets verified out — `.env.local` gitignored/untracked); created a **private** GitHub repo and pushed `main` → github.com/raymindai/majlis.
 
+### Turn 25 — 2026-06-20 · Before: meeting series + who's-in-the-room
+**Claude:** added `lib/meetings.ts` (the DG's meeting portfolio + participant profiles) and wired two Before cards — **Meeting series**: today sits in a string of related meetings (Q1 Steering, Budget Review, SSO Sync → today → Vendor Review, Digital Council), each with its relation to today; **Who's in the room**: participant profiles (name, role, what they own, status) with a "what to ask them" that clicks through to brief you via Majlis. Build clean; committed. Next: During — live-recording framing + generated insights/suggested questions.
+
 ### Turn 24 — 2026-06-20 · Craft elevation + Ask-on-selection
 **User:** elevate overall craft/refinement/sophistication (audience = high officials; clear in every way); and add "Ask Majlis" via select-text → right-click context menu.
 **Claude:** elevated the design system — real **Lucide icons** (replacing unicode glyphs), soft theme-aware **card elevation**, refined palette/type, focus-visible rings, selection colour, micro-interaction transitions. Added **Ask-Majlis-on-selection**: select text + right-click → a menu sends it to the persistent chat (`ask-bus` event + `SelectionAsk`). Build clean; committed (2 commits). Next: the queued feature expansion — meeting series + relations + participant profiles (Before); live-recording + suggested questions (During).
