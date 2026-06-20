@@ -3,12 +3,13 @@
 import { type ReactNode } from "react";
 import { C } from "@/components/ui";
 import MeetingBar from "@/components/meeting-bar";
+import CalendarButton from "@/components/calendar-button";
 import DetailControl from "@/components/detail-control";
 import UserMenu from "@/components/user-menu";
 import ThemeSwitcher from "@/components/theme-switcher";
 import ChatPanel from "@/components/chat-panel";
 
-const serif = { fontFamily: "var(--font-newsreader), Georgia, serif" };
+const serif = { fontFamily: "var(--font-newsreader), var(--font-arabic), Georgia, serif" };
 
 /**
  * Stage chrome: header, the three-zone laptop body, and the reserved chat rail.
@@ -25,7 +26,7 @@ export default function AppShell({
   children: ReactNode;
 }) {
   return (
-    <div className="h-dvh flex flex-col" style={{ background: C.bg, color: C.ink, fontFamily: "var(--font-inter), system-ui, sans-serif" }}>
+    <div className="h-dvh flex flex-col" style={{ background: C.bg, color: C.ink, fontFamily: "var(--font-inter), var(--font-arabic), system-ui, sans-serif" }}>
       {/* header: left = title + meeting + stage, center = zoom, right = theme + profile */}
       <header className="shrink-0 border-b" style={{ borderColor: C.line, background: C.surface }}>
         <div className="px-5 h-14 flex items-center gap-4">
@@ -33,6 +34,7 @@ export default function AppShell({
             <span style={serif} className="text-xl shrink-0">Majlis</span>
             <span className="h-6 w-px shrink-0" style={{ background: C.line }} />
             <MeetingBar stage={stage} />
+            <CalendarButton />
           </div>
 
           <div className="shrink-0 hidden md:block">

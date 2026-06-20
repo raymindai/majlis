@@ -13,7 +13,7 @@ import { useDetail } from "@/components/detail-context";
 import { Gloss } from "@/components/gloss";
 import AppShell from "@/components/app-shell";
 
-const serif = { fontFamily: "var(--font-newsreader), Georgia, serif" };
+const serif = { fontFamily: "var(--font-newsreader), var(--font-arabic), Georgia, serif" };
 
 const NAV = [
   { label: "Decisions", icon: Gavel },

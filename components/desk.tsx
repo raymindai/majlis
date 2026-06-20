@@ -16,7 +16,7 @@ import { Gloss } from "@/components/gloss";
 import ReviewerGuide from "@/components/reviewer-guide";
 import SelectionAsk from "@/components/selection-ask";
 
-const serif = { fontFamily: "var(--font-newsreader), Georgia, serif" };
+const serif = { fontFamily: "var(--font-newsreader), var(--font-arabic), Georgia, serif" };
 
 type WinItem =
   | { instanceId: string; kind: "participant"; payload: string; pos: WinPos; raise: number }

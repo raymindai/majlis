@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 import { ArrowRight, BookOpen, GitBranch, Layers, MousePointerClick, Sparkles, Users, X } from "lucide-react";
 import { C } from "@/components/ui";
 
-const serif = { fontFamily: "var(--font-newsreader), Georgia, serif" };
+const serif = { fontFamily: "var(--font-newsreader), var(--font-arabic), Georgia, serif" };
 
 function Lbl({ children }: { children: string }) {
   return <div className="text-[11px] font-semibold mt-5 mb-2 uppercase tracking-wide" style={{ color: C.accent }}>{children}</div>;

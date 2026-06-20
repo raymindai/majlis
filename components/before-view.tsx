@@ -33,7 +33,7 @@ import { useDetail } from "@/components/detail-context";
 import { Gloss } from "@/components/gloss";
 import AppShell from "@/components/app-shell";
 
-const serif = { fontFamily: "var(--font-newsreader), Georgia, serif" };
+const serif = { fontFamily: "var(--font-newsreader), var(--font-arabic), Georgia, serif" };
 
 const NAV = [
   { label: "The bottom line", icon: Target },
@@ -151,6 +151,7 @@ export default function BeforeView() {
           <h1 style={serif} className="text-[30px] leading-tight"><Gloss>{bl.lead}</Gloss></h1>
           {level >= 2 && <p className="mt-3 text-[16px] leading-relaxed" style={{ color: C.detail }}><Gloss>{bl.detail}</Gloss></p>}
           <div className="mt-4 flex flex-wrap items-center gap-2">
+            <span className="text-[11px] font-medium" style={{ color: C.faint }}>Confidence</span>
             <ConfidenceBadge confidence={bl.confidence} />
             <span className="text-[11px] font-medium ml-1" style={{ color: C.faint }}>Sources</span>
             {bl.citations.map((c, i) => (
@@ -244,10 +245,13 @@ export default function BeforeView() {
                             </div>
                           )}
                           {/* Evidence stays visible at every zoom: the claim is always linked to its source. */}
-                          <div className="mt-3 pt-3 border-t" style={{ borderColor: C.line }}>
-                            <div className="text-[11px] font-semibold mb-1.5" style={{ color: C.faint }}>Source</div>
+                          <div className="mt-3 pt-3 border-t space-y-2" style={{ borderColor: C.line }}>
                             <div className="flex flex-wrap items-center gap-1.5">
+                              <span className="text-[11px] font-semibold" style={{ color: C.faint }}>Confidence</span>
                               <ConfidenceBadge confidence={a.confidence} />
+                            </div>
+                            <div className="flex flex-wrap items-center gap-1.5">
+                              <span className="text-[11px] font-semibold" style={{ color: C.faint }}>Sources</span>
                               {sources.map((c, i) => (
                                 <CitationChip key={i} sourceId={c.sourceId} onClick={(pos) => open(c, pos)} />
                               ))}

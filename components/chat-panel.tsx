@@ -9,7 +9,7 @@ import { addNote, loadNotes } from "@/lib/notes";
 import { Gloss } from "@/components/gloss";
 import type { Confidence } from "@/lib/corpus";
 
-const serif = { fontFamily: "var(--font-newsreader), Georgia, serif" };
+const serif = { fontFamily: "var(--font-newsreader), var(--font-arabic), Georgia, serif" };
 
 type Claim = { text: string; confidence: Confidence; sourceId: string; passageId: string };
 type Answer = { notInMaterial: boolean; summary: string; claims: Claim[] };

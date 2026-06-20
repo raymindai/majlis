@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { C } from "@/components/theme";
 
-const serif = { fontFamily: "var(--font-newsreader), Georgia, serif" };
+const serif = { fontFamily: "var(--font-newsreader), var(--font-arabic), Georgia, serif" };
 
 export const metadata = {
   title: "Majlis, the case study",
@@ -94,7 +94,7 @@ function Eyebrow({ children }: { children: string }) {
 
 export default function ProcessPage() {
   return (
-    <div className="min-h-dvh" style={{ background: C.bg, color: C.ink, fontFamily: "var(--font-inter), system-ui, sans-serif" }}>
+    <div className="min-h-dvh" style={{ background: C.bg, color: C.ink, fontFamily: "var(--font-inter), var(--font-arabic), system-ui, sans-serif" }}>
       <div className="mx-auto max-w-3xl px-6 py-16 md:py-24">
         <div className="relative w-full aspect-[16/7] rounded-2xl overflow-hidden mb-10" style={{ border: `1px solid ${C.line}`, boxShadow: C.shadow }}>
           <Image src="/manarah-hero.jpg" alt="The Manarah programme" fill sizes="(max-width: 768px) 100vw, 768px" className="object-cover" priority />

@@ -8,7 +8,7 @@ import { OrgBadge } from "@/components/rail";
 import { C } from "@/components/ui";
 import { Gloss } from "@/components/gloss";
 
-const serif = { fontFamily: "var(--font-newsreader), Georgia, serif" };
+const serif = { fontFamily: "var(--font-newsreader), var(--font-arabic), Georgia, serif" };
 
 /** A meeting from the series: its summary, with a toggle for full details. */
 export default function MeetingPopover({ id, pos, onClose, raise }: { id: string | null; pos: WinPos | null; onClose: () => void; raise?: number }) {

@@ -9,7 +9,7 @@ import { FloatingWindow } from "@/components/floating-window";
 import { Gloss } from "@/components/gloss";
 import type { ParticipantPos } from "@/components/participant-context";
 
-const serif = { fontFamily: "var(--font-newsreader), Georgia, serif" };
+const serif = { fontFamily: "var(--font-newsreader), var(--font-arabic), Georgia, serif" };
 
 const pledgeIcon = { kept: CircleCheck, missed: CircleAlert, open: CircleDashed } as const;
 const pledgeColor: Record<string, string> = { kept: C.confirmed, missed: C.unverified, open: C.muted };
