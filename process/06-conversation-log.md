@@ -49,6 +49,9 @@ Session: 2026-06-19 → 2026-06-20.
 **User:** "let's push it to git first."
 **Claude:** committed corpus + process archive + grounding backbone locally (secrets verified out — `.env.local` gitignored/untracked); created a **private** GitHub repo and pushed `main` → github.com/raymindai/majlis.
 
+### Turn 26 — 2026-06-20 · During live-recording + insights; After consistency
+**Claude:** rebuilt During in the elevated card-grid with a **live-recording** framing ("● Recording", "Majlis is listening") and a generated **Insights & suggested questions** panel that grows as the meeting runs (each flag → an insight; each moment → a question you could ask, clickable to brief you via Majlis). Converted After to the same card-grid (decisions/commitments side by side, action-items table, distribution + memory). All three stages consistent; build clean; committed.
+
 ### Turn 25 — 2026-06-20 · Before: meeting series + who's-in-the-room
 **Claude:** added `lib/meetings.ts` (the DG's meeting portfolio + participant profiles) and wired two Before cards — **Meeting series**: today sits in a string of related meetings (Q1 Steering, Budget Review, SSO Sync → today → Vendor Review, Digital Council), each with its relation to today; **Who's in the room**: participant profiles (name, role, what they own, status) with a "what to ask them" that clicks through to brief you via Majlis. Build clean; committed. Next: During — live-recording framing + generated insights/suggested questions.
 
