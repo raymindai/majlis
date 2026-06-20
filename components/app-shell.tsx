@@ -28,8 +28,8 @@ export default function AppShell({
     <div className="h-dvh flex flex-col" style={{ background: C.bg, color: C.ink, fontFamily: "var(--font-inter), system-ui, sans-serif" }}>
       {/* header: left = title + meeting + stage, center = zoom, right = theme + profile */}
       <header className="shrink-0 border-b" style={{ borderColor: C.line, background: C.surface }}>
-        <div className="relative px-5 h-14 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3 min-w-0">
+        <div className="px-5 h-14 flex items-center gap-4">
+          <div className="flex items-center gap-3 min-w-0 flex-1">
             <span style={serif} className="text-xl shrink-0">Majlis</span>
             <span className="h-6 w-px shrink-0" style={{ background: C.line }} />
             <MeetingBar stage={stage} />
@@ -37,11 +37,11 @@ export default function AppShell({
             <div className="hidden lg:block"><StageSpine active={stage} /></div>
           </div>
 
-          <div className="absolute left-1/2 -translate-x-1/2 hidden md:block">
+          <div className="shrink-0 hidden md:block">
             <DetailControl />
           </div>
 
-          <div className="flex items-center gap-3 shrink-0">
+          <div className="flex items-center gap-3 shrink-0 flex-1 justify-end">
             <ThemeSwitcher />
             <UserMenu />
           </div>
