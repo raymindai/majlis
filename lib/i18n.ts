@@ -1,0 +1,191 @@
+/**
+ * Lightweight bilingual dictionary for the app chrome. The synthetic committee
+ * content is written live by Claude in the selected language; this covers the
+ * fixed UI labels around it. t(lang, key, vars) interpolates {name} placeholders.
+ */
+export type Lang = "en" | "ar";
+
+export const LANGS: { code: Lang; label: string; native: string }[] = [
+  { code: "en", label: "English", native: "EN" },
+  { code: "ar", label: "Arabic", native: "ع" },
+];
+
+type Dict = Record<string, string>;
+
+const EN: Dict = {
+  // stages
+  before: "Before",
+  during: "During",
+  after: "After",
+  duringInSession: "During (In session)",
+  // meeting bar
+  meetingStatus: "Meeting status",
+  upcoming: "Upcoming",
+  inSession: "In session",
+  concluded: "Concluded",
+  inMinutes: "in {n} min",
+  changeStatus: "Change the meeting status",
+  // calendar
+  calendar: "Calendar",
+  meetingSeries: "Meeting series",
+  today: "today",
+  openCalendar: "Open the calendar",
+  // detail control
+  headlines: "Headlines",
+  brief: "Brief",
+  full: "Full",
+  zoom: "Zoom",
+  // theme + language
+  light: "Light",
+  dark: "Dark",
+  language: "Language",
+  // reviewer
+  forReviewers: "For reviewers",
+  reviewersGuide: "Reviewer's guide",
+  // chat
+  askMajlis: "Ask Majlis",
+  majlisAI: "Majlis AI",
+  chatSubtitle: "Grounded in the committee pack. Every answer cites its source.",
+  note: "Note",
+  chatHelper: "Enter to ask Majlis, or save your text as a note.",
+  chatEmpty: "Ask anything about what is happening. Each answer streams in with a confidence rating and a citation you can open.",
+  // before
+  bottomLine: "The bottom line",
+  yourDecision: "Your decision",
+  recommendation: "Recommendation",
+  why: "Why",
+  needsAttention: "Needs attention",
+  recommendedAction: "Recommended action",
+  confidence: "Confidence",
+  source: "Source",
+  sources: "Sources",
+  onTrack: "On track",
+  todaysAgenda: "Today's agenda",
+  whoInRoom: "Who's in the room",
+  prepChecklist: "Prep checklist",
+  likelyQuestions: "Likely questions",
+  committeePack: "Committee pack",
+  regenerateBrief: "Regenerate brief",
+  synthesising: "Synthesising",
+  carriedOver: "Carried over, verify these were kept",
+  yourOptions: "Your options",
+  hingesOn: "Hinges on",
+  needAction: "{n} of {m} need action",
+  documents: "documents, the only material Majlis uses",
+  briefingLive: "Briefing synthesised live by Majlis from the committee pack",
+  briefingSample: "Sample briefing, regenerating live from the committee pack",
+  // pills
+  blocker: "Blocker",
+  atRisk: "At risk",
+  confirmed: "Confirmed",
+  likely: "Likely",
+  unverified: "Unverified",
+  entity: "entity",
+  entities: "entities",
+  // rail
+  inThisBrief: "In this brief",
+  theRoom: "The room",
+  programme: "Programme",
+  sessionOf: "Session {n} of {m} in the series",
+  // during
+  liveTranscript: "Live transcript",
+  decisionOnTable: "Decision on the table",
+  insights: "Insights & suggested questions",
+  capturedThisMeeting: "Captured this meeting",
+  majlisListening: "Majlis is listening",
+  // after
+  minutes: "Minutes",
+  decisions: "Decisions",
+  newCommitments: "New commitments",
+  actionItems: "Action items",
+  yourFollowUps: "Your follow-ups",
+  distribution: "Distribution",
+  institutionalMemory: "Institutional memory",
+};
+
+const AR: Dict = {
+  before: "قبل",
+  during: "أثناء",
+  after: "بعد",
+  duringInSession: "أثناء (منعقد)",
+  meetingStatus: "حالة الاجتماع",
+  upcoming: "قادم",
+  inSession: "منعقد",
+  concluded: "منتهٍ",
+  inMinutes: "خلال {n} دقيقة",
+  changeStatus: "تغيير حالة الاجتماع",
+  calendar: "التقويم",
+  meetingSeries: "سلسلة الاجتماعات",
+  today: "اليوم",
+  openCalendar: "فتح التقويم",
+  headlines: "العناوين",
+  brief: "موجز",
+  full: "كامل",
+  zoom: "تكبير",
+  light: "فاتح",
+  dark: "داكن",
+  language: "اللغة",
+  forReviewers: "للمراجعين",
+  reviewersGuide: "دليل المراجع",
+  askMajlis: "اسأل مجلس",
+  majlisAI: "مجلس الذكي",
+  chatSubtitle: "مستند إلى حزمة اللجنة، وكل إجابة تذكر مصدرها.",
+  note: "ملاحظة",
+  chatHelper: "اضغط Enter لسؤال مجلس، أو احفظ نصك كملاحظة.",
+  chatEmpty: "اسأل عن أي شيء يجري. تظهر كل إجابة مع تقييم للثقة ومصدر يمكنك فتحه.",
+  bottomLine: "الخلاصة",
+  yourDecision: "قرارك",
+  recommendation: "التوصية",
+  why: "لماذا",
+  needsAttention: "يتطلب انتباهاً",
+  recommendedAction: "الإجراء الموصى به",
+  confidence: "الثقة",
+  source: "المصدر",
+  sources: "المصادر",
+  onTrack: "على المسار",
+  todaysAgenda: "جدول اليوم",
+  whoInRoom: "الحضور",
+  prepChecklist: "قائمة التحضير",
+  likelyQuestions: "الأسئلة المتوقعة",
+  committeePack: "حزمة اللجنة",
+  regenerateBrief: "إعادة توليد الموجز",
+  synthesising: "جارٍ التوليف",
+  carriedOver: "مُرحّل، تحقق من الالتزام بها",
+  yourOptions: "خياراتك",
+  hingesOn: "يتوقف على",
+  needAction: "{n} من {m} يتطلب إجراء",
+  documents: "مستندات، وهي المادة الوحيدة التي يستخدمها مجلس",
+  briefingLive: "موجز موّلَّف مباشرةً بواسطة مجلس من حزمة اللجنة",
+  briefingSample: "موجز تجريبي، يُعاد توليده مباشرةً من حزمة اللجنة",
+  blocker: "معطِّل",
+  atRisk: "في خطر",
+  confirmed: "مؤكَّد",
+  likely: "مرجَّح",
+  unverified: "غير مؤكَّد",
+  entity: "جهة",
+  entities: "جهات",
+  inThisBrief: "في هذا الموجز",
+  theRoom: "الحضور",
+  programme: "البرنامج",
+  sessionOf: "الجلسة {n} من {m} في السلسلة",
+  liveTranscript: "المحضر المباشر",
+  decisionOnTable: "القرار المطروح",
+  insights: "ملاحظات وأسئلة مقترحة",
+  capturedThisMeeting: "ما تم رصده في هذا الاجتماع",
+  majlisListening: "مجلس يستمع",
+  minutes: "المحضر",
+  decisions: "القرارات",
+  newCommitments: "التزامات جديدة",
+  actionItems: "بنود العمل",
+  yourFollowUps: "متابعاتك",
+  distribution: "التوزيع",
+  institutionalMemory: "الذاكرة المؤسسية",
+};
+
+const DICT: Record<Lang, Dict> = { en: EN, ar: AR };
+
+export function t(lang: Lang, key: string, vars?: Record<string, string | number>): string {
+  let s = DICT[lang]?.[key] ?? DICT.en[key] ?? key;
+  if (vars) for (const [k, v] of Object.entries(vars)) s = s.replace(`{${k}}`, String(v));
+  return s;
+}

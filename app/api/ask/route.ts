@@ -2,6 +2,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
 import { z } from "zod";
 import { corpusForPrompt } from "@/lib/corpus";
+import { langSuffix } from "@/lib/ai-lang";
 import { logQa } from "@/lib/supabase";
 
 export const runtime = "nodejs";
@@ -56,7 +57,7 @@ export async function POST(req: Request) {
     const stream = client.messages.stream({
       model: "claude-opus-4-8",
       max_tokens: 2048,
-      system: SYSTEM,
+      system: SYSTEM + langSuffix(body?.lang),
       output_config: { format: zodOutputFormat(AnswerSchema) },
       messages: [{ role: "user", content: question }],
     });

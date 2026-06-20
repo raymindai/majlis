@@ -3,14 +3,16 @@
 import { useEffect, useState } from "react";
 import { Moon, Sun } from "lucide-react";
 import { C } from "@/components/ui";
+import { useLang } from "@/components/lang-context";
 
 const THEMES = [
-  { key: "", label: "Light", icon: Sun },
-  { key: "dark", label: "Dark", icon: Moon },
+  { key: "", labelKey: "light", icon: Sun },
+  { key: "dark", labelKey: "dark", icon: Moon },
 ];
 
 export default function ThemeSwitcher() {
   const [theme, setTheme] = useState("");
+  const { t: tr } = useLang();
 
   useEffect(() => {
     const saved = window.localStorage.getItem("majlis-theme") === "dark" ? "dark" : "";
@@ -33,8 +35,8 @@ export default function ThemeSwitcher() {
             key={t.key}
             type="button"
             onClick={() => pick(t.key)}
-            title={t.label}
-            aria-label={t.label}
+            title={tr(t.labelKey)}
+            aria-label={tr(t.labelKey)}
             className="rounded-full p-1.5 cursor-pointer transition-colors"
             style={theme === t.key ? { background: C.accent, color: C.onAccent } : { background: "transparent", color: C.muted }}
           >

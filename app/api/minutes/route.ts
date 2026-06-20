@@ -2,6 +2,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
 import { after } from "next/server";
 import { z } from "zod";
+import { langSuffix } from "@/lib/ai-lang";
 import { logQa } from "@/lib/supabase";
 
 export const runtime = "nodejs";
@@ -44,7 +45,7 @@ export async function POST(req: Request) {
     const message = await client.messages.parse({
       model: "claude-opus-4-8",
       max_tokens: 1024,
-      system: SYSTEM,
+      system: SYSTEM + langSuffix(body?.lang),
       output_config: { format: zodOutputFormat(MinutesSchema) },
       messages: [{ role: "user", content: `Captured this meeting:\n${list}\n\nDraft the minutes.` }],
     });

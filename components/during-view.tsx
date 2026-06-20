@@ -12,6 +12,7 @@ import { Avatar, MeetingContext, TheRoom } from "@/components/rail";
 import { useCitation } from "@/components/citation-context";
 import { useParticipant } from "@/components/participant-context";
 import { useDetail } from "@/components/detail-context";
+import { useLang } from "@/components/lang-context";
 import { Gloss } from "@/components/gloss";
 import AppShell from "@/components/app-shell";
 
@@ -46,6 +47,7 @@ export default function DuringView() {
   const { open } = useCitation();
   const { open: openProfile } = useParticipant();
   const { level } = useDetail();
+  const { lang } = useLang();
   const [revealed, setRevealed] = useState(1);
   const [captured, setCaptured] = useState<Commitment[]>([]);
   const [observations, setObservations] = useState<Record<string, Obs | "loading">>({});
@@ -63,12 +65,12 @@ export default function DuringView() {
   // same one Before recommended. Falls back to the mock if Before was skipped.
   useEffect(() => {
     try {
-      const raw = localStorage.getItem(BRIEF_CACHE_KEY);
+      const raw = localStorage.getItem(`${BRIEF_CACHE_KEY}:${lang}`);
       if (raw) setBrief(JSON.parse(raw) as Brief);
     } catch {
       /* keep mock */
     }
-  }, []);
+  }, [lang]);
 
   // Observe each utterance live as it is revealed.
   useEffect(() => {
@@ -76,7 +78,7 @@ export default function DuringView() {
     if (!item || requested.current.has(item.id)) return;
     requested.current.add(item.id);
     setObservations((o) => ({ ...o, [item.id]: "loading" }));
-    fetch("/api/observe", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ speaker: item.speaker, text: item.text }) })
+    fetch("/api/observe", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ speaker: item.speaker, text: item.text, lang }) })
       .then((r) => r.json())
       .then((obs: Obs & { error?: string }) => {
         setObservations((o) => {

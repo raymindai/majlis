@@ -5,6 +5,7 @@ import { CalendarDays } from "lucide-react";
 import { MEETINGS } from "@/lib/meetings";
 import { C } from "@/components/ui";
 import { useOpenMeeting } from "@/components/meeting-context";
+import { useLang } from "@/components/lang-context";
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 function fmtDate(iso: string) {
@@ -16,6 +17,7 @@ function fmtDate(iso: string) {
 export default function CalendarButton() {
   const [open, setOpen] = useState(false);
   const { open: openMeeting } = useOpenMeeting();
+  const { t: tr } = useLang();
   const meetings = [...MEETINGS].sort((a, b) => (a.date < b.date ? -1 : 1));
 
   return (
@@ -23,13 +25,13 @@ export default function CalendarButton() {
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        title="Open the calendar"
-        aria-label="Open the calendar"
+        title={tr("openCalendar")}
+        aria-label={tr("openCalendar")}
         className="inline-flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-[12px] cursor-pointer hover:opacity-80"
         style={{ color: C.muted, border: `1px solid ${C.line}` }}
       >
         <CalendarDays size={15} strokeWidth={2} />
-        <span className="hidden xl:inline">Calendar</span>
+        <span className="hidden xl:inline">{tr("calendar")}</span>
       </button>
 
       {open && (
@@ -39,7 +41,7 @@ export default function CalendarButton() {
             className="absolute left-0 top-full mt-1.5 z-[91] w-72 rounded-xl p-1.5"
             style={{ background: C.surface, border: `1px solid ${C.line}`, boxShadow: "0 16px 40px rgba(0,0,0,0.22)" }}
           >
-            <div className="px-2 py-1.5 text-[10px] font-semibold uppercase tracking-wide" style={{ color: C.faint }}>Meeting series</div>
+            <div className="px-2 py-1.5 text-[10px] font-semibold uppercase tracking-wide" style={{ color: C.faint }}>{tr("meetingSeries")}</div>
             <ul className="max-h-[60vh] overflow-y-auto">
               {meetings.map((mt) => (
                 <li key={mt.id}>
@@ -55,7 +57,7 @@ export default function CalendarButton() {
                     <span className="min-w-0">
                       <span className="block text-[13px] font-medium leading-tight" style={{ color: C.ink }}>
                         {mt.title}
-                        {mt.current && <span className="ml-1.5 text-[10px] font-semibold" style={{ color: C.accent }}>today</span>}
+                        {mt.current && <span className="ml-1.5 text-[10px] font-semibold" style={{ color: C.accent }}>{tr("today")}</span>}
                       </span>
                       <span className="block text-[11px]" style={{ color: C.muted }}>{fmtDate(mt.date)}</span>
                     </span>

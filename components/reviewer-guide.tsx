@@ -6,6 +6,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ArrowRight, BookOpen, GitBranch, Layers, MousePointerClick, Sparkles, Users, X } from "lucide-react";
 import { C } from "@/components/ui";
+import { useLang } from "@/components/lang-context";
 
 const serif = { fontFamily: "var(--font-newsreader), var(--font-arabic), Georgia, serif" };
 
@@ -36,6 +37,7 @@ const STAGES = [
  */
 export default function ReviewerGuide() {
   const [open, setOpen] = useState(false);
+  const { t: tr } = useLang();
   const pathname = usePathname();
   const active = pathname === "/during" ? "during" : pathname === "/after" ? "after" : "before";
 
@@ -49,7 +51,7 @@ export default function ReviewerGuide() {
           {/* accent ribbon: the signal that this is a guide and not a document window */}
           <div className="shrink-0 px-4 py-2.5 flex items-center justify-between" style={{ background: C.accent, color: C.onAccent }}>
             <span className="inline-flex items-center gap-2 text-[12px] font-semibold uppercase tracking-wide">
-              <BookOpen size={14} strokeWidth={2.25} /> Reviewer&rsquo;s guide
+              <BookOpen size={14} strokeWidth={2.25} /> {tr("reviewersGuide")}
             </span>
             <button type="button" onClick={() => setOpen(false)} className="cursor-pointer hover:opacity-80" aria-label="Close guide">
               <X size={16} strokeWidth={2.25} />
@@ -125,7 +127,7 @@ export default function ReviewerGuide() {
                 className="px-1.5 py-1 rounded-full hover:opacity-80"
                 style={s.key === active ? { color: C.ink, fontWeight: 600 } : { color: C.faint }}
               >
-                {s.label}
+                {tr(s.key)}
               </Link>
               {i < STAGES.length - 1 && <span style={{ color: C.line }}>/</span>}
             </span>
@@ -137,7 +139,7 @@ export default function ReviewerGuide() {
           className="inline-flex items-center gap-1.5 rounded-full pl-2.5 pr-3 py-1.5 text-[12px] font-medium cursor-pointer hover:opacity-90"
           style={{ background: C.ink, color: C.bg }}
         >
-          <BookOpen size={14} strokeWidth={2} /> For reviewers
+          <BookOpen size={14} strokeWidth={2} /> {tr("forReviewers")}
         </button>
       </div>
     </div>

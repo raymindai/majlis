@@ -3,6 +3,7 @@ import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
 import { after } from "next/server";
 import { z } from "zod";
 import { corpusForPrompt } from "@/lib/corpus";
+import { langSuffix } from "@/lib/ai-lang";
 import { logQa } from "@/lib/supabase";
 
 export const runtime = "nodejs";
@@ -79,13 +80,14 @@ COMMITTEE PACK, the only material you may use:
 
 ${corpusForPrompt()}`;
 
-export async function POST() {
+export async function POST(req: Request) {
   try {
+    const body = await req.json().catch(() => ({}));
     const started = Date.now();
     const message = await client.messages.parse({
       model: "claude-opus-4-8",
       max_tokens: 4096,
-      system: SYSTEM,
+      system: SYSTEM + langSuffix(body?.lang),
       output_config: { format: zodOutputFormat(BriefSchema) },
       messages: [{ role: "user", content: "Write the brief for today's committee." }],
     });

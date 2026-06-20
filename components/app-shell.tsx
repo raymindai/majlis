@@ -7,6 +7,7 @@ import CalendarButton from "@/components/calendar-button";
 import DetailControl from "@/components/detail-control";
 import UserMenu from "@/components/user-menu";
 import ThemeSwitcher from "@/components/theme-switcher";
+import LanguageSwitcher from "@/components/language-switcher";
 import ChatPanel from "@/components/chat-panel";
 
 const serif = { fontFamily: "var(--font-newsreader), var(--font-arabic), Georgia, serif" };
@@ -43,6 +44,7 @@ export default function AppShell({
 
           <div className="flex items-center gap-3 shrink-0 flex-1 justify-end">
             <ThemeSwitcher />
+            <LanguageSwitcher />
             <UserMenu />
           </div>
         </div>

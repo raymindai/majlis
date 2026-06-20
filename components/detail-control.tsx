@@ -2,19 +2,21 @@
 
 import { AlignJustify, Equal, type LucideIcon, Minus, Search } from "lucide-react";
 import { useDetail, type DetailLevel } from "@/components/detail-context";
+import { useLang } from "@/components/lang-context";
 import { C } from "@/components/ui";
 
 // A magnifier frames it as zoom; the glyphs grow in line-density from one line
 // (headlines) to a full block (full detail), so the control reads as zooming.
-const LEVELS: { v: DetailLevel; label: string; icon: LucideIcon }[] = [
-  { v: 1, label: "Headlines", icon: Minus },
-  { v: 2, label: "Brief", icon: Equal },
-  { v: 3, label: "Full", icon: AlignJustify },
+const LEVELS: { v: DetailLevel; key: string; icon: LucideIcon }[] = [
+  { v: 1, key: "headlines", icon: Minus },
+  { v: 2, key: "brief", icon: Equal },
+  { v: 3, key: "full", icon: AlignJustify },
 ];
 
 /** Level-of-detail control: zoom the whole stage from headlines to full detail. */
 export default function DetailControl() {
   const { level, setLevel } = useDetail();
+  const { t: tr } = useLang();
   return (
     <div className="inline-flex items-center gap-1 rounded-lg p-0.5 pl-1.5" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
       <Search size={12} strokeWidth={2.5} style={{ color: C.faint }} className="shrink-0" aria-hidden />
@@ -26,12 +28,12 @@ export default function DetailControl() {
             key={l.v}
             type="button"
             onClick={() => setLevel(l.v)}
-            title={`Zoom: ${l.label}`}
+            title={`${tr("zoom")}: ${tr(l.key)}`}
             className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-md cursor-pointer transition-colors"
             style={on ? { background: C.surface, color: C.ink, fontWeight: 600, boxShadow: C.shadow } : { color: C.muted }}
           >
             <Icon size={12} strokeWidth={2.25} style={{ color: on ? C.accent : C.faint }} />
-            {l.label}
+            {tr(l.key)}
           </button>
         );
       })}

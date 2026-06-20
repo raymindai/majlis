@@ -5,6 +5,7 @@ import { Sparkles, StickyNote } from "lucide-react";
 import { ASK_EVENT } from "@/components/ask-bus";
 import { C, CitationChip, ConfidenceBadge } from "@/components/ui";
 import { useCitation } from "@/components/citation-context";
+import { useLang } from "@/components/lang-context";
 import { addNote, loadNotes } from "@/lib/notes";
 import { Gloss } from "@/components/gloss";
 import type { Confidence } from "@/lib/corpus";
@@ -36,6 +37,7 @@ function extractSummary(buf: string): string {
 
 export default function ChatPanel({ stage }: { stage: "before" | "during" | "after" }) {
   const { open } = useCitation();
+  const { lang, t: tr } = useLang();
   const [msgs, setMsgs] = useState<Msg[]>([]);
   const [q, setQ] = useState("");
   const [loading, setLoading] = useState(false);
@@ -58,7 +60,7 @@ export default function ChatPanel({ stage }: { stage: "before" | "during" | "aft
       const res = await fetch("/api/ask", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ question: t, stage }),
+        body: JSON.stringify({ question: t, stage, lang }),
       });
       if (!res.body) throw new Error("no stream");
       const reader = res.body.getReader();
@@ -120,17 +122,17 @@ export default function ChatPanel({ stage }: { stage: "before" | "during" | "aft
         </svg>
         <div className="relative px-4 pt-3 pb-3">
           <span className="inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wide rounded-full px-2 py-0.5" style={{ background: C.surface, color: C.accent, border: `1px solid ${C.line}` }}>
-            <Sparkles size={11} strokeWidth={2.5} /> Majlis AI
+            <Sparkles size={11} strokeWidth={2.5} /> {tr("majlisAI")}
           </span>
-          <div style={serif} className="text-[19px] leading-tight mt-1.5" >Ask Majlis</div>
-          <div className="text-[12px] mt-0.5" style={{ color: C.muted }}>Grounded in the committee pack. Every answer cites its source.</div>
+          <div style={serif} className="text-[19px] leading-tight mt-1.5" >{tr("askMajlis")}</div>
+          <div className="text-[12px] mt-0.5" style={{ color: C.muted }}>{tr("chatSubtitle")}</div>
         </div>
       </div>
 
       <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-3 space-y-4">
         {msgs.length === 0 && (
           <div className="text-[13px] leading-relaxed" style={{ color: C.muted }}>
-            <p>Ask anything about what&rsquo;s happening. Each answer streams in with a confidence rating and a citation you can open.</p>
+            <p>{tr("chatEmpty")}</p>
             <div className="mt-3 flex flex-col gap-2">
               {STARTERS.map((s) => (
                 <button
@@ -213,7 +215,7 @@ export default function ChatPanel({ stage }: { stage: "before" | "during" | "aft
           <input
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder={STAGE_HINT[stage]}
+            placeholder={lang === "ar" ? `${tr("askMajlis")}…` : STAGE_HINT[stage]}
             disabled={loading}
             className="flex-1 bg-transparent outline-none text-[14px]"
             style={{ color: C.ink }}
@@ -226,13 +228,13 @@ export default function ChatPanel({ stage }: { stage: "before" | "during" | "aft
             className="inline-flex items-center gap-1 text-[12px] px-2 py-1 rounded-md cursor-pointer disabled:opacity-40 hover:opacity-80"
             style={{ color: C.muted, border: `1px solid ${C.line}` }}
           >
-            <StickyNote size={13} strokeWidth={2} /> Note
+            <StickyNote size={13} strokeWidth={2} /> {tr("note")}
           </button>
           <button type="submit" disabled={loading} className="text-[14px] px-2 py-1 rounded cursor-pointer disabled:opacity-50" style={{ color: C.accent }}>
             ↵
           </button>
         </div>
-        <div className="mt-1.5 text-[10.5px]" style={{ color: C.faint }}>Enter to ask Majlis, or save your text as a note.</div>
+        <div className="mt-1.5 text-[10.5px]" style={{ color: C.faint }}>{tr("chatHelper")}</div>
       </form>
     </div>
   );

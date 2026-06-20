@@ -10,6 +10,7 @@ import { Avatar, MeetingContext, NavList, TheRoom } from "@/components/rail";
 import { useParticipant } from "@/components/participant-context";
 import { useCitation } from "@/components/citation-context";
 import { useDetail } from "@/components/detail-context";
+import { useLang } from "@/components/lang-context";
 import { Gloss } from "@/components/gloss";
 import AppShell from "@/components/app-shell";
 
@@ -28,6 +29,7 @@ export default function AfterView() {
   const { open: openProfile } = useParticipant();
   const { open: openSource } = useCitation();
   const { level } = useDetail();
+  const { lang } = useLang();
   const [state, setState] = useState<MeetingState>({ commitments: [], writtenToMemory: false });
   const [sent, setSent] = useState(false);
   const [minutes, setMinutes] = useState<{ headline: string; summary: string; riskOutlook?: string; chairFollowUps?: string[]; distributionNote: string } | null>(null);
@@ -69,7 +71,7 @@ export default function AfterView() {
     let cancelled = false;
     setDrafting(true);
     const items = state.commitments.map((c) => ({ entity: c.entity, text: c.text, due: c.due, kind: c.entity === "Committee" ? "decision" : "commitment" }));
-    fetch("/api/minutes", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ items }) })
+    fetch("/api/minutes", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ items, lang }) })
       .then((r) => r.json())
       .then((m) => {
         if (!cancelled && m && !m.error) setMinutes(m);
@@ -82,7 +84,7 @@ export default function AfterView() {
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sig]);
+  }, [sig, lang]);
 
   const leftRail = (
     <div className="space-y-6">

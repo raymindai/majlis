@@ -30,6 +30,7 @@ import { useCitation } from "@/components/citation-context";
 import { useParticipant } from "@/components/participant-context";
 import { useOpenMeeting } from "@/components/meeting-context";
 import { useDetail } from "@/components/detail-context";
+import { useLang } from "@/components/lang-context";
 import { Gloss } from "@/components/gloss";
 import AppShell from "@/components/app-shell";
 
@@ -52,6 +53,7 @@ export default function BeforeView() {
   const { open: openProfile } = useParticipant();
   const { open: openMeeting } = useOpenMeeting();
   const { level } = useDetail();
+  const { lang, t: tr } = useLang();
   const [prior, setPrior] = useState<Commitment[]>([]);
   const [checked, setChecked] = useState<Record<number, boolean>>({});
   const [brief, setBrief] = useState<Brief>(MOCK_BRIEF);
@@ -71,12 +73,12 @@ export default function BeforeView() {
   async function regenerate() {
     setSyncing(true);
     try {
-      const res = await fetch("/api/brief", { method: "POST" });
+      const res = await fetch("/api/brief", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ lang }) });
       const data = await res.json();
       if (data && !data.error) {
         setBrief(data);
         setLive(true);
-        localStorage.setItem(BRIEF_CACHE_KEY, JSON.stringify(data));
+        localStorage.setItem(`${BRIEF_CACHE_KEY}:${lang}`, JSON.stringify(data));
       }
     } catch {
       /* keep the current brief */
@@ -85,9 +87,10 @@ export default function BeforeView() {
     }
   }
 
-  // On first load, use the cached live brief if present, else synthesise it.
+  // On load and whenever the language changes, use the cached brief for that
+  // language if present, else synthesise it fresh in that language.
   useEffect(() => {
-    const cached = typeof window !== "undefined" ? localStorage.getItem(BRIEF_CACHE_KEY) : null;
+    const cached = typeof window !== "undefined" ? localStorage.getItem(`${BRIEF_CACHE_KEY}:${lang}`) : null;
     if (cached) {
       try {
         setBrief(JSON.parse(cached));
@@ -97,9 +100,11 @@ export default function BeforeView() {
         /* fall through to fetch */
       }
     }
+    setLive(false);
+    setBrief(MOCK_BRIEF);
     regenerate();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [lang]);
 
   const leftRail = (
     <div className="space-y-6">
@@ -119,7 +124,7 @@ export default function BeforeView() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="inline-flex items-center gap-1.5 text-[12px]" style={{ color: C.faint }}>
           <Sparkles size={13} strokeWidth={2} />
-          {live ? "Briefing synthesised live by Majlis from the committee pack" : "Sample briefing, regenerating live from the committee pack"}
+          {live ? tr("briefingLive") : tr("briefingSample")}
         </div>
         <button
           type="button"
@@ -129,7 +134,7 @@ export default function BeforeView() {
           style={{ background: C.surfaceAlt, border: `1px solid ${C.line}`, color: C.muted }}
         >
           {syncing ? <Loader2 size={13} className="animate-spin" /> : <RefreshCw size={13} strokeWidth={2} />}
-          {syncing ? "Synthesising" : "Regenerate brief"}
+          {syncing ? tr("synthesising") : tr("regenerateBrief")}
         </button>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
@@ -151,9 +156,9 @@ export default function BeforeView() {
           <h1 style={serif} className="text-[30px] leading-tight"><Gloss>{bl.lead}</Gloss></h1>
           {level >= 2 && <p className="mt-3 text-[16px] leading-relaxed" style={{ color: C.detail }}><Gloss>{bl.detail}</Gloss></p>}
           <div className="mt-4 flex flex-wrap items-center gap-2">
-            <span className="text-[11px] font-medium" style={{ color: C.faint }}>Confidence</span>
+            <span className="text-[11px] font-medium" style={{ color: C.faint }}>{tr("confidence")}</span>
             <ConfidenceBadge confidence={bl.confidence} />
-            <span className="text-[11px] font-medium ml-1" style={{ color: C.faint }}>Sources</span>
+            <span className="text-[11px] font-medium ml-1" style={{ color: C.faint }}>{tr("sources")}</span>
             {bl.citations.map((c, i) => (
               <CitationChip key={i} sourceId={c.sourceId} onClick={(pos) => open(c, pos)} />
             ))}
@@ -177,11 +182,11 @@ export default function BeforeView() {
         <Card label="Your decision" span={2} icon={Gavel}>
           <div style={serif} className="text-[20px] leading-snug"><Gloss>{brief.decision.text}</Gloss></div>
           <div className="mt-3 rounded-xl p-3.5" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
-            <div className="text-[11px] font-semibold mb-1" style={{ color: C.accent }}>Recommendation</div>
+            <div className="text-[11px] font-semibold mb-1" style={{ color: C.accent }}>{tr("recommendation")}</div>
             <p className="text-[14px] leading-snug"><Gloss>{brief.decision.recommendation}</Gloss></p>
             {brief.decision.rationale && (
               <p className="text-[13px] leading-relaxed mt-2.5 pt-2.5 border-t" style={{ borderColor: C.line, color: C.detail }}>
-                <span className="font-medium" style={{ color: C.ink }}>Why: </span>
+                <span className="font-medium" style={{ color: C.ink }}>{tr("why")}: </span>
                 <Gloss>{brief.decision.rationale}</Gloss>
               </p>
             )}
@@ -209,7 +214,7 @@ export default function BeforeView() {
           )}
         </Card>
 
-        <Card label="Needs attention" span={2} icon={TriangleAlert} aside={<span className="text-[12px]" style={{ color: C.muted }}>{brief.attention.length} of {PARTICIPANTS.length} need action</span>}>
+        <Card label="Needs attention" span={2} icon={TriangleAlert} aside={<span className="text-[12px]" style={{ color: C.muted }}>{tr("needAction", { n: brief.attention.length, m: PARTICIPANTS.length })}</span>}>
           <div className="space-y-5">
             {(["blocker", "at-risk"] as const).map((sev) => {
               const items = brief.attention.filter((a) => a.severity === sev);
@@ -239,7 +244,7 @@ export default function BeforeView() {
                           {a.action && (
                             <div className="mt-3 rounded-lg p-2.5" style={{ background: C.chipBg }}>
                               <div className="text-[11px] font-semibold mb-1 inline-flex items-center gap-1" style={{ color: C.accent }}>
-                                <Sparkles size={11} strokeWidth={2.5} /> Recommended action
+                                <Sparkles size={11} strokeWidth={2.5} /> {tr("recommendedAction")}
                               </div>
                               <p className="text-[13px] leading-snug" style={{ color: C.detail }}><Gloss>{a.action}</Gloss></p>
                             </div>
@@ -247,11 +252,11 @@ export default function BeforeView() {
                           {/* Evidence stays visible at every zoom: the claim is always linked to its source. */}
                           <div className="mt-3 pt-3 border-t space-y-2" style={{ borderColor: C.line }}>
                             <div className="flex flex-wrap items-center gap-1.5">
-                              <span className="text-[11px] font-semibold" style={{ color: C.faint }}>Confidence</span>
+                              <span className="text-[11px] font-semibold" style={{ color: C.faint }}>{tr("confidence")}</span>
                               <ConfidenceBadge confidence={a.confidence} />
                             </div>
                             <div className="flex flex-wrap items-center gap-1.5">
-                              <span className="text-[11px] font-semibold" style={{ color: C.faint }}>Sources</span>
+                              <span className="text-[11px] font-semibold" style={{ color: C.faint }}>{tr("sources")}</span>
                               {sources.map((c, i) => (
                                 <CitationChip key={i} sourceId={c.sourceId} onClick={(pos) => open(c, pos)} />
                               ))}
@@ -269,7 +274,7 @@ export default function BeforeView() {
               <div className="pt-4 border-t" style={{ borderColor: C.line }}>
                 <div className="flex items-center gap-2 mb-2.5">
                   <span className="inline-flex items-center gap-1.5 text-[11px] font-medium rounded-full px-2 py-0.5" style={{ background: C.surfaceAlt, color: C.confirmed, border: `1px solid ${C.line}` }}>
-                    <CircleCheck size={12} strokeWidth={2.25} /> On track
+                    <CircleCheck size={12} strokeWidth={2.25} /> {tr("onTrack")}
                   </span>
                   <span className="text-[11px]" style={{ color: C.faint }}>{brief.steady.length} {brief.steady.length === 1 ? "entity" : "entities"}</span>
                 </div>
