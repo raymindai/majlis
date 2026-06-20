@@ -248,7 +248,7 @@ export default function BeforeView() {
                           </div>
                           <p className="text-[13px] leading-snug mt-3"><Gloss>{a.line}</Gloss></p>
                           {a.action && (
-                            <div className="mt-3 rounded-lg p-2.5" style={{ background: C.chipBg }}>
+                            <div className="mt-3.5 pl-3 border-l-2" style={{ borderColor: C.accent }}>
                               <div className="text-[11px] font-semibold mb-1 inline-flex items-center gap-1" style={{ color: C.accent }}>
                                 <Sparkles size={11} strokeWidth={2.5} /> {tr("recommendedAction")}
                               </div>
