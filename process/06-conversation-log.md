@@ -49,6 +49,9 @@ Session: 2026-06-19 → 2026-06-20.
 **User:** "let's push it to git first."
 **Claude:** committed corpus + process archive + grounding backbone locally (secrets verified out — `.env.local` gitignored/untracked); created a **private** GitHub repo and pushed `main` → github.com/raymindai/majlis.
 
+### Turn 28 — 2026-06-20 · fal avatars generated + wired
+**Claude:** wrote `scripts/generate-avatars.mjs` and ran it against **fal `nano-banana-pro`** → 5 dignified, lightly-stylised editorial portraits (PSD = anonymous silhouette for "restricted"), resized to 384px. Verified them (viewed), then wired via `next/image` (monogram fallback) into the participant cards and "The room" sidebar list — replacing the initials. Build clean; committed. Followed the UX/service procedure: D11 (intent + style) → generate → verify → wire.
+
 ### Turn 27 — 2026-06-20 · Elevated Before sidebar + fal lookup
 **User:** the left sidebar is too primitive; the bare codes/initials don't explain themselves. (Also asked to generate fal avatars per the UX/service procedure.)
 **Claude:** logged D11 (avatar design decision — dignified stylized editorial portraits, not photoreal). Rebuilt the Before left rail — a meeting-context block (session · countdown · "4 of 6 in the series"), an **icon-led nav**, and **"The room"** showing each entity with its **name + status** (not just a code). Looked up the fal model: **`fal-ai/nano-banana-pro`** (Nano Banana 2, text-to-image). Build clean. Next: generate + wire participant avatars; carry the rail elevation to During/After.

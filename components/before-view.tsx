@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import {
   CalendarClock,
   CalendarRange,
@@ -53,6 +54,31 @@ function initials(name: string) {
   const parts = name.replace(/\(.*?\)/g, "").trim().split(/\s+/).filter(Boolean);
   if (!parts.length) return "—";
   return (parts[0][0] + (parts.length > 1 ? parts[parts.length - 1][0] : "")).toUpperCase();
+}
+
+function Avatar({ id, name, size = 44 }: { id: string; name: string; size?: number }) {
+  const [err, setErr] = useState(false);
+  if (err) {
+    return (
+      <div
+        className="rounded-full flex items-center justify-center font-semibold shrink-0"
+        style={{ width: size, height: size, fontSize: Math.round(size * 0.32), background: `color-mix(in srgb, ${C.accent} 16%, transparent)`, color: C.accent }}
+      >
+        {initials(name)}
+      </div>
+    );
+  }
+  return (
+    <Image
+      src={`/avatars/${id}.png`}
+      alt=""
+      width={size}
+      height={size}
+      onError={() => setErr(true)}
+      className="rounded-full object-cover shrink-0"
+      style={{ width: size, height: size }}
+    />
+  );
 }
 
 export default function BeforeView() {
@@ -110,12 +136,15 @@ export default function BeforeView() {
         <RailLabel>The room</RailLabel>
         <ul className="space-y-2.5">
           {ENTITIES.map((e) => (
-            <li key={e.id} className="flex items-start gap-2">
-              <span className="h-1.5 w-1.5 rounded-full mt-1.5 shrink-0" style={{ background: statusColor[e.status] }} />
+            <li key={e.id} className="flex items-center gap-2.5">
+              <Avatar id={e.id} name={e.name} size={26} />
               <div className="min-w-0">
                 <div className="flex items-baseline gap-1.5">
                   <span className="font-semibold text-[13px]">{e.id}</span>
-                  <span className="text-[11px]" style={{ color: statusColor[e.status] }}>{statusLabel[e.status]}</span>
+                  <span className="inline-flex items-center gap-1 text-[11px]" style={{ color: statusColor[e.status] }}>
+                    <span className="h-1.5 w-1.5 rounded-full" style={{ background: statusColor[e.status] }} />
+                    {statusLabel[e.status]}
+                  </span>
                 </div>
                 <div className="text-[11px] truncate" style={{ color: C.muted }}>{e.name}</div>
               </div>
@@ -204,12 +233,7 @@ export default function BeforeView() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {PARTICIPANTS.map((p) => (
               <div key={p.id} className="rounded-xl p-3.5 flex gap-3" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
-                <div
-                  className="h-9 w-9 rounded-full flex items-center justify-center text-[12px] font-semibold shrink-0"
-                  style={{ background: `color-mix(in srgb, ${C.accent} 16%, transparent)`, color: C.accent }}
-                >
-                  {initials(p.name)}
-                </div>
+                <Avatar id={p.id} name={p.name} size={44} />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="font-semibold text-[14px]">{p.name}</span>
