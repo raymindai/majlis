@@ -1,12 +1,15 @@
 import Link from "next/link";
-import Image from "next/image";
 import {
   ArrowRight,
   CircleCheck,
+  Compass,
   Database,
   GitBranch,
   Layers,
+  ListChecks,
   MessageCircleQuestion,
+  PenTool,
+  Rocket,
   ShieldCheck,
   Sparkles,
   Users,
@@ -19,6 +22,47 @@ export const metadata = {
   title: "Majlis, the case study",
   description: "How an AI briefing companion was scoped, decided, and built.",
 };
+
+const STATS: { k: string; v: string }[] = [
+  { k: "5 days", v: "concept to a live prototype" },
+  { k: "3 stages", v: "Before, During, After, all live AI" },
+  { k: "9 documents", v: "the grounded source corpus" },
+  { k: "100% synthetic", v: "no real government data" },
+];
+
+/** How the work was actually done, in order. */
+const PROCESS: { icon: typeof Compass; title: string; body: string }[] = [
+  {
+    icon: Compass,
+    title: "Frame the brief",
+    body: "Read the AI Experience Designer brief and pinned the bar: the AI is the product, not a feature, and the user is a time-pressured senior official. Chose reach over the safest sign-off scenario.",
+  },
+  {
+    icon: ListChecks,
+    title: "Explore and score",
+    body: "Generated candidate scenarios and scored each on three axes: real-world likelihood, how AI-native the core moment is, and fit to the mandate. Likelihood was treated as first-class, not an afterthought.",
+  },
+  {
+    icon: GitBranch,
+    title: "Decide in the open",
+    body: "Resolved every fork as a decision tree, recording what was chosen, why, and what was deliberately left unbuilt, kept in a running decision log rather than a single final answer.",
+  },
+  {
+    icon: PenTool,
+    title: "Design the architecture",
+    body: "An exception-led information architecture: bottom line and decision first, then ranked exceptions, then interrogation on demand. A provenance flow runs through everything, claim to confidence to citation to source, on a re-skinnable token system.",
+  },
+  {
+    icon: Rocket,
+    title: "Build live, end to end",
+    body: "Built a connected Before to During to After spine on real Claude, Supabase, and fal first, so it stayed demoable at every step instead of becoming a set of disconnected screens.",
+  },
+  {
+    icon: Sparkles,
+    title: "Deepen and pressure-test",
+    body: "Iterated each stage around what the chair actually needs in the moment, then layered in bilingual Arabic with RTL, a level-of-detail zoom, and the institutional-memory loop that carries commitments between cycles.",
+  },
+];
 
 /** The decision spine. Each fork shows what was chosen, why, and what was left unbuilt. */
 const DECISIONS: { n: string; fork: string; chose: string; why: string; notBuilt?: string }[] = [
@@ -89,40 +133,64 @@ const LIFECYCLE: { icon: typeof Layers; stage: string; line: string; href: strin
 ];
 
 function Eyebrow({ children }: { children: string }) {
-  return <div className="text-[12px] font-semibold mb-3" style={{ color: C.accent, letterSpacing: "0.04em" }}>{children}</div>;
+  return <div className="text-[12px] font-semibold mb-3 uppercase" style={{ color: C.accent, letterSpacing: "0.06em" }}>{children}</div>;
+}
+
+function SectionTitle({ children }: { children: string }) {
+  return <h2 style={serif} className="text-[28px] md:text-[32px] leading-snug">{children}</h2>;
 }
 
 export default function ProcessPage() {
   return (
     <div className="min-h-dvh" style={{ background: C.bg, color: C.ink, fontFamily: "var(--font-inter), var(--font-arabic), system-ui, sans-serif" }}>
-      <div className="mx-auto max-w-3xl px-6 py-16 md:py-24">
-        <div className="relative w-full aspect-[16/7] rounded-2xl overflow-hidden mb-10" style={{ border: `1px solid ${C.line}`, boxShadow: C.shadow }}>
-          <Image src="/manarah-hero.jpg" alt="The Manarah programme" fill sizes="(max-width: 768px) 100vw, 768px" className="object-cover" priority />
-        </div>
-        {/* Hero */}
-        <div className="text-[12px] font-semibold" style={{ color: C.muted }}>Case study</div>
-        <h1 style={serif} className="text-[44px] md:text-[56px] leading-[1.05] mt-3">Majlis</h1>
-        <p className="text-[19px] md:text-[21px] leading-relaxed mt-4" style={{ color: C.detail }}>
-          An AI briefing companion that prepares a senior government official for a high-stakes meeting, across the whole
-          lifecycle, Before, During, and After, with an institutional memory that carries between cycles.
-        </p>
-        <p className="text-[14px] mt-4" style={{ color: C.muted }}>
-          A five-day prototype for the AI Experience Designer brief at the Department of Government Enablement, Abu Dhabi.
-          Built AI-first: live Claude, a synthetic committee pack, fal-generated people, and a Supabase audit trail.
-        </p>
-        <div className="flex flex-wrap items-center gap-3 mt-7">
-          <Link href="/" className="inline-flex items-center gap-1.5 text-[14px] rounded-lg px-4 py-2.5" style={{ background: C.accent, color: C.onAccent }}>
-            Open the prototype <ArrowRight size={15} strokeWidth={2} />
-          </Link>
-          <a href="https://github.com/raymindai/majlis" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 text-[14px] rounded-lg px-4 py-2.5" style={{ border: `1px solid ${C.line}`, color: C.ink }}>
-            View the code
-          </a>
+      <div className="mx-auto max-w-3xl px-6 py-12 md:py-16">
+        {/* Hero, a branded gradient rather than a stock photo */}
+        <header className="relative overflow-hidden rounded-3xl p-8 md:p-12" style={{ border: `1px solid ${C.line}`, background: `linear-gradient(135deg, ${C.chipBg}, ${C.surface} 72%)`, boxShadow: C.shadow }}>
+          <svg aria-hidden className="absolute -right-12 -top-12 opacity-[0.06]" width="300" height="300" viewBox="0 0 100 100" style={{ color: C.accent }}>
+            <g fill="none" stroke="currentColor" strokeWidth="1.4">
+              <rect x="18" y="18" width="64" height="64" />
+              <rect x="18" y="18" width="64" height="64" transform="rotate(45 50 50)" />
+              <circle cx="50" cy="50" r="45" />
+            </g>
+          </svg>
+          <div className="relative">
+            <div className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide rounded-full px-2.5 py-1" style={{ background: C.surface, color: C.accent, border: `1px solid ${C.line}` }}>
+              <Sparkles size={12} strokeWidth={2.5} /> Case study
+            </div>
+            <h1 style={serif} className="text-[52px] md:text-[68px] leading-[1.02] mt-4">Majlis</h1>
+            <p className="text-[18px] md:text-[20px] leading-relaxed mt-3 max-w-xl" style={{ color: C.detail }}>
+              An AI briefing companion that prepares a senior government official for a high-stakes meeting, across the whole
+              lifecycle, with a memory that carries between cycles.
+            </p>
+            <p className="text-[14px] mt-4 max-w-xl" style={{ color: C.muted }}>
+              A five-day prototype for the AI Experience Designer brief at the Department of Government Enablement, Abu Dhabi.
+              Built AI-first: live Claude, a synthetic committee pack, fal-generated people, and a Supabase audit trail.
+            </p>
+            <div className="flex flex-wrap items-center gap-3 mt-7">
+              <Link href="/" className="inline-flex items-center gap-1.5 text-[14px] rounded-lg px-4 py-2.5" style={{ background: C.accent, color: C.onAccent }}>
+                Open the prototype <ArrowRight size={15} strokeWidth={2} />
+              </Link>
+              <a href="https://github.com/raymindai/majlis" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 text-[14px] rounded-lg px-4 py-2.5" style={{ border: `1px solid ${C.line}`, color: C.ink, background: C.surface }}>
+                View the code
+              </a>
+            </div>
+          </div>
+        </header>
+
+        {/* Stat strip */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">
+          {STATS.map((s) => (
+            <div key={s.k} className="rounded-xl p-4" style={{ background: C.surface, border: `1px solid ${C.line}` }}>
+              <div className="text-[18px] font-semibold leading-tight" style={{ color: C.ink }}>{s.k}</div>
+              <div className="text-[12px] mt-1 leading-snug" style={{ color: C.muted }}>{s.v}</div>
+            </div>
+          ))}
         </div>
 
         {/* The case */}
         <section className="mt-20">
           <Eyebrow>The case</Eyebrow>
-          <h2 style={serif} className="text-[28px] leading-snug">A bounded moment, made trustworthy</h2>
+          <SectionTitle>A bounded moment, made trustworthy</SectionTitle>
           <p className="text-[16px] leading-relaxed mt-4" style={{ color: C.detail }}>
             The scenario is a quarterly steering committee where five government entities report on a shared digital-services
             programme. One blocker dominates, a budget figure does not reconcile across sources, and an informal note
@@ -131,10 +199,42 @@ export default function ProcessPage() {
           </p>
         </section>
 
+        {/* The process */}
+        <section className="mt-20">
+          <Eyebrow>How it was made</Eyebrow>
+          <SectionTitle>The process</SectionTitle>
+          <p className="text-[15px] leading-relaxed mt-3" style={{ color: C.muted }}>
+            Six moves, from reading the brief to a live, bilingual prototype. The work was kept demoable and documented at
+            every step, not saved for a big reveal.
+          </p>
+          <div className="relative mt-8">
+            <div aria-hidden className="absolute left-[19px] top-3 bottom-3 w-px" style={{ background: C.line }} />
+            <ol className="space-y-7">
+              {PROCESS.map((p, i) => {
+                const Icon = p.icon;
+                return (
+                  <li key={p.title} className="relative flex gap-4">
+                    <div className="relative z-10 w-10 h-10 rounded-full flex items-center justify-center shrink-0" style={{ background: C.surface, border: `1px solid ${C.line}`, boxShadow: C.shadow }}>
+                      <Icon size={17} strokeWidth={2} style={{ color: C.accent }} />
+                    </div>
+                    <div className="pt-1 min-w-0">
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-[12px] font-semibold tabular-nums" style={{ color: C.faint }}>{String(i + 1).padStart(2, "0")}</span>
+                        <h3 className="text-[16px] font-semibold">{p.title}</h3>
+                      </div>
+                      <p className="text-[14px] leading-relaxed mt-1" style={{ color: C.detail }}>{p.body}</p>
+                    </div>
+                  </li>
+                );
+              })}
+            </ol>
+          </div>
+        </section>
+
         {/* The decision spine */}
         <section className="mt-20">
           <Eyebrow>How I decided</Eyebrow>
-          <h2 style={serif} className="text-[28px] leading-snug">The decision spine</h2>
+          <SectionTitle>The decision spine</SectionTitle>
           <p className="text-[15px] leading-relaxed mt-3 mb-8" style={{ color: C.muted }}>
             The brief asks for judgment, not just a screen. Each fork below records what was chosen, why, and, where it
             matters, what was deliberately left unbuilt.
@@ -164,7 +264,7 @@ export default function ProcessPage() {
         {/* The experience */}
         <section className="mt-20">
           <Eyebrow>The experience</Eyebrow>
-          <h2 style={serif} className="text-[28px] leading-snug">One loop, three stages</h2>
+          <SectionTitle>One loop, three stages</SectionTitle>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-6">
             {LIFECYCLE.map((s) => {
               const Icon = s.icon;
@@ -183,7 +283,7 @@ export default function ProcessPage() {
         {/* The AI craft */}
         <section className="mt-20">
           <Eyebrow>The AI craft</Eyebrow>
-          <h2 style={serif} className="text-[28px] leading-snug">What makes it trustworthy</h2>
+          <SectionTitle>What makes it trustworthy</SectionTitle>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-6">
             {CRAFT.map((c) => {
               const Icon = c.icon;
@@ -201,7 +301,7 @@ export default function ProcessPage() {
         {/* Honest next */}
         <section className="mt-20">
           <Eyebrow>If I had longer</Eyebrow>
-          <h2 style={serif} className="text-[28px] leading-snug">What I would do next</h2>
+          <SectionTitle>What I would do next</SectionTitle>
           <ul className="mt-5 space-y-2.5">
             {[
               "Pull the live transcript from real audio, rather than a stepped script.",
