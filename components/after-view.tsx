@@ -10,6 +10,7 @@ import { C, Card, CitationChip, ConfidenceBadge, RailLabel } from "@/components/
 import { Avatar, MeetingContext, NavList, TheRoom } from "@/components/rail";
 import { useParticipant } from "@/components/participant-context";
 import { useCitation } from "@/components/citation-context";
+import { useDetail } from "@/components/detail-context";
 import { Gloss } from "@/components/gloss";
 import AppShell from "@/components/app-shell";
 
@@ -27,6 +28,7 @@ const NAV = [
 export default function AfterView() {
   const { open: openProfile } = useParticipant();
   const { open: openSource } = useCitation();
+  const { level } = useDetail();
   const [state, setState] = useState<MeetingState>({ commitments: [], writtenToMemory: false });
   const [sent, setSent] = useState(false);
   const [minutes, setMinutes] = useState<{ headline: string; summary: string; riskOutlook?: string; chairFollowUps?: string[]; distributionNote: string } | null>(null);
@@ -135,7 +137,7 @@ export default function AfterView() {
           {minutes ? (
             <>
               <h1 style={serif} className="text-[24px] leading-snug"><Gloss>{minutes.headline}</Gloss></h1>
-              <p className="mt-2 text-[15px] leading-relaxed" style={{ color: C.detail }}><Gloss>{minutes.summary}</Gloss></p>
+              {level >= 2 && <p className="mt-2 text-[15px] leading-relaxed" style={{ color: C.detail }}><Gloss>{minutes.summary}</Gloss></p>}
               {minutes.riskOutlook && (
                 <div className="mt-3 rounded-lg p-3 text-[13px] flex items-start gap-2" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
                   <ShieldAlert size={14} strokeWidth={2.25} style={{ color: C.unverified, marginTop: 1 }} className="shrink-0" />
@@ -169,7 +171,7 @@ export default function AfterView() {
           </Card>
         )}
 
-        <Card label="New commitments" icon={Handshake}>
+        <Card label="New commitments" icon={Handshake} minLevel={2}>
           <ul className="space-y-2">
             {commitments.map((c) => (
               <li key={c.id} className="rounded-lg p-4" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
@@ -187,7 +189,7 @@ export default function AfterView() {
           </ul>
         </Card>
 
-        <Card label="Action items" span={2} icon={ListChecks}>
+        <Card label="Action items" span={2} icon={ListChecks} minLevel={2}>
           <table className="w-full text-[13px]">
             <thead>
               <tr style={{ color: C.faint }}>
@@ -221,7 +223,7 @@ export default function AfterView() {
           </Card>
         )}
 
-        <Card label="Distribution" icon={Send}>
+        <Card label="Distribution" icon={Send} minLevel={3}>
           {minutes?.distributionNote && (
             <div className="text-[13px] leading-snug mb-3 rounded-lg p-3" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}`, color: C.detail }}>
               <Gloss>{minutes.distributionNote}</Gloss>
@@ -253,7 +255,7 @@ export default function AfterView() {
           </button>
         </Card>
 
-        <Card label="Institutional memory" span={2} icon={Database}>
+        <Card label="Institutional memory" span={2} icon={Database} minLevel={2}>
           {state.writtenToMemory ? (
             <div className="rounded-xl p-4" style={{ background: C.priorBg, border: `1px solid ${C.priorBorder}` }}>
               <div className="font-medium text-[14px]" style={{ color: C.priorInk }}>✓ Written to institutional memory</div>

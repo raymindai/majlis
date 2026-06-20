@@ -12,6 +12,7 @@ import { C, Card, CitationChip, RailLabel } from "@/components/ui";
 import { Avatar, MeetingContext, TheRoom } from "@/components/rail";
 import { useCitation } from "@/components/citation-context";
 import { useParticipant } from "@/components/participant-context";
+import { useDetail } from "@/components/detail-context";
 import { Gloss } from "@/components/gloss";
 import AppShell from "@/components/app-shell";
 
@@ -45,6 +46,7 @@ function speakerOf(code: string): { name: string; id?: string; role?: string } {
 export default function DuringView() {
   const { open } = useCitation();
   const { open: openProfile } = useParticipant();
+  const { level } = useDetail();
   const [revealed, setRevealed] = useState(1);
   const [captured, setCaptured] = useState<Commitment[]>([]);
   const [observations, setObservations] = useState<Record<string, Obs | "loading">>({});
@@ -208,10 +210,10 @@ export default function DuringView() {
                           </div>
                         </div>
                       ) : (
-                        obs.note && <p className="mt-3 text-[13px]" style={{ color: C.detail }}><Gloss>{obs.note}</Gloss></p>
+                        obs.note && level >= 3 && <p className="mt-3 text-[13px]" style={{ color: C.detail }}><Gloss>{obs.note}</Gloss></p>
                       )}
 
-                      {obs.suggestedQuestion && (
+                      {obs.suggestedQuestion && level >= 2 && (
                         <button type="button" onClick={() => askMajlis(obs.suggestedQuestion!)} className="mt-2 flex items-start gap-1.5 text-left text-[12px] cursor-pointer hover:opacity-70" style={{ color: C.accent }}>
                           <MessageSquareQuote size={13} strokeWidth={2} className="mt-0.5 shrink-0" />
                           <span><span className="font-medium">Suggested:</span> <span style={{ color: C.detail }}><Gloss>{obs.suggestedQuestion}</Gloss></span></span>
@@ -302,7 +304,7 @@ export default function DuringView() {
           </div>
         </Card>
 
-        <Card label="Insights & suggested questions" icon={Lightbulb}>
+        <Card label="Insights & suggested questions" icon={Lightbulb} minLevel={2}>
           {insights.length === 0 && suggestions.length === 0 ? (
             <div className="text-[13px]" style={{ color: C.muted }}>Majlis surfaces insights and questions as the meeting progresses.</div>
           ) : (
