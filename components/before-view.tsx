@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import {
-  CalendarClock,
   CalendarRange,
+  ChevronRight,
   Gavel,
+  History,
   ListChecks,
   MessageCircleQuestion,
   MessageSquareQuote,
@@ -14,16 +14,16 @@ import {
   Users,
 } from "lucide-react";
 import { ATTENTION, BOTTOM_LINE, DECISION, MEETING_META, STEADY } from "@/lib/mock";
-import { ENTITIES } from "@/lib/corpus";
 import { MEETINGS, PARTICIPANTS } from "@/lib/meetings";
 import { loadState, type Commitment } from "@/lib/store";
 import { askMajlis } from "@/components/ask-bus";
 import { C, Card, CitationChip, ConfidenceBadge, RailLabel, SeverityPill } from "@/components/ui";
+import { Avatar, MeetingContext, NavList, statusColor, statusLabel, TheRoom } from "@/components/rail";
 import { useCitation } from "@/components/citation-context";
+import { useParticipant } from "@/components/participant-context";
 import AppShell from "@/components/app-shell";
 
 const serif = { fontFamily: "var(--font-newsreader), Georgia, serif" };
-const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-");
 
 const PREP = [
   "Reconcile MTA's budget figure (40 vs 52) before the reallocation vote.",
@@ -47,42 +47,9 @@ const NAV = [
   { label: "Likely questions", icon: MessageCircleQuestion },
 ];
 
-const statusColor: Record<string, string> = { "on-track": C.confirmed, "at-risk": C.likely, slipped: C.unverified, restricted: C.faint };
-const statusLabel: Record<string, string> = { "on-track": "On track", "at-risk": "At risk", slipped: "Slipped", restricted: "Restricted" };
-
-function initials(name: string) {
-  const parts = name.replace(/\(.*?\)/g, "").trim().split(/\s+/).filter(Boolean);
-  if (!parts.length) return "—";
-  return (parts[0][0] + (parts.length > 1 ? parts[parts.length - 1][0] : "")).toUpperCase();
-}
-
-function Avatar({ id, name, size = 44 }: { id: string; name: string; size?: number }) {
-  const [err, setErr] = useState(false);
-  if (err) {
-    return (
-      <div
-        className="rounded-full flex items-center justify-center font-semibold shrink-0"
-        style={{ width: size, height: size, fontSize: Math.round(size * 0.32), background: `color-mix(in srgb, ${C.accent} 16%, transparent)`, color: C.accent }}
-      >
-        {initials(name)}
-      </div>
-    );
-  }
-  return (
-    <Image
-      src={`/avatars/${id}.png`}
-      alt=""
-      width={size}
-      height={size}
-      onError={() => setErr(true)}
-      className="rounded-full object-cover shrink-0"
-      style={{ width: size, height: size }}
-    />
-  );
-}
-
 export default function BeforeView() {
   const { open } = useCitation();
+  const { open: openProfile } = useParticipant();
   const [prior, setPrior] = useState<Commitment[]>([]);
   const [checked, setChecked] = useState<Record<number, boolean>>({});
 
@@ -96,62 +63,14 @@ export default function BeforeView() {
     return () => window.removeEventListener("majlis-store", sync);
   }, []);
 
-  const currentIndex = MEETINGS.findIndex((m) => m.current) + 1;
-
   const leftRail = (
     <div className="space-y-6">
-      <div className="rounded-xl p-3" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
-        <div className="flex items-start gap-2">
-          <CalendarClock size={15} strokeWidth={2} style={{ color: C.accent, marginTop: 1 }} className="shrink-0" />
-          <div className="min-w-0">
-            <div className="text-[13px] font-semibold leading-tight">{MEETING_META.session}</div>
-            <div className="text-[12px] mt-0.5" style={{ color: C.muted }}>
-              in {MEETING_META.minutesUntil} min · {currentIndex} of {MEETINGS.length} in the series
-            </div>
-          </div>
-        </div>
-      </div>
-
+      <MeetingContext />
       <div>
         <RailLabel>In this brief</RailLabel>
-        <nav className="-mx-2 space-y-0.5">
-          {NAV.map((n) => {
-            const Icon = n.icon;
-            return (
-              <a
-                key={n.label}
-                href={`#${slug(n.label)}`}
-                className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg text-[13px] hover:bg-[var(--c-surface-alt)]"
-                style={{ color: C.muted }}
-              >
-                <Icon size={15} strokeWidth={2} style={{ color: C.faint }} className="shrink-0" />
-                {n.label}
-              </a>
-            );
-          })}
-        </nav>
+        <NavList items={NAV} />
       </div>
-
-      <div>
-        <RailLabel>The room</RailLabel>
-        <ul className="space-y-2.5">
-          {ENTITIES.map((e) => (
-            <li key={e.id} className="flex items-center gap-2.5">
-              <Avatar id={e.id} name={e.name} size={26} />
-              <div className="min-w-0">
-                <div className="flex items-baseline gap-1.5">
-                  <span className="font-semibold text-[13px]">{e.id}</span>
-                  <span className="inline-flex items-center gap-1 text-[11px]" style={{ color: statusColor[e.status] }}>
-                    <span className="h-1.5 w-1.5 rounded-full" style={{ background: statusColor[e.status] }} />
-                    {statusLabel[e.status]}
-                  </span>
-                </div>
-                <div className="text-[11px] truncate" style={{ color: C.muted }}>{e.name}</div>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </div>
+      <TheRoom />
     </div>
   );
 
@@ -166,7 +85,7 @@ export default function BeforeView() {
     <AppShell stage="before" meta={meta} leftRail={leftRail}>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
         {prior.length > 0 && (
-          <Card label="Carried over — verify these were kept" span={2}>
+          <Card label="Carried over — verify these were kept" span={2} icon={History}>
             <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-1.5">
               {prior.map((c) => (
                 <li key={c.id} className="text-[13px] flex items-baseline gap-2">
@@ -179,7 +98,7 @@ export default function BeforeView() {
           </Card>
         )}
 
-        <Card label="The bottom line" span={2}>
+        <Card label="The bottom line" span={2} icon={Target}>
           <h1 style={serif} className="text-[30px] leading-tight">{BOTTOM_LINE.lead}</h1>
           <p className="mt-3 text-[16px] leading-relaxed" style={{ color: C.detail }}>{BOTTOM_LINE.detail}</p>
           <div className="mt-4 flex flex-wrap items-center gap-2">
@@ -202,12 +121,12 @@ export default function BeforeView() {
           </div>
         </Card>
 
-        <Card label="Your decision" span={2}>
+        <Card label="Your decision" span={2} icon={Gavel}>
           <div style={serif} className="text-[20px] leading-snug">{DECISION.text}</div>
           <div className="mt-2 text-[13px]" style={{ color: C.muted }}>Hinges on → {DECISION.hingesOn.join(" · ")}</div>
         </Card>
 
-        <Card label="Needs attention" span={2} aside={<span className="text-[12px]" style={{ color: C.muted }}>3 of 5 need action</span>}>
+        <Card label="Needs attention" span={2} icon={TriangleAlert} aside={<span className="text-[12px]" style={{ color: C.muted }}>3 of 5 need action</span>}>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             {ATTENTION.map((a) => (
               <div key={a.id} className="rounded-xl p-3.5" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
@@ -229,10 +148,15 @@ export default function BeforeView() {
           <div className="mt-3 text-[12px]" style={{ color: C.muted }}>Also: {STEADY.map((s) => `${s.id} — ${s.line}`).join("  ·  ")}</div>
         </Card>
 
-        <Card label="Who's in the room" span={2} aside={<span className="text-[12px]" style={{ color: C.muted }}>ask the right person</span>}>
+        <Card label="Who's in the room" span={2} icon={Users} aside={<span className="text-[12px]" style={{ color: C.muted }}>tap a person for their full profile</span>}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {PARTICIPANTS.map((p) => (
-              <div key={p.id} className="rounded-xl p-3.5 flex gap-3" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
+              <div
+                key={p.id}
+                onClick={() => openProfile(p.id)}
+                className="group rounded-xl p-3.5 flex gap-3 items-start cursor-pointer transition-colors"
+                style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}
+              >
                 <Avatar id={p.id} name={p.name} size={44} />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
@@ -244,12 +168,12 @@ export default function BeforeView() {
                       </span>
                     )}
                   </div>
-                  <div className="text-[12px]" style={{ color: C.muted }}>{p.role} · {p.entity}</div>
+                  <div className="text-[12px]" style={{ color: C.muted }}>{p.role} · {p.entityName}</div>
                   <div className="text-[12px] mt-1" style={{ color: C.detail }}>Owns: {p.owns}</div>
                   {p.ask && (
                     <button
                       type="button"
-                      onClick={() => askMajlis(`On ${p.entity}: ${p.ask}`)}
+                      onClick={(e) => { e.stopPropagation(); askMajlis(`On ${p.entity}: ${p.ask}`); }}
                       className="mt-2 flex items-start gap-1.5 text-left text-[12px] cursor-pointer hover:opacity-70"
                       style={{ color: C.accent }}
                     >
@@ -258,12 +182,13 @@ export default function BeforeView() {
                     </button>
                   )}
                 </div>
+                <ChevronRight size={16} strokeWidth={2} className="shrink-0 mt-0.5 transition-transform group-hover:translate-x-0.5" style={{ color: C.faint }} />
               </div>
             ))}
           </div>
         </Card>
 
-        <Card label="Meeting series" span={2}>
+        <Card label="Meeting series" span={2} icon={CalendarRange}>
           <div className="text-[12px] mb-4" style={{ color: C.muted }}>Today&rsquo;s steering committee sits in a string of related meetings.</div>
           <ol>
             {MEETINGS.map((m, i) => (
@@ -287,7 +212,7 @@ export default function BeforeView() {
           </ol>
         </Card>
 
-        <Card label="Prep checklist">
+        <Card label="Prep checklist" icon={ListChecks}>
           <ul className="space-y-2.5">
             {PREP.map((p, i) => (
               <li key={i}>
@@ -307,7 +232,7 @@ export default function BeforeView() {
           </ul>
         </Card>
 
-        <Card label="Likely questions">
+        <Card label="Likely questions" icon={MessageCircleQuestion}>
           <ul className="space-y-3">
             {LIKELY_QS.map((x, i) => (
               <li key={i}>

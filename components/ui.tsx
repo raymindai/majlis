@@ -130,20 +130,24 @@ export function RailLabel({ children }: { children: ReactNode }) {
   return <div className="text-[11px] font-semibold mb-2.5" style={{ color: C.faint }}>{children}</div>;
 }
 
-function Header({ label, aside }: { label: string; aside?: ReactNode }) {
+function Header({ label, aside, icon: Icon }: { label: string; aside?: ReactNode; icon?: LucideIcon }) {
   return (
     <div className="flex items-center gap-2.5 mb-4 pb-3 border-b" style={{ borderColor: C.line }}>
-      <span aria-hidden className="inline-block w-[3px] h-4 rounded-full shrink-0" style={{ background: C.accent }} />
+      {Icon ? (
+        <Icon size={15} strokeWidth={2} className="shrink-0" style={{ color: C.accent }} />
+      ) : (
+        <span aria-hidden className="inline-block w-[3px] h-4 rounded-full shrink-0" style={{ background: C.accent }} />
+      )}
       <h2 className="text-[13px] font-semibold tracking-[-0.01em]" style={{ color: C.ink }}>{label}</h2>
       {aside && <div className="ml-auto">{aside}</div>}
     </div>
   );
 }
 
-export function Section({ label, aside, children }: { label: string; aside?: ReactNode; children: ReactNode }) {
+export function Section({ label, aside, icon, children }: { label: string; aside?: ReactNode; icon?: LucideIcon; children: ReactNode }) {
   return (
     <section id={label.toLowerCase().replace(/[^a-z0-9]+/g, "-")} className="scroll-mt-4">
-      <Header label={label} aside={aside} />
+      <Header label={label} aside={aside} icon={icon} />
       {children}
     </section>
   );
@@ -155,11 +159,13 @@ export function Card({
   label,
   aside,
   span = 1,
+  icon,
   children,
 }: {
   label?: string;
   aside?: ReactNode;
   span?: 1 | 2;
+  icon?: LucideIcon;
   children: ReactNode;
 }) {
   const id = label ? label.toLowerCase().replace(/[^a-z0-9]+/g, "-") : undefined;
@@ -169,7 +175,7 @@ export function Card({
       className={`rounded-2xl p-6 scroll-mt-4 ${span === 2 ? "lg:col-span-2" : ""}`}
       style={{ background: C.surface, border: `1px solid ${C.line}`, boxShadow: C.shadow }}
     >
-      {label && <Header label={label} aside={aside} />}
+      {label && <Header label={label} aside={aside} icon={icon} />}
       {children}
     </section>
   );

@@ -4,6 +4,8 @@ import { useState, type ReactNode } from "react";
 import { resolveCitation, type Citation } from "@/lib/mock";
 import { C, StageSpine } from "@/components/ui";
 import { CitationContext } from "@/components/citation-context";
+import { ParticipantContext } from "@/components/participant-context";
+import ParticipantDrawer from "@/components/participant-drawer";
 import ThemeSwitcher from "@/components/theme-switcher";
 import ChatPanel from "@/components/chat-panel";
 import SelectionAsk from "@/components/selection-ask";
@@ -22,10 +24,12 @@ export default function AppShell({
   children: ReactNode;
 }) {
   const [openCite, setOpenCite] = useState<Citation | null>(null);
+  const [openParticipant, setOpenParticipant] = useState<string | null>(null);
   const drawer = openCite ? resolveCitation(openCite.sourceId, openCite.passageId) : null;
 
   return (
     <CitationContext.Provider value={{ open: setOpenCite }}>
+      <ParticipantContext.Provider value={{ open: setOpenParticipant }}>
       <div className="h-dvh flex flex-col" style={{ background: C.bg, color: C.ink, fontFamily: "var(--font-inter), system-ui, sans-serif" }}>
         {/* header */}
         <header className="shrink-0 border-b" style={{ borderColor: C.line, background: C.surface }}>
@@ -61,7 +65,7 @@ export default function AppShell({
           <div className="fixed inset-0 bg-black/30 z-40" onClick={() => setOpenCite(null)} />
           <aside className="fixed right-0 top-0 h-dvh w-full max-w-md p-6 overflow-y-auto shadow-2xl z-50" style={{ background: C.surface, color: C.ink }}>
             <div className="flex items-center justify-between mb-4">
-              <span className="text-[11px] uppercase" style={{ color: C.faint, letterSpacing: "0.1em" }}>Source</span>
+              <span className="text-[11px] font-semibold" style={{ color: C.faint }}>Source</span>
               <button type="button" onClick={() => setOpenCite(null)} className="text-[13px] cursor-pointer" style={{ color: C.muted }}>
                 Close ✕
               </button>
@@ -77,6 +81,8 @@ export default function AppShell({
         </>
       )}
       <SelectionAsk />
+      <ParticipantDrawer id={openParticipant} onClose={() => setOpenParticipant(null)} />
+      </ParticipantContext.Provider>
     </CitationContext.Provider>
   );
 }
