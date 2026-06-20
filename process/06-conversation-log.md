@@ -49,6 +49,10 @@ Session: 2026-06-19 → 2026-06-20.
 **User:** "let's push it to git first."
 **Claude:** committed corpus + process archive + grounding backbone locally (secrets verified out — `.env.local` gitignored/untracked); created a **private** GitHub repo and pushed `main` → github.com/raymindai/majlis.
 
+### Turn 23 — 2026-06-20 · Design pass (no caps, pills, scrollbars) + new direction
+**User (design):** improve element clarity; drop all-caps headers; stylize scrollbars. **User (new direction):** Before should show the *series* of meetings (not just one) + their relations; richer participant profiles so you ask the right people the right questions; During = live recording that generates insights / suggested questions.
+**Claude:** design pass — sentence-case headers with an accent tick (no all-caps anywhere), confidence + severity as tinted pills ("Blocker"/"At risk"), styled theme-aware scrollbars. Build clean; committed. Next: a meeting portfolio + relations + participant profiles in Before; live-recording + suggested-questions in During.
+
 ### Turn 22 — 2026-06-20 · Layout critique → card-grid center
 **User:** still unhappy — sections need better legibility/separation; the center still uses a narrow one-column style instead of the width.
 **Claude:** added a `Card` component (own surface/border/labelled header) and rebuilt the **Before** center as a **2-column grid that fills the width** (full-width hero + decision; the 3 exceptions side-by-side; prep + likely paired); widened the shell center (max-w-5xl). Build clean. Showing Before first to confirm the direction before converting During/After. (Background dev servers keep getting reaped between turns → asked the user to run their own `npm run dev`, which hot-reloads my edits live.)

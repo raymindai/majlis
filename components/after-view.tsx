@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { loadState, resetMeeting, writeToMemory, type MeetingState } from "@/lib/store";
 import { MEETING_META } from "@/lib/mock";
-import { C, ConfidenceBadge, Section } from "@/components/ui";
+import { C, ConfidenceBadge, RailLabel, Section } from "@/components/ui";
 import AppShell from "@/components/app-shell";
 
 const serif = { fontFamily: "var(--font-newsreader), Georgia, serif" };
@@ -29,7 +29,7 @@ export default function AfterView() {
   const leftRail = (
     <div className="space-y-6">
       <div>
-        <div className="text-[10px] uppercase mb-2" style={{ color: C.faint, letterSpacing: "0.12em" }}>Minutes</div>
+        <RailLabel>Minutes</RailLabel>
         <nav className="space-y-1 text-[13px]">
           {NAV.map((s) => (
             <a key={s} href={`#${s.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`} className="block hover:underline" style={{ color: C.muted }}>

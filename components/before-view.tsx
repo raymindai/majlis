@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { ATTENTION, BOTTOM_LINE, DECISION, MEETING_META, STEADY } from "@/lib/mock";
 import { loadState, type Commitment } from "@/lib/store";
-import { C, Card, CitationChip, ConfidenceBadge, severityColor, severityGlyph } from "@/components/ui";
+import { C, Card, CitationChip, ConfidenceBadge, RailLabel, SeverityPill, severityColor, severityGlyph } from "@/components/ui";
 import { useCitation } from "@/components/citation-context";
 import AppShell from "@/components/app-shell";
 
@@ -41,7 +41,7 @@ export default function BeforeView() {
   const leftRail = (
     <div className="space-y-6">
       <div>
-        <div className="text-[10px] uppercase mb-2" style={{ color: C.faint, letterSpacing: "0.12em" }}>Sections</div>
+        <RailLabel>Sections</RailLabel>
         <nav className="space-y-1 text-[13px]">
           {NAV.map((s) => (
             <a key={s} href={`#${s.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`} className="block hover:underline" style={{ color: C.muted }}>
@@ -51,7 +51,7 @@ export default function BeforeView() {
         </nav>
       </div>
       <div>
-        <div className="text-[10px] uppercase mb-2" style={{ color: C.faint, letterSpacing: "0.12em" }}>Roster</div>
+        <RailLabel>Roster</RailLabel>
         <ul className="space-y-1.5 text-[13px]">
           {ATTENTION.map((a) => (
             <li key={a.id} className="flex items-center gap-2">
@@ -103,7 +103,7 @@ export default function BeforeView() {
               <CitationChip key={i} sourceId={c.sourceId} onClick={() => open(c)} />
             ))}
             <span
-              className="inline-flex items-center gap-1.5 text-[11px] rounded px-2 py-0.5"
+              className="inline-flex items-center gap-1.5 text-[11px] rounded-full px-2 py-0.5"
               style={{ background: C.flagBg, color: C.unverified, border: `1px solid ${C.flagBorder}` }}
             >
               <span className="h-1.5 w-1.5 rounded-full" style={{ background: C.unverified }} />
@@ -122,15 +122,15 @@ export default function BeforeView() {
           <div className="mt-2 text-[13px]" style={{ color: C.muted }}>Hinges on → {DECISION.hingesOn.join(" · ")}</div>
         </Card>
 
-        <Card label="Needs attention" span={2} aside={<span className="text-[12px]" style={{ color: C.muted }}>{ATTENTION.length} of 5</span>}>
+        <Card label="Needs attention" span={2} aside={<span className="text-[12px]" style={{ color: C.muted }}>3 of 5 need action</span>}>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             {ATTENTION.map((a) => (
               <div key={a.id} className="rounded-lg p-3" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
-                <div className="flex items-center gap-2">
-                  <span aria-hidden style={{ color: severityColor[a.severity] }}>{severityGlyph[a.severity]}</span>
+                <div className="flex items-center gap-2 flex-wrap">
                   <span className="font-semibold text-[14px]">{a.id}</span>
+                  <SeverityPill severity={a.severity} />
                 </div>
-                <div className="text-[12px] mt-0.5" style={{ color: C.muted }}>{a.name}</div>
+                <div className="text-[12px] mt-1" style={{ color: C.muted }}>{a.name}</div>
                 <p className="text-[13px] leading-snug mt-2">{a.line}</p>
                 <div className="mt-2 flex flex-wrap items-center gap-1.5">
                   <ConfidenceBadge confidence={a.confidence} />
@@ -141,7 +141,7 @@ export default function BeforeView() {
               </div>
             ))}
           </div>
-          <div className="mt-3 text-[12px]" style={{ color: C.muted }}>▸ {STEADY.map((s) => `${s.id} — ${s.line}`).join("  ·  ")}</div>
+          <div className="mt-3 text-[12px]" style={{ color: C.muted }}>Also: {STEADY.map((s) => `${s.id} — ${s.line}`).join("  ·  ")}</div>
         </Card>
 
         <Card label="Prep checklist">

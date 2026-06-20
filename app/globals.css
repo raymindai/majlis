@@ -80,4 +80,22 @@ body {
 
 * {
   border-color: var(--c-line);
+  scrollbar-width: thin;
+  scrollbar-color: var(--c-line) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--c-line);
+  border-radius: 8px;
+  border: 2px solid var(--c-bg);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--c-faint);
 }

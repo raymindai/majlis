@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { addCommitment, loadState, type Commitment } from "@/lib/store";
 import { ATTENTION, MEETING_META } from "@/lib/mock";
-import { C, CitationChip, Section, severityColor, severityGlyph } from "@/components/ui";
+import { C, CitationChip, RailLabel, Section, severityColor, severityGlyph } from "@/components/ui";
 import { useCitation } from "@/components/citation-context";
 import AppShell from "@/components/app-shell";
 
@@ -65,7 +65,7 @@ export default function DuringView() {
   const leftRail = (
     <div className="space-y-6">
       <div>
-        <div className="text-[10px] uppercase mb-2" style={{ color: C.faint, letterSpacing: "0.12em" }}>Agenda</div>
+        <RailLabel>Agenda</RailLabel>
         <ol className="space-y-1 text-[13px]">
           {FEED.map((f, i) => (
             <li key={f.id} className="flex items-center gap-2" style={{ color: i < revealed ? C.ink : C.faint, fontWeight: i === revealed - 1 ? 600 : 400 }}>
@@ -80,7 +80,7 @@ export default function DuringView() {
         <div>Flags raised: <span className="font-semibold" style={{ color: flagsRaised ? C.unverified : C.ink }}>{flagsRaised}</span></div>
       </div>
       <div>
-        <div className="text-[10px] uppercase mb-2" style={{ color: C.faint, letterSpacing: "0.12em" }}>Watch-list</div>
+        <RailLabel>Watch-list</RailLabel>
         <ul className="space-y-1.5 text-[12px]">
           {ATTENTION.map((a) => (
             <li key={a.id} className="flex items-start gap-1.5">

@@ -47,7 +47,7 @@ export default function ChatPanel({ stage }: { stage: "before" | "during" | "aft
   return (
     <div className="flex flex-col min-h-0 h-full">
       <div className="shrink-0 px-4 py-3 border-b" style={{ borderColor: C.line }}>
-        <div className="text-[11px] uppercase font-medium" style={{ color: C.faint, letterSpacing: "0.12em" }}>Ask Majlis</div>
+        <div className="text-[13px] font-semibold" style={{ color: C.ink }}>Ask Majlis</div>
         <div className="text-[12px] mt-0.5" style={{ color: C.muted }}>Grounded in the committee pack — every answer cites its source.</div>
       </div>
 
