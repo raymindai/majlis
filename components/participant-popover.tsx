@@ -6,6 +6,7 @@ import { askMajlis } from "@/components/ask-bus";
 import { Avatar, deptFor, OrgBadge, StatusTag } from "@/components/rail";
 import { C } from "@/components/ui";
 import { FloatingWindow } from "@/components/floating-window";
+import { Gloss } from "@/components/gloss";
 import type { ParticipantPos } from "@/components/participant-context";
 
 const serif = { fontFamily: "var(--font-newsreader), Georgia, serif" };
@@ -48,7 +49,7 @@ export default function ParticipantPopover({ id, pos, onClose }: { id: string | 
           </div>
         </div>
         <div className="text-[12px] mt-2.5" style={{ color: C.detail }}>Owns {p.owns}</div>
-        {dept?.headline && <div className="text-[12px] mt-1 leading-snug" style={{ color: C.muted }}>{dept.headline}</div>}
+        {dept?.headline && <div className="text-[12px] mt-1 leading-snug" style={{ color: C.muted }}><Gloss>{dept.headline}</Gloss></div>}
       </div>
 
       {/* Contact */}
@@ -74,7 +75,7 @@ export default function ParticipantPopover({ id, pos, onClose }: { id: string | 
             <li key={i} className="flex items-start gap-2.5">
               <Icon size={15} strokeWidth={2} style={{ color: pledgeColor[pl.status], marginTop: 1 }} className="shrink-0" />
               <div className="min-w-0">
-                <div className="text-[13px] leading-snug">{pl.text}</div>
+                <div className="text-[13px] leading-snug"><Gloss>{pl.text}</Gloss></div>
                 <div className="text-[11px] mt-0.5" style={{ color: C.muted }}>{pledgeLabel[pl.status]}, {pl.due}</div>
               </div>
             </li>
@@ -84,7 +85,7 @@ export default function ParticipantPopover({ id, pos, onClose }: { id: string | 
 
       {/* Context */}
       <Lbl>In this programme</Lbl>
-      <p className="text-[12px] leading-snug" style={{ color: C.detail }}>{p.history}</p>
+      <p className="text-[12px] leading-snug" style={{ color: C.detail }}><Gloss>{p.history}</Gloss></p>
 
       {/* The one thing to ask */}
       {p.ask && (
@@ -97,7 +98,7 @@ export default function ParticipantPopover({ id, pos, onClose }: { id: string | 
           <MessageSquareQuote size={15} strokeWidth={2} style={{ color: C.accent, marginTop: 1 }} className="shrink-0" />
           <span className="text-[12px] leading-snug">
             <span className="font-semibold" style={{ color: C.accent }}>Ask {first}:</span>{" "}
-            <span style={{ color: C.detail }}>{p.ask}</span>
+            <span style={{ color: C.detail }}><Gloss>{p.ask}</Gloss></span>
           </span>
         </button>
       )}

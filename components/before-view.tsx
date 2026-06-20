@@ -22,6 +22,7 @@ import { Avatar, deptFor, MeetingContext, NavList, OrgBadge, StatusTag, TheRoom 
 import { useCitation } from "@/components/citation-context";
 import { useParticipant } from "@/components/participant-context";
 import MeetingPopover from "@/components/meeting-popover";
+import { Gloss } from "@/components/gloss";
 import AppShell from "@/components/app-shell";
 
 const serif = { fontFamily: "var(--font-newsreader), Georgia, serif" };
@@ -101,8 +102,8 @@ export default function BeforeView() {
         )}
 
         <Card label="The bottom line" span={2} icon={Target}>
-          <h1 style={serif} className="text-[30px] leading-tight">{BOTTOM_LINE.lead}</h1>
-          <p className="mt-3 text-[16px] leading-relaxed" style={{ color: C.detail }}>{BOTTOM_LINE.detail}</p>
+          <h1 style={serif} className="text-[30px] leading-tight"><Gloss>{BOTTOM_LINE.lead}</Gloss></h1>
+          <p className="mt-3 text-[16px] leading-relaxed" style={{ color: C.detail }}><Gloss>{BOTTOM_LINE.detail}</Gloss></p>
           <div className="mt-4 flex flex-wrap items-center gap-2">
             <ConfidenceBadge confidence={BOTTOM_LINE.confidence} />
             {BOTTOM_LINE.citations.map((c, i) => (
@@ -124,8 +125,8 @@ export default function BeforeView() {
         </Card>
 
         <Card label="Your decision" span={2} icon={Gavel}>
-          <div style={serif} className="text-[20px] leading-snug">{DECISION.text}</div>
-          <div className="mt-2 text-[13px]" style={{ color: C.muted }}>Hinges on → {DECISION.hingesOn.join(", ")}</div>
+          <div style={serif} className="text-[20px] leading-snug"><Gloss>{DECISION.text}</Gloss></div>
+          <div className="mt-2 text-[13px]" style={{ color: C.muted }}>Hinges on → <Gloss>{DECISION.hingesOn.join(", ")}</Gloss></div>
         </Card>
 
         <Card label="Needs attention" span={2} icon={TriangleAlert} aside={<span className="text-[12px]" style={{ color: C.muted }}>3 of 5 need action</span>}>
@@ -142,7 +143,7 @@ export default function BeforeView() {
                     <div className="text-[11px] leading-tight mt-0.5" style={{ color: C.muted }}>{deptFor(a.id)?.name ?? a.name}</div>
                   </div>
                 </div>
-                <p className="text-[13px] leading-snug mt-2.5">{a.line}</p>
+                <p className="text-[13px] leading-snug mt-2.5"><Gloss>{a.line}</Gloss></p>
                 <div className="mt-2 flex flex-wrap items-center gap-1.5">
                   <ConfidenceBadge confidence={a.confidence} />
                   {a.citations.map((c, i) => (
@@ -225,7 +226,7 @@ export default function BeforeView() {
                       <span className="text-[12px] w-20 shrink-0" style={{ color: C.faint }}>{m.when}</span>
                       <span className="font-semibold text-[14px]" style={{ color: m.current ? C.accent : C.ink }}>{m.title}</span>
                     </span>
-                    {m.relation && <span className="block text-[13px] mt-0.5 ml-[5.5rem]" style={{ color: C.detail }}>{m.relation}</span>}
+                    {m.relation && <span className="block text-[13px] mt-0.5 ml-[5.5rem]" style={{ color: C.detail }}><Gloss>{m.relation}</Gloss></span>}
                   </span>
                   <ChevronRight size={15} strokeWidth={2} className="shrink-0 mt-1 opacity-0 group-hover:opacity-100 transition-opacity" style={{ color: C.faint }} />
                 </button>

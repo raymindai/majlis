@@ -49,6 +49,10 @@ Session: 2026-06-19 → 2026-06-20.
 **User:** "let's push it to git first."
 **Claude:** committed corpus + process archive + grounding backbone locally (secrets verified out — `.env.local` gitignored/untracked); created a **private** GitHub repo and pushed `main` → github.com/raymindai/majlis.
 
+### Turn 40 — 2026-06-20 · Acronym glossary (hover for the full term)
+**User:** don't expect everyone to remember the acronyms; every acronym should hover to reveal the full words.
+**Claude:** added a `Gloss` component with a glossary (EDD/EKD/MTA/HSA/PSD, SSO, DGE, DG, PMO, AED, AOB, CIO) that auto-wraps known acronyms in any string with an `<abbr>` (native hover tooltip, subtle dotted underline). Applied across all rendered prose: the briefing hero, attention lines, decision, meeting relations; the live Q&A answers; the During transcript, notes, and suggestions; the meeting, participant, and source popovers; saved notes; and the After minutes. Entity square-badges already revealed the full name on hover. Build clean.
+
 ### Turn 39 — 2026-06-20 · Process microsite (deliverable #2)
 **Claude (autonomous):** built the case-study microsite at `/process`: hero, the case, the **decision spine** (D1, D4, D5, D8, D9, D10, D11 + the IA rule, each as fork -> chosen -> why -> what was not built), the three-stage lifecycle (linking into the prototype), the AI-craft pillars (grounded answers, honest uncertainty, auditable, AI-built assets), and an honest "what I would do next". Shares the editorial design system; linked from the app header. Build clean (`/process` static). This is the process-presentation deliverable, with the decision trees as its spine (D2).
 

@@ -6,6 +6,7 @@ import { ASK_EVENT } from "@/components/ask-bus";
 import { C, CitationChip, ConfidenceBadge } from "@/components/ui";
 import { useCitation } from "@/components/citation-context";
 import { addNote, loadNotes } from "@/lib/notes";
+import { Gloss } from "@/components/gloss";
 import type { Confidence } from "@/lib/corpus";
 
 type Claim = { text: string; confidence: Confidence; sourceId: string; passageId: string };
@@ -78,14 +79,14 @@ export default function ChatPanel({ stage }: { stage: "before" | "during" | "aft
             </div>
           ) : (
             <div key={i} className="text-[14px]">
-              {m.answer.summary && <p className="leading-relaxed mb-2">{m.answer.summary}</p>}
+              {m.answer.summary && <p className="leading-relaxed mb-2"><Gloss>{m.answer.summary}</Gloss></p>}
               {m.answer.notInMaterial ? (
                 <div className="text-[12px] rounded px-2 py-1 inline-block" style={{ background: C.surfaceAlt, color: C.muted }}>Not in the pack.</div>
               ) : (
                 <div className="space-y-2">
                   {m.answer.claims?.map((c, j) => (
                     <div key={j} className="rounded-lg p-2.5" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
-                      <p className="text-[13px] leading-relaxed">{c.text}</p>
+                      <p className="text-[13px] leading-relaxed"><Gloss>{c.text}</Gloss></p>
                       <div className="mt-1.5 flex items-center gap-2">
                         <ConfidenceBadge confidence={c.confidence} />
                         <CitationChip sourceId={c.sourceId} onClick={(pos) => open({ sourceId: c.sourceId, passageId: c.passageId }, pos)} />

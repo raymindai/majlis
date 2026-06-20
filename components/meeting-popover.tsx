@@ -6,6 +6,7 @@ import { MEETINGS } from "@/lib/meetings";
 import { FloatingWindow, type WinPos } from "@/components/floating-window";
 import { OrgBadge } from "@/components/rail";
 import { C } from "@/components/ui";
+import { Gloss } from "@/components/gloss";
 
 const serif = { fontFamily: "var(--font-newsreader), Georgia, serif" };
 
@@ -26,7 +27,7 @@ export default function MeetingPopover({ id, pos, onClose }: { id: string | null
     >
       <div style={serif} className="text-[17px] leading-snug">{m.title}</div>
       <div className="text-[12px] mt-1" style={{ color: C.muted }}>{m.kind}{m.current ? ", in progress" : `, ${m.when}`}</div>
-      <p className="text-[13px] mt-3 leading-relaxed" style={{ color: C.detail }}>{m.summary}</p>
+      <p className="text-[13px] mt-3 leading-relaxed" style={{ color: C.detail }}><Gloss>{m.summary}</Gloss></p>
 
       {m.details && (
         <>
@@ -43,7 +44,7 @@ export default function MeetingPopover({ id, pos, onClose }: { id: string | null
             <div className="mt-3 space-y-4">
               <div>
                 <div className="text-[11px] font-semibold mb-1" style={{ color: C.faint }}>Purpose</div>
-                <p className="text-[12px] leading-snug" style={{ color: C.detail }}>{m.details.purpose}</p>
+                <p className="text-[12px] leading-snug" style={{ color: C.detail }}><Gloss>{m.details.purpose}</Gloss></p>
               </div>
               <div>
                 <div className="text-[11px] font-semibold mb-1.5" style={{ color: C.faint }}>Key points</div>
@@ -51,7 +52,7 @@ export default function MeetingPopover({ id, pos, onClose }: { id: string | null
                   {m.details.points.map((p, i) => (
                     <li key={i} className="text-[12px] flex gap-2 leading-snug" style={{ color: C.detail }}>
                       <span className="shrink-0" style={{ color: C.faint }}>-</span>
-                      {p}
+                      <Gloss>{p}</Gloss>
                     </li>
                   ))}
                 </ul>

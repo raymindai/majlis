@@ -11,6 +11,7 @@ import { C, Card, CitationChip, RailLabel } from "@/components/ui";
 import { Avatar, MeetingContext, TheRoom } from "@/components/rail";
 import { useCitation } from "@/components/citation-context";
 import { useParticipant } from "@/components/participant-context";
+import { Gloss } from "@/components/gloss";
 import AppShell from "@/components/app-shell";
 
 type Cite = { sourceId: string; passageId: string };
@@ -149,7 +150,7 @@ export default function DuringView() {
                       {sp.role && <span className="block text-[11px]" style={{ color: C.muted }}>{sp.role}</span>}
                     </span>
                   )}
-                  <p className="text-[15px] mt-2 leading-relaxed">&ldquo;{item.text}&rdquo;</p>
+                  <p className="text-[15px] mt-2 leading-relaxed">&ldquo;<Gloss>{item.text}</Gloss>&rdquo;</p>
                   {item.note && (
                     <div className="mt-3 rounded-lg p-3 text-[13px]" style={item.note.kind === "flag" ? { background: C.flagBg, border: `1px solid ${C.flagBorder}` } : { background: C.surface, border: `1px solid ${C.line}` }}>
                       <div className="flex items-start gap-2">
@@ -162,7 +163,7 @@ export default function DuringView() {
                           <span style={{ color: item.note.kind === "flag" ? C.unverified : C.ink, fontWeight: 500 }}>
                             {item.note.kind === "flag" ? "Inconsistency: " : "Confirmed: "}
                           </span>
-                          <span style={{ color: C.detail }}>{item.note.text}</span>{" "}
+                          <span style={{ color: C.detail }}><Gloss>{item.note.text}</Gloss></span>{" "}
                           <span className="inline-block align-middle">
                             <CitationChip sourceId={item.note.cite.sourceId} onClick={(pos) => open(item.note!.cite, pos)} />
                           </span>
@@ -173,7 +174,7 @@ export default function DuringView() {
                   {item.suggest && (
                     <button type="button" onClick={() => askMajlis(item.suggest!)} className="mt-2 flex items-start gap-1.5 text-left text-[12px] cursor-pointer hover:opacity-70" style={{ color: C.accent }}>
                       <MessageSquareQuote size={13} strokeWidth={2} className="mt-0.5 shrink-0" />
-                      <span><span className="font-medium">Suggested:</span> <span style={{ color: C.detail }}>{item.suggest}</span></span>
+                      <span><span className="font-medium">Suggested:</span> <span style={{ color: C.detail }}><Gloss>{item.suggest}</Gloss></span></span>
                     </button>
                   )}
                   {item.capture && (
@@ -214,7 +215,7 @@ export default function DuringView() {
                   ) : (
                     <CircleCheck size={14} style={{ color: C.confirmed, marginTop: 1 }} className="shrink-0" />
                   )}
-                  <span style={{ color: C.detail }}>{ins.text}</span>
+                  <span style={{ color: C.detail }}><Gloss>{ins.text}</Gloss></span>
                 </div>
               ))}
               {suggestions.length > 0 && (
@@ -225,7 +226,7 @@ export default function DuringView() {
                       <li key={`q-${s.id}`}>
                         <button type="button" onClick={() => askMajlis(s.q)} className="text-left text-[13px] hover:opacity-70 cursor-pointer flex items-start gap-1.5" style={{ color: C.accent }}>
                           <MessageSquareQuote size={13} className="mt-0.5 shrink-0" />
-                          <span style={{ color: C.detail }}>{s.q}</span>
+                          <span style={{ color: C.detail }}><Gloss>{s.q}</Gloss></span>
                         </button>
                       </li>
                     ))}

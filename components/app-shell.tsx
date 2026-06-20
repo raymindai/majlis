@@ -9,6 +9,7 @@ import { ParticipantContext, type ParticipantPos } from "@/components/participan
 import ParticipantPopover from "@/components/participant-popover";
 import { FloatingWindow, type WinPos } from "@/components/floating-window";
 import NotesLayer from "@/components/notes-layer";
+import { Gloss } from "@/components/gloss";
 import ThemeSwitcher from "@/components/theme-switcher";
 import ChatPanel from "@/components/chat-panel";
 import SelectionAsk from "@/components/selection-ask";
@@ -78,7 +79,7 @@ export default function AppShell({
           <div style={serif} className="text-[18px] leading-snug">{src.title}</div>
           <div className="text-[12px] mt-1" style={{ color: C.muted }}>{src.date ?? "undated"}{src.authority ? `, ${src.authority}` : ""}</div>
           <p className="mt-3 text-[14px] leading-relaxed p-3 rounded-lg" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
-            {src.text || "This passage isn't in the loaded pack."}
+            <Gloss>{src.text || "This passage isn't in the loaded pack."}</Gloss>
           </p>
         </FloatingWindow>
       )}

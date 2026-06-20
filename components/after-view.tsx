@@ -9,6 +9,7 @@ import { PARTICIPANTS } from "@/lib/meetings";
 import { C, Card, ConfidenceBadge, RailLabel } from "@/components/ui";
 import { Avatar, MeetingContext, NavList, TheRoom } from "@/components/rail";
 import { useParticipant } from "@/components/participant-context";
+import { Gloss } from "@/components/gloss";
 import AppShell from "@/components/app-shell";
 
 const serif = { fontFamily: "var(--font-newsreader), Georgia, serif" };
@@ -86,7 +87,7 @@ export default function AfterView() {
             <ul className="space-y-2">
               {decisions.map((d) => (
                 <li key={d.id} className="rounded-lg p-4" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
-                  <p className="text-[15px]">{d.text}</p>
+                  <p className="text-[15px]"><Gloss>{d.text}</Gloss></p>
                   <div className="mt-1.5"><ConfidenceBadge confidence={d.confidence} /></div>
                 </li>
               ))}
@@ -102,7 +103,7 @@ export default function AfterView() {
                   <span className="font-semibold text-[14px]">{c.entity}</span>
                   <span className="text-[12px]" style={{ color: C.muted }}>due {c.due}</span>
                 </div>
-                <p className="text-[14px] mt-0.5">{c.text}</p>
+                <p className="text-[14px] mt-0.5"><Gloss>{c.text}</Gloss></p>
                 <div className="mt-1.5"><ConfidenceBadge confidence={c.confidence} /></div>
               </li>
             ))}
@@ -122,7 +123,7 @@ export default function AfterView() {
               {commitments.map((c) => (
                 <tr key={c.id} style={{ borderTop: `1px solid ${C.line}` }}>
                   <td className="py-2.5 font-semibold align-top whitespace-nowrap pr-3">{c.entity}</td>
-                  <td className="py-2.5 align-top pr-3">{c.text}</td>
+                  <td className="py-2.5 align-top pr-3"><Gloss>{c.text}</Gloss></td>
                   <td className="py-2.5 align-top whitespace-nowrap" style={{ color: C.muted }}>{c.due}</td>
                 </tr>
               ))}

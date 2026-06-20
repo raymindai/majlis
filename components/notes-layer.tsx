@@ -5,6 +5,7 @@ import { FloatingWindow } from "@/components/floating-window";
 import { loadNotes, NOTES_EVENT, removeNote, updateNotePos, type Note } from "@/lib/notes";
 import { C, CitationChip, ConfidenceBadge } from "@/components/ui";
 import { useCitation } from "@/components/citation-context";
+import { Gloss } from "@/components/gloss";
 import type { Confidence } from "@/lib/corpus";
 
 /** Renders every saved note as its own floating window. */
@@ -32,12 +33,12 @@ export default function NotesLayer() {
           initialH={300}
         >
           <div className="text-[13px] font-semibold leading-snug">{n.title}</div>
-          <p className="text-[13px] mt-2 leading-relaxed" style={{ color: C.detail }}>{n.summary}</p>
+          <p className="text-[13px] mt-2 leading-relaxed" style={{ color: C.detail }}><Gloss>{n.summary}</Gloss></p>
           {n.claims.length > 0 && (
             <div className="mt-3 pt-3 border-t space-y-2.5" style={{ borderColor: C.line }}>
               {n.claims.map((c, i) => (
                 <div key={i} className="text-[12px]">
-                  <div style={{ color: C.detail }} className="leading-snug">{c.text}</div>
+                  <div style={{ color: C.detail }} className="leading-snug"><Gloss>{c.text}</Gloss></div>
                   <div className="mt-1 flex items-center gap-1.5 flex-wrap">
                     <ConfidenceBadge confidence={c.confidence as Confidence} />
                     <CitationChip sourceId={c.sourceId} onClick={(pos) => open({ sourceId: c.sourceId, passageId: c.passageId }, pos)} />
