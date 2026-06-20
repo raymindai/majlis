@@ -98,6 +98,13 @@ Legend: ✅ locked · 🔶 open · 👤 user call · 🤖 Claude recommendation
 - **Brief-level Regenerate:** moved off the bottom-line card to a brief toolbar with the synthesis attribution, since it regenerates the whole brief.
 - **Ask Majlis identity:** branded header (gradient, a fal-generated backdrop, a girih star, a Majlis AI mark); the chat input can also save typed text as a note instead of asking.
 
+## D17 — Bilingual (Arabic) + a batch of product-detail fixes · ✅ 👤-requested
+- **Date:** 2026-06-20
+- **Arabic / bilingual:** a language selector (EN / ع) right of the theme switcher; Arabic sets `dir=rtl` and an Arabic UI font (no-flash inline script), and the live AI answers in the selected language (a shared `langSuffix` steers the brief, ask, observe, and minutes prompts; identifiers like sourceId/passageId and entity codes stay Latin so citations still resolve). The brief is cached per language. Chrome translated via a small i18n dictionary on the header controls, reviewer dock, chat panel, and the Before screen's inline labels. Remaining English (noted): in-card titles + table-of-contents anchors (need a stable-anchor refactor), During/After deep labels, and the synthetic corpus.
+- **Window persistence:** Desk hoisted into a shared `(stages)` route-group layout, so windows and notes opened in one stage survive navigation to the others. Per the Next docs, layout-hoisting beats Activity-based preservation here (Activity would leak the windows' z-index between hidden pages).
+- **Reasoning everywhere:** the decision now carries a rationale ("why this call, what risk it manages"), and every Needs-attention exception carries a concrete recommended action (so "3 of 5 need action" says what to do).
+- **Detail fixes:** confidence badges are now labelled "Confidence" (meaning was hidden in a click-tip); tooltips clamp to the viewport; theme switcher is sun/moon icons; a header Calendar opens the meeting series; attention cards use a flexible auto-fit grid; OrgBadge resolves loose labels (a live "MTA delivery") to a clean code.
+
 ## Earlier framing decisions (context)
 - **AI is the product, not a feature** — the scenario must make the AI's judgment the experience. 🤖
 - **Scope down to 1–2 capabilities built deeply.** 🤖
