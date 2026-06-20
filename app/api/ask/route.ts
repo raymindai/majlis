@@ -1,7 +1,9 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
+import { after } from "next/server";
 import { z } from "zod";
 import { corpusForPrompt } from "@/lib/corpus";
+import { logQa } from "@/lib/supabase";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -51,6 +53,7 @@ export async function POST(req: Request) {
       return Response.json({ error: "Missing question" }, { status: 400 });
     }
 
+    const started = Date.now();
     const message = await client.messages.parse({
       model: "claude-opus-4-8",
       max_tokens: 2048,
@@ -58,6 +61,7 @@ export async function POST(req: Request) {
       output_config: { format: zodOutputFormat(AnswerSchema) },
       messages: [{ role: "user", content: question }],
     });
+    const latencyMs = Date.now() - started;
 
     const answer =
       message.parsed_output ?? {
@@ -65,6 +69,9 @@ export async function POST(req: Request) {
         summary: "I couldn't produce a grounded answer to that.",
         claims: [],
       };
+
+    // Audit trail — logged after the response is sent, so it adds no latency.
+    after(() => logQa({ stage: typeof body?.stage === "string" ? body.stage : null, question, answer, latencyMs }));
 
     return Response.json(answer);
   } catch (err) {
