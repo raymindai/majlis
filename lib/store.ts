@@ -3,6 +3,7 @@
  * localStorage-backed so the loop works with no database. Swappable for Supabase later.
  */
 import type { Confidence } from "./corpus";
+import { supabaseBrowser } from "./supabase-browser";
 
 export interface Commitment {
   id: string;
@@ -44,7 +45,27 @@ export function addCommitment(c: Commitment) {
 }
 
 export function writeToMemory() {
-  saveState({ ...loadState(), writtenToMemory: true });
+  const s = loadState();
+  saveState({ ...s, writtenToMemory: true });
+  // Persist the loop to Supabase so commitments are durable, not just local.
+  persistCommitments(s.commitments).catch((e) => console.error("commitments persist failed:", e));
+}
+
+async function persistCommitments(commitments: Commitment[]) {
+  const db = supabaseBrowser();
+  if (!db || commitments.length === 0) return;
+  const rows = commitments.map((c) => ({
+    id: c.id,
+    cycle: "manarah-q2",
+    entity: c.entity,
+    text: c.text,
+    due: c.due,
+    confidence: c.confidence,
+    captured_at: c.capturedAt,
+    written_to_memory: true,
+  }));
+  const { error } = await db.from("commitments").upsert(rows, { onConflict: "id" });
+  if (error) console.error("commitments upsert:", error.message);
 }
 
 export function resetMeeting() {
