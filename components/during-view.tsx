@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { AudioLines, CircleCheck, ClipboardCheck, Lightbulb, MessageSquareQuote, TriangleAlert } from "lucide-react";
 import { addCommitment, loadState, type Commitment } from "@/lib/store";
@@ -15,48 +15,25 @@ import { Gloss } from "@/components/gloss";
 import AppShell from "@/components/app-shell";
 
 type Cite = { sourceId: string; passageId: string };
-type FeedItem = {
-  id: string;
-  speaker: string;
-  text: string;
-  note?: { kind: "confirm" | "flag"; text: string; cite: Cite };
-  suggest?: string;
-  capture?: Commitment;
+
+/** A scripted utterance. Majlis observes each one live against the record. */
+type FeedItem = { id: string; speaker: string; text: string };
+
+type Obs = {
+  stance: "confirms" | "contradicts" | "neutral";
+  note: string;
+  citation: Cite | null;
+  suggestedQuestion: string | null;
+  commitment: { entity: string; text: string; due: string } | null;
 };
 
 const FEED: FeedItem[] = [
-  {
-    id: "edd",
-    speaker: "EDD",
-    text: "SSO has slipped, and we now forecast completion at the end of Q3.",
-    note: { kind: "confirm", text: "Matches the record (R-07). It blocks HSA and EKD go-lives.", cite: { sourceId: "RISK", passageId: "R-07" } },
-    suggest: "Ask EDD for a firm recovery date. Is the identity-vendor contract signed?",
-    capture: { id: "c-edd-sso", entity: "EDD", text: "Deliver the shared SSO integration", due: "end of Q3", confidence: "confirmed", capturedAt: "during" },
-  },
-  {
-    id: "ekd",
-    speaker: "EKD",
-    text: "We're confident the Parent Portal is on track for the original timeline.",
-    note: { kind: "flag", text: "Inconsistent with the record: the Q2 report shows the portal slipped to August.", cite: { sourceId: "Q2-EKD", passageId: "slip" } },
-    suggest: "Ask EKD to reconcile that confidence with the August date on record.",
-  },
-  {
-    id: "mta",
-    speaker: "MTA",
-    text: "Our programme spend is well within budget.",
-    note: { kind: "flag", text: "The MTA budget conflicts across sources: Charter 40M vs Q2 report 52M.", cite: { sourceId: "Q2-MTA", passageId: "budget" } },
-    suggest: "Ask MTA which figure is correct, 40M or 52M, before the reallocation vote.",
-    capture: { id: "c-mta-budget", entity: "MTA", text: "Reconcile the 40M vs 52M budget figure", due: "within 2 weeks", confidence: "confirmed", capturedAt: "during" },
-  },
-  {
-    id: "chair",
-    speaker: "Chair",
-    text: "We'll defer the reallocation pending MTA's reconciliation.",
-    capture: { id: "d-defer", entity: "Committee", text: "Q2 reallocation deferred pending MTA reconciliation", due: "next session", confidence: "confirmed", capturedAt: "during" },
-  },
+  { id: "edd", speaker: "EDD", text: "SSO has slipped, and we now forecast completion at the end of Q3." },
+  { id: "ekd", speaker: "EKD", text: "We're confident the Parent Portal is on track for the original timeline." },
+  { id: "mta", speaker: "MTA", text: "Our programme spend is well within budget." },
+  { id: "chair", speaker: "Chair", text: "We'll defer the reallocation pending MTA's reconciliation." },
 ];
 
-/** Resolve a transcript speaker code to a name (+ profile id when it's a participant). */
 function speakerOf(code: string): { name: string; id?: string; role?: string } {
   const p = PARTICIPANTS.find((x) => x.id === code);
   if (p) return { name: p.name, id: p.id, role: `${p.role}, ${p.entity}` };
@@ -69,6 +46,8 @@ export default function DuringView() {
   const { open: openProfile } = useParticipant();
   const [revealed, setRevealed] = useState(1);
   const [captured, setCaptured] = useState<Commitment[]>([]);
+  const [observations, setObservations] = useState<Record<string, Obs | "loading">>({});
+  const requested = useRef<Set<string>>(new Set());
 
   useEffect(() => {
     const sync = () => setCaptured(loadState().commitments);
@@ -77,11 +56,37 @@ export default function DuringView() {
     return () => window.removeEventListener("majlis-store", sync);
   }, []);
 
+  // Observe each utterance live as it is revealed.
+  useEffect(() => {
+    const item = FEED[revealed - 1];
+    if (!item || requested.current.has(item.id)) return;
+    requested.current.add(item.id);
+    setObservations((o) => ({ ...o, [item.id]: "loading" }));
+    fetch("/api/observe", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ speaker: item.speaker, text: item.text }) })
+      .then((r) => r.json())
+      .then((obs: Obs & { error?: string }) => {
+        setObservations((o) => {
+          if (obs && !obs.error) return { ...o, [item.id]: obs };
+          const n = { ...o };
+          delete n[item.id];
+          return n;
+        });
+      })
+      .catch(() => {
+        setObservations((o) => {
+          const n = { ...o };
+          delete n[item.id];
+          return n;
+        });
+      });
+  }, [revealed]);
+
   const capturedIds = new Set(captured.map((c) => c.id));
   const shown = FEED.slice(0, revealed);
-  const flagsRaised = shown.filter((i) => i.note?.kind === "flag").length;
-  const insights = shown.filter((i) => i.note).map((i) => ({ id: i.id, kind: i.note!.kind, text: i.note!.text }));
-  const suggestions = shown.filter((i) => i.suggest).map((i) => ({ id: i.id, q: i.suggest! }));
+  const obsList = shown.map((i) => observations[i.id]).filter((o): o is Obs => !!o && o !== "loading");
+  const flagsRaised = obsList.filter((o) => o.stance === "contradicts").length;
+  const insights = obsList.filter((o) => o.stance !== "neutral");
+  const suggestions = obsList.map((o) => o.suggestedQuestion).filter((q): q is string => !!q);
 
   const leftRail = (
     <div className="space-y-6">
@@ -134,6 +139,7 @@ export default function DuringView() {
           <div className="space-y-3">
             {shown.map((item) => {
               const sp = speakerOf(item.speaker);
+              const obs = observations[item.id];
               return (
                 <div key={item.id} className="rounded-xl p-4" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
                   {sp.id ? (
@@ -151,44 +157,62 @@ export default function DuringView() {
                     </span>
                   )}
                   <p className="text-[15px] mt-2 leading-relaxed">&ldquo;<Gloss>{item.text}</Gloss>&rdquo;</p>
-                  {item.note && (
-                    <div className="mt-3 rounded-lg p-3 text-[13px]" style={item.note.kind === "flag" ? { background: C.flagBg, border: `1px solid ${C.flagBorder}` } : { background: C.surface, border: `1px solid ${C.line}` }}>
-                      <div className="flex items-start gap-2">
-                        {item.note.kind === "flag" ? (
-                          <TriangleAlert size={14} strokeWidth={2.25} style={{ color: C.unverified, marginTop: 1 }} className="shrink-0" />
-                        ) : (
-                          <CircleCheck size={14} strokeWidth={2.25} style={{ color: C.confirmed, marginTop: 1 }} className="shrink-0" />
-                        )}
-                        <div>
-                          <span style={{ color: item.note.kind === "flag" ? C.unverified : C.ink, fontWeight: 500 }}>
-                            {item.note.kind === "flag" ? "Inconsistency: " : "Confirmed: "}
-                          </span>
-                          <span style={{ color: C.detail }}><Gloss>{item.note.text}</Gloss></span>{" "}
-                          <span className="inline-block align-middle">
-                            <CitationChip sourceId={item.note.cite.sourceId} onClick={(pos) => open(item.note!.cite, pos)} />
-                          </span>
+
+                  {obs === "loading" && (
+                    <div className="mt-3 text-[12px] flex items-center gap-2" style={{ color: C.muted }}>
+                      <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: C.accent }} /> Majlis is checking the record…
+                    </div>
+                  )}
+                  {obs && obs !== "loading" && (
+                    <>
+                      {obs.stance !== "neutral" ? (
+                        <div className="mt-3 rounded-lg p-3 text-[13px]" style={obs.stance === "contradicts" ? { background: C.flagBg, border: `1px solid ${C.flagBorder}` } : { background: C.surface, border: `1px solid ${C.line}` }}>
+                          <div className="flex items-start gap-2">
+                            {obs.stance === "contradicts" ? (
+                              <TriangleAlert size={14} strokeWidth={2.25} style={{ color: C.unverified, marginTop: 1 }} className="shrink-0" />
+                            ) : (
+                              <CircleCheck size={14} strokeWidth={2.25} style={{ color: C.confirmed, marginTop: 1 }} className="shrink-0" />
+                            )}
+                            <div>
+                              <span style={{ color: obs.stance === "contradicts" ? C.unverified : C.ink, fontWeight: 500 }}>
+                                {obs.stance === "contradicts" ? "Inconsistency: " : "Confirmed: "}
+                              </span>
+                              <span style={{ color: C.detail }}><Gloss>{obs.note}</Gloss></span>{" "}
+                              {obs.citation && (
+                                <span className="inline-block align-middle">
+                                  <CitationChip sourceId={obs.citation.sourceId} onClick={(pos) => open(obs.citation!, pos)} />
+                                </span>
+                              )}
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </div>
-                  )}
-                  {item.suggest && (
-                    <button type="button" onClick={() => askMajlis(item.suggest!)} className="mt-2 flex items-start gap-1.5 text-left text-[12px] cursor-pointer hover:opacity-70" style={{ color: C.accent }}>
-                      <MessageSquareQuote size={13} strokeWidth={2} className="mt-0.5 shrink-0" />
-                      <span><span className="font-medium">Suggested:</span> <span style={{ color: C.detail }}><Gloss>{item.suggest}</Gloss></span></span>
-                    </button>
-                  )}
-                  {item.capture && (
-                    <div className="mt-3">
-                      <button
-                        type="button"
-                        disabled={capturedIds.has(item.capture.id)}
-                        onClick={() => addCommitment(item.capture!)}
-                        className="text-[12px] rounded-lg px-2.5 py-1 cursor-pointer disabled:opacity-50"
-                        style={{ background: C.chipBg, color: C.ink }}
-                      >
-                        {capturedIds.has(item.capture.id) ? "✓ Captured" : "+ Capture commitment"}
-                      </button>
-                    </div>
+                      ) : (
+                        obs.note && <p className="mt-3 text-[13px]" style={{ color: C.detail }}><Gloss>{obs.note}</Gloss></p>
+                      )}
+
+                      {obs.suggestedQuestion && (
+                        <button type="button" onClick={() => askMajlis(obs.suggestedQuestion!)} className="mt-2 flex items-start gap-1.5 text-left text-[12px] cursor-pointer hover:opacity-70" style={{ color: C.accent }}>
+                          <MessageSquareQuote size={13} strokeWidth={2} className="mt-0.5 shrink-0" />
+                          <span><span className="font-medium">Suggested:</span> <span style={{ color: C.detail }}><Gloss>{obs.suggestedQuestion}</Gloss></span></span>
+                        </button>
+                      )}
+
+                      {obs.commitment && (
+                        <div className="mt-3">
+                          <button
+                            type="button"
+                            disabled={capturedIds.has(`c-${item.id}`)}
+                            onClick={() =>
+                              addCommitment({ id: `c-${item.id}`, entity: obs.commitment!.entity, text: obs.commitment!.text, due: obs.commitment!.due, confidence: "confirmed", capturedAt: "during" })
+                            }
+                            className="text-[12px] rounded-lg px-2.5 py-1 cursor-pointer disabled:opacity-50"
+                            style={{ background: C.chipBg, color: C.ink }}
+                          >
+                            {capturedIds.has(`c-${item.id}`) ? "✓ Captured" : "+ Capture commitment"}
+                          </button>
+                        </div>
+                      )}
+                    </>
                   )}
                 </div>
               );
@@ -208,25 +232,25 @@ export default function DuringView() {
             <div className="text-[13px]" style={{ color: C.muted }}>Majlis surfaces insights and questions as the meeting progresses.</div>
           ) : (
             <div className="space-y-3">
-              {insights.map((ins) => (
-                <div key={`i-${ins.id}`} className="flex items-start gap-2 text-[13px]">
-                  {ins.kind === "flag" ? (
+              {insights.map((ins, idx) => (
+                <div key={`i-${idx}`} className="flex items-start gap-2 text-[13px]">
+                  {ins.stance === "contradicts" ? (
                     <TriangleAlert size={14} style={{ color: C.unverified, marginTop: 1 }} className="shrink-0" />
                   ) : (
                     <CircleCheck size={14} style={{ color: C.confirmed, marginTop: 1 }} className="shrink-0" />
                   )}
-                  <span style={{ color: C.detail }}><Gloss>{ins.text}</Gloss></span>
+                  <span style={{ color: C.detail }}><Gloss>{ins.note}</Gloss></span>
                 </div>
               ))}
               {suggestions.length > 0 && (
                 <div className="pt-3 border-t" style={{ borderColor: C.line }}>
                   <div className="text-[11px] font-semibold mb-2" style={{ color: C.faint }}>Questions you could ask</div>
                   <ul className="space-y-2">
-                    {suggestions.map((s) => (
-                      <li key={`q-${s.id}`}>
-                        <button type="button" onClick={() => askMajlis(s.q)} className="text-left text-[13px] hover:opacity-70 cursor-pointer flex items-start gap-1.5" style={{ color: C.accent }}>
+                    {suggestions.map((s, idx) => (
+                      <li key={`q-${idx}`}>
+                        <button type="button" onClick={() => askMajlis(s)} className="text-left text-[13px] hover:opacity-70 cursor-pointer flex items-start gap-1.5" style={{ color: C.accent }}>
                           <MessageSquareQuote size={13} className="mt-0.5 shrink-0" />
-                          <span style={{ color: C.detail }}><Gloss>{s.q}</Gloss></span>
+                          <span style={{ color: C.detail }}><Gloss>{s}</Gloss></span>
                         </button>
                       </li>
                     ))}

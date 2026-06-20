@@ -49,6 +49,10 @@ Session: 2026-06-19 → 2026-06-20.
 **User:** "let's push it to git first."
 **Claude:** committed corpus + process archive + grounding backbone locally (secrets verified out — `.env.local` gitignored/untracked); created a **private** GitHub repo and pushed `main` → github.com/raymindai/majlis.
 
+### Turn 45 — 2026-06-20 · During: live AI observer
+**User:** close the During/After gap (make the AI live), then proceed.
+**Claude:** built `/api/observe`, Claude assesses each utterance against the pack and returns structured output: stance (confirms / contradicts / neutral), a one-line note (what the record actually shows), a citation, a sharp suggested question, and any commitment or decision to capture. Refactored During so the transcript flags, insights, and captures are LIVE per utterance, with a "Majlis is checking the record" state as each is revealed, replacing the hardcoded notes. Verified live: EKD's "on track" claim is flagged as contradicting (cites Q2-EKD#slip with a pointed follow-up); the chair's deferral yields a captured decision. Audit-logged to qa_log (stage during). Build clean. Next: After, live minutes.
+
 ### Turn 44 — 2026-06-20 · Streamed chat + starter questions (Tier 1b + Tier 3)
 **Claude:** made the Q&A stream. `/api/ask` now uses `client.messages.stream` with the structured output and forwards text deltas; the chat reads the stream and renders the summary live with a typing cursor (extracting it from the partial JSON), then parses the full payload for the grounded claims (confidence + citations). Added clickable starter questions to the empty chat. Audit logging moved into the stream's completion. Verified live: the stream returns valid structured JSON (summary + 3 grounded claims). Build clean. Before's gaps are now closed across Tier 1 (live brief + streaming), Tier 2 (decision support, agenda, provenance), and Tier 3 (starters, friendly conflict chips). Ready for During/After.
 
