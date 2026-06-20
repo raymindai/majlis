@@ -82,6 +82,13 @@ Legend: ✅ locked · 🔶 open · 👤 user call · 🤖 Claude recommendation
 - **After:** the live minutes now also yield a one-line **risk outlook** and **"Your follow-ups"** (2 to 4 things the chair personally must chase before the next cycle); **"Copy minutes"** exports the whole record as plain text.
 - **Why:** the chair is a busy senior official; both stages needed to answer "what do I do now" and "what changed," not just transcribe.
 
+## D15 — Header as product chrome; reviewer guide as a distinct surface · ✅ 👤-requested
+- **Date:** 2026-06-20
+- **Header, three zones:** left = title, the meeting (session, room, and a situational join control: enter the room Before, "In session" During, "Concluded" After), and the stage spine; centre = the Headlines/Brief/Full zoom; right = theme and profile. Centred with equal flex sides so the zoom never overlaps the left cluster.
+- **Meeting info is first-class:** the old per-view free-form "meta" is gone. A new `MeetingBar` carries it in the header; the rail's meeting block now frames the wider programme (name, series position, scale) so the two complement rather than repeat.
+- **Reviewer's guide:** "For reviewers" moved out of the header to a fixed bottom-left panel with its own accent-ribbon chrome, deliberately not a draggable window, so it reads as a guide laid over the product. Replaced the old AboutWindow/AboutContext.
+- **Zoom reaches the rail:** the "In this brief" table of contents and "The room" now follow the zoom level too, so the sidebar stays honest about what is on screen.
+
 ## Earlier framing decisions (context)
 - **AI is the product, not a feature** — the scenario must make the AI's judgment the experience. 🤖
 - **Scope down to 1–2 capabilities built deeply.** 🤖
