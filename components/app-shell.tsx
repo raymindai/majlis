@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
+import Link from "next/link";
 import { resolveCitation, type Citation } from "@/lib/mock";
 import { C, StageSpine } from "@/components/ui";
 import { CitationContext } from "@/components/citation-context";
@@ -44,6 +45,7 @@ export default function AppShell({
             </div>
             <div className="flex items-center gap-4">
               {meta && <div className="text-[12px] text-right leading-tight" style={{ color: C.muted }}>{meta}</div>}
+              <Link href="/process" className="text-[12px] hover:opacity-70 hidden sm:block" style={{ color: C.muted }}>Case study</Link>
               <ThemeSwitcher />
             </div>
           </div>
