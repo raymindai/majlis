@@ -1,7 +1,8 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { CircleAlert, CircleCheck, CircleDashed, FileText, type LucideIcon, OctagonAlert, TriangleAlert } from "lucide-react";
-import { sourceLabel, type Confidence } from "@/lib/corpus";
+import { getSource, sourceLabel, type Confidence } from "@/lib/corpus";
+import { Tip } from "@/components/tip";
 
 /** All colours resolve through CSS variables (set per theme in globals.css). */
 export const C = {
@@ -58,46 +59,62 @@ export const severityGlyph: Record<string, string> = {
 
 const tint = (color: string, pct = 13) => `color-mix(in srgb, ${color} ${pct}%, transparent)`;
 
-/** A small tinted status tag with an icon, communicates state at a glance. */
-export function Pill({ color, icon: Icon, children }: { color: string; icon?: LucideIcon; children: ReactNode }) {
-  return (
-    <span
-      className="inline-flex items-center gap-1 text-[11px] font-medium rounded-full py-0.5 whitespace-nowrap"
-      style={{ background: tint(color), color, paddingLeft: Icon ? "0.45rem" : "0.6rem", paddingRight: "0.6rem" }}
-    >
+/** A small tinted status tag with an icon, communicates state at a glance. Hover for what it means. */
+export function Pill({ color, icon: Icon, tip, children }: { color: string; icon?: LucideIcon; tip?: ReactNode; children: ReactNode }) {
+  const cls = "inline-flex items-center gap-1 text-[11px] font-medium rounded-full py-0.5 whitespace-nowrap";
+  const style = { background: tint(color), color, paddingLeft: Icon ? "0.45rem" : "0.6rem", paddingRight: "0.6rem", cursor: tip ? "help" : undefined };
+  const inner = (
+    <>
       {Icon && <Icon size={12} strokeWidth={2.25} className="shrink-0" />}
       {children}
-    </span>
+    </>
   );
+  if (tip) return <Tip as="span" content={tip} className={cls} style={style}>{inner}</Tip>;
+  return <span className={cls} style={style}>{inner}</span>;
 }
+
+const confDef: Record<Confidence, string> = {
+  confirmed: "Backed by a current, authoritative source.",
+  likely: "Supported but caveated; a later source may supersede it.",
+  unverified: "Informal, undated, or conflicting across sources.",
+};
 
 export function ConfidenceBadge({ confidence }: { confidence: Confidence }) {
   return (
-    <Pill color={confColor[confidence]} icon={confIcon[confidence]}>
+    <Pill color={confColor[confidence]} icon={confIcon[confidence]} tip={confDef[confidence]}>
       {confLabel[confidence]}
     </Pill>
   );
 }
 
+const sevDef: Record<string, string> = {
+  blocker: "Blocks other entities' delivery; needs resolving now.",
+  "at-risk": "May slip; watch it closely.",
+};
+
 export function SeverityPill({ severity }: { severity: string }) {
   return (
-    <Pill color={severityColor[severity]} icon={severity === "blocker" ? OctagonAlert : TriangleAlert}>
+    <Pill color={severityColor[severity]} icon={severity === "blocker" ? OctagonAlert : TriangleAlert} tip={sevDef[severity]}>
       {severityLabel[severity]}
     </Pill>
   );
 }
 
 export function CitationChip({ sourceId, onClick }: { sourceId: string; onClick?: (pos: { x: number; y: number }) => void }) {
+  const s = getSource(sourceId);
+  const tip = s ? `${s.title}${s.date ? `, ${s.date}` : ", undated"}. Click to read it.` : "Open the source";
   return (
-    <button
-      type="button"
-      onClick={(e) => onClick?.({ x: e.clientX, y: e.clientY })}
-      className="inline-flex items-center gap-1 text-[11px] rounded-md border px-1.5 py-0.5 cursor-pointer hover:opacity-70"
-      style={{ borderColor: C.line, color: C.muted, background: C.surface }}
-    >
-      <FileText size={11} strokeWidth={2} style={{ color: C.faint }} />
-      {sourceLabel(sourceId)}
-    </button>
+    <Tip as="span" content={tip} className="inline-flex">
+      <button
+        type="button"
+        onClick={(e) => onClick?.({ x: e.clientX, y: e.clientY })}
+        className="inline-flex items-center gap-1 text-[11px] rounded-md border px-1.5 py-0.5 cursor-pointer hover:opacity-70"
+        style={{ borderColor: C.line, color: C.muted, background: C.surface }}
+      >
+        <FileText size={11} strokeWidth={2} style={{ color: C.faint }} />
+        {sourceLabel(sourceId)}
+      </button>
+    </Tip>
   );
 }
 

@@ -2,7 +2,6 @@
 
 import { useState, type CSSProperties, type ReactNode } from "react";
 import { createPortal } from "react-dom";
-import { C } from "@/components/ui";
 
 /**
  * A reliable hover tooltip: rendered to a portal at a fixed position, so it shows
@@ -40,8 +39,8 @@ export function Tip({
               left: pos.x,
               top: pos.y - 8,
               transform: "translate(-50%, -100%)",
-              background: C.ink,
-              color: C.bg,
+              background: "var(--c-ink)",
+              color: "var(--c-bg)",
               fontSize: "12px",
               lineHeight: 1.35,
               padding: "5px 9px",

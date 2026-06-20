@@ -49,6 +49,10 @@ Session: 2026-06-19 → 2026-06-20.
 **User:** "let's push it to git first."
 **Claude:** committed corpus + process archive + grounding backbone locally (secrets verified out — `.env.local` gitignored/untracked); created a **private** GitHub repo and pushed `main` → github.com/raymindai/majlis.
 
+### Turn 42 — 2026-06-20 · Stackable windows + interactive pills
+**User:** clicking a profile (or note) replaces the previous one; it should add a popup that stays until closed. And all chips and pills should have interactions and augmented info.
+**Claude:** (windows) turned AppShell into a window manager holding a stack of floating windows; profiles, sources, and meetings now each open as their own window that persists until closed and stack (with a slight cascade), instead of replacing the last. Meetings routed through a new `OpenMeetingContext` (named to avoid the rail's `MeetingContext` block). (pills) every pill explains itself on hover via `Tip`: ConfidenceBadge (what each level means), SeverityPill (blocker / at-risk), StatusTag (on-track / slipped / restricted), and CitationChip (full source title + date, "click to read"). Build clean.
+
 ### Turn 41 — 2026-06-20 · Real tooltips + full acronym coverage
 **User:** hovering only shows a question-mark cursor (native title is unreliable); and it still misses some acronyms.
 **Claude:** built a portal-based `Tip` (fixed-position, shows instantly, never clipped by overflow) and routed acronyms through it (replaced the native `<abbr title>`). Expanded coverage: `OrgBadge` now uses `Tip` (so every square code badge reveals its department name), and the remaining bare codes are wrapped, the room rail code, attention card id, During speaker "role, CODE", the After owner column and commitment entities, and the Before carried-over entity. Build clean. (Still queued from the same message: stackable windows + interactive pills.)

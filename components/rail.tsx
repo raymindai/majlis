@@ -50,13 +50,20 @@ export function Avatar({ id, name, size = 44 }: { id: string; name: string; size
   );
 }
 
-/** A status dot + label, always a DEPARTMENT's delivery status, never a person's. */
+const statusDef: Record<string, string> = {
+  "on-track": "Delivering to plan.",
+  "at-risk": "May miss its commitment; watch closely.",
+  slipped: "Has missed its committed date.",
+  restricted: "Status withheld from the shared pack.",
+};
+
+/** A status dot + label, always a DEPARTMENT's delivery status, never a person's. Hover for its meaning. */
 export function StatusTag({ status, className = "" }: { status: string; className?: string }) {
   return (
-    <span className={`inline-flex items-center gap-1 text-[11px] ${className}`} style={{ color: statusColor[status] }}>
+    <Tip as="span" content={statusDef[status] ?? statusLabel[status]} className={`inline-flex items-center gap-1 text-[11px] ${className}`} style={{ color: statusColor[status], cursor: "help" }}>
       <span className="h-1.5 w-1.5 rounded-full shrink-0" style={{ background: statusColor[status] }} />
       {statusLabel[status]}
-    </span>
+    </Tip>
   );
 }
 

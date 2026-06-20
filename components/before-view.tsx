@@ -21,7 +21,7 @@ import { C, Card, CitationChip, ConfidenceBadge, RailLabel, SeverityPill } from 
 import { Avatar, deptFor, MeetingContext, NavList, OrgBadge, StatusTag, TheRoom } from "@/components/rail";
 import { useCitation } from "@/components/citation-context";
 import { useParticipant } from "@/components/participant-context";
-import MeetingPopover from "@/components/meeting-popover";
+import { useOpenMeeting } from "@/components/meeting-context";
 import { Gloss } from "@/components/gloss";
 import AppShell from "@/components/app-shell";
 
@@ -54,7 +54,7 @@ export default function BeforeView() {
   const { open: openProfile } = useParticipant();
   const [prior, setPrior] = useState<Commitment[]>([]);
   const [checked, setChecked] = useState<Record<number, boolean>>({});
-  const [openMeeting, setOpenMeeting] = useState<{ id: string; pos: { x: number; y: number } } | null>(null);
+  const { open: openMeeting } = useOpenMeeting();
 
   useEffect(() => {
     const sync = () => {
@@ -218,7 +218,7 @@ export default function BeforeView() {
                 </div>
                 <button
                   type="button"
-                  onClick={(e) => setOpenMeeting({ id: m.id, pos: { x: e.clientX, y: e.clientY } })}
+                  onClick={(e) => openMeeting(m.id, { x: e.clientX, y: e.clientY })}
                   className={`group flex-1 flex items-start justify-between gap-2 text-left cursor-pointer rounded-lg px-2 -mx-2 pt-1 pb-4 hover:bg-[var(--c-surface-alt)] ${m.current ? "bg-[var(--c-surface-alt)]" : ""}`}
                 >
                   <span className="min-w-0">
@@ -266,7 +266,6 @@ export default function BeforeView() {
           </ul>
         </Card>
       </div>
-      <MeetingPopover id={openMeeting?.id ?? null} pos={openMeeting?.pos ?? null} onClose={() => setOpenMeeting(null)} />
     </AppShell>
   );
 }
