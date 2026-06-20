@@ -54,10 +54,10 @@ export const MEETING = {
 
 export const ENTITIES: Entity[] = [
   { id: "HSA", name: "Health Services Authority", scope: "Health services", status: "on-track", headline: "10/10 services migrated; met its March commitment" },
-  { id: "EKD", name: "Education & Knowledge Dept", scope: "Education incl. Parent Portal", status: "at-risk", headline: "Parent Portal slipped June → August; recovery only informally claimed" },
-  { id: "MTA", name: "Municipalities & Transport Authority", scope: "Municipal & transport services", status: "on-track", headline: "Delivering, but budget figures conflict across sources" },
+  { id: "EKD", name: "Education & Knowledge Department", scope: "Education incl. Parent Portal", status: "at-risk", headline: "Parent Portal slipped June → August; recovery only informally claimed" },
+  { id: "MTA", name: "Municipalities & Transport Authority", scope: "Municipal & transport services", status: "at-risk", headline: "Delivering, but budget figures conflict across sources (40M vs 52M)" },
   { id: "PSD", name: "Public Security Directorate", scope: "Security-related services", status: "restricted", headline: "Detailed status redacted from the shared pack" },
-  { id: "EDD", name: "Economic Development Dept", scope: "Licensing + shared SSO", status: "slipped", headline: "SSO integration slipped — a dependency blocking others" },
+  { id: "EDD", name: "Economic Development Department", scope: "Licensing + shared SSO", status: "slipped", headline: "SSO integration slipped — a dependency blocking others" },
 ];
 
 export const SOURCES: Source[] = [

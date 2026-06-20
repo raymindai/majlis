@@ -49,6 +49,14 @@ Session: 2026-06-19 → 2026-06-20.
 **User:** "let's push it to git first."
 **Claude:** committed corpus + process archive + grounding backbone locally (secrets verified out — `.env.local` gitignored/untracked); created a **private** GitHub repo and pushed `main` → github.com/raymindai/majlis.
 
+### Turn 32 — 2026-06-20 · Department-vs-person consistency (circle = person, square = org)
+**User:** department initials vs full names vs people's names are used without rules — you can't tell if it means the department or the person who represents it; the status sits on the person; the card doesn't differentiate information types; make org/person consistent across ALL surfaces (3 screenshots: room rail, attention cards, participant cards).
+**Claude:** established + documented the rule (`process/14`): a **person represents a department**; delivery status is the **department's**, never the person's. One visual language — **circle (face) = person, rounded-square code badge = department** — via shared primitives (`OrgBadge` / `OrgRow` / `PersonRow` / `StatusTag`, `deptFor`). Single source of truth for status (`ENTITIES`); removed status/entityName from people; fixed a latent MTA on-track/at-risk drift (now consistently at-risk → "3 of 5 need action" holds). Applied everywhere: room rail → person-led; Needs attention → org-led square badges; participant card → three zones (identity · represents · action, with "Ask them" a separated CTA); drawer → "Represents" block; During speaker → "role · CODE". Build clean.
+
+### Turn 31 — 2026-06-20 · Supabase Q&A audit log
+**User:** do Supabase — real persistence for the loop + a Q&A audit log.
+**Claude:** added a server-side Supabase layer (`lib/supabase.ts`, service-role, degrades gracefully if unconfigured/un-migrated) and a **Q&A audit log**: `/api/ask` records every grounded answer (question, summary, claims, confidence mix, latency, model) to `qa_log` via Next's `after()` so it adds no response latency — government-grade auditability. Schema in `supabase/migrations/0001_init.sql` (qa_log + commitments, RLS); one-time paste into the Supabase SQL editor to go live. Build clean. Loop (commitments) persistence still to wire.
+
 ### Turn 30 — 2026-06-20 · Rail + named participants on During & After
 **Claude:** carried the shared rail (MeetingContext + agenda/minutes nav + clickable room) to During and After. During: transcript speakers now show name + face + role and open the profile drawer; the agenda rail lists who speaks, by name. After: minutes nav is icon-led; distribution shows named recipient chips with faces, each opening the profile; Card headers icon-aligned with the nav. Build clean. Real names + click-through now reflected across all three stages. Next: Supabase persistence (the loop + a Q&A audit log); then contextual augmentation.
 

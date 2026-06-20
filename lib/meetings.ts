@@ -1,6 +1,12 @@
 /**
  * The DG's meeting portfolio + the people in today's room.
  * SYNTHETIC demo data — fictional, no real person implied.
+ *
+ * IA rule (see process/14): a PERSON represents a DEPARTMENT.
+ * - Person facts live here (name, role, contacts, track record, the question to ask).
+ * - Department facts — full name, delivery STATUS, scope — live in lib/corpus ENTITIES,
+ *   the single source of truth. Look them up by `entity` code. Status is never a
+ *   property of a person.
  */
 
 export type MeetingStatus = "past" | "today" | "upcoming";
@@ -85,10 +91,8 @@ export interface Participant {
   id: string; // entity code — also the avatar key (public/avatars/<id>.png)
   name: string;
   role: string;
-  entity: string; // entity code
-  entityName: string; // full organisation name
+  entity: string; // department code → join to lib/corpus ENTITIES for name + status
   owns: string;
-  status?: "on-track" | "at-risk" | "slipped" | "restricted";
   ask?: string; // the one question to put to this person
   email: string;
   phone: string;
@@ -106,9 +110,7 @@ export const PARTICIPANTS: Participant[] = [
     name: "Khalid Al Marri",
     role: "Director-General",
     entity: "EDD",
-    entityName: "Economic Development Department",
     owns: "the shared Single Sign-On",
-    status: "slipped",
     ask: "Give a firm SSO recovery date — is the identity-vendor contract signed?",
     email: "k.almarri@edd.gov.ae",
     phone: "+971 2 555 0143",
@@ -126,9 +128,7 @@ export const PARTICIPANTS: Participant[] = [
     name: "Aisha Al Hammadi",
     role: "Under-Secretary",
     entity: "EKD",
-    entityName: "Education & Knowledge Department",
     owns: "the Parent Portal",
-    status: "at-risk",
     ask: "Is the July soft-launch real, or is August the true date?",
     email: "a.alhammadi@ekd.gov.ae",
     phone: "+971 2 555 0177",
@@ -146,9 +146,7 @@ export const PARTICIPANTS: Participant[] = [
     name: "Omar Saif",
     role: "Programme Lead",
     entity: "MTA",
-    entityName: "Municipalities & Transport Authority",
     owns: "municipal services + the programme budget line",
-    status: "at-risk",
     ask: "Reconcile the 40M vs 52M figure before the reallocation vote.",
     email: "o.saif@mta.gov.ae",
     phone: "+971 2 555 0192",
@@ -166,9 +164,7 @@ export const PARTICIPANTS: Participant[] = [
     name: "Sara Khoury",
     role: "Chief Information Officer",
     entity: "HSA",
-    entityName: "Health Services Authority",
     owns: "health-services migration",
-    status: "on-track",
     ask: "Does EDD's SSO slip put either of your two pending go-lives at risk?",
     email: "s.khoury@hsa.gov.ae",
     phone: "+971 2 555 0120",
@@ -186,9 +182,7 @@ export const PARTICIPANTS: Participant[] = [
     name: "Liaison (restricted)",
     role: "Security liaison",
     entity: "PSD",
-    entityName: "Public Security Directorate",
     owns: "security-related services",
-    status: "restricted",
     ask: "Request the restricted status annex if it's material to the vote.",
     email: "(restricted)",
     phone: "(restricted)",

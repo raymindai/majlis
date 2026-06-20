@@ -18,7 +18,7 @@ import { MEETINGS, PARTICIPANTS } from "@/lib/meetings";
 import { loadState, type Commitment } from "@/lib/store";
 import { askMajlis } from "@/components/ask-bus";
 import { C, Card, CitationChip, ConfidenceBadge, RailLabel, SeverityPill } from "@/components/ui";
-import { Avatar, MeetingContext, NavList, statusColor, statusLabel, TheRoom } from "@/components/rail";
+import { Avatar, deptFor, MeetingContext, NavList, OrgBadge, StatusTag, TheRoom } from "@/components/rail";
 import { useCitation } from "@/components/citation-context";
 import { useParticipant } from "@/components/participant-context";
 import AppShell from "@/components/app-shell";
@@ -130,12 +130,17 @@ export default function BeforeView() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             {ATTENTION.map((a) => (
               <div key={a.id} className="rounded-xl p-3.5" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="font-semibold text-[14px]">{a.id}</span>
-                  <SeverityPill severity={a.severity} />
+                <div className="flex items-start gap-2.5">
+                  <OrgBadge code={a.id} size={34} />
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-semibold text-[14px]">{a.id}</span>
+                      <SeverityPill severity={a.severity} />
+                    </div>
+                    <div className="text-[11px] leading-tight mt-0.5" style={{ color: C.muted }}>{deptFor(a.id)?.name ?? a.name}</div>
+                  </div>
                 </div>
-                <div className="text-[12px] mt-1" style={{ color: C.muted }}>{a.name}</div>
-                <p className="text-[13px] leading-snug mt-2">{a.line}</p>
+                <p className="text-[13px] leading-snug mt-2.5">{a.line}</p>
                 <div className="mt-2 flex flex-wrap items-center gap-1.5">
                   <ConfidenceBadge confidence={a.confidence} />
                   {a.citations.map((c, i) => (
@@ -150,41 +155,49 @@ export default function BeforeView() {
 
         <Card label="Who's in the room" span={2} icon={Users} aside={<span className="text-[12px]" style={{ color: C.muted }}>tap a person for their full profile</span>}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {PARTICIPANTS.map((p) => (
-              <div
-                key={p.id}
-                onClick={() => openProfile(p.id)}
-                className="group rounded-xl p-3.5 flex gap-3 items-start cursor-pointer transition-colors"
-                style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}
-              >
-                <Avatar id={p.id} name={p.name} size={44} />
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="font-semibold text-[14px]">{p.name}</span>
-                    {p.status && (
-                      <span className="inline-flex items-center gap-1 text-[11px]" style={{ color: statusColor[p.status] }}>
-                        <span className="h-1.5 w-1.5 rounded-full" style={{ background: statusColor[p.status] }} />
-                        {statusLabel[p.status]}
-                      </span>
-                    )}
+            {PARTICIPANTS.map((p) => {
+              const dept = deptFor(p.entity);
+              return (
+                <div key={p.id} className="rounded-xl flex flex-col overflow-hidden" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
+                  {/* Identity — the person. Click → full profile. */}
+                  <button type="button" onClick={() => openProfile(p.id)} className="group flex items-center gap-3 p-3.5 text-left cursor-pointer hover:bg-[var(--c-surface)]">
+                    <Avatar id={p.id} name={p.name} size={44} />
+                    <div className="flex-1 min-w-0">
+                      <div className="font-semibold text-[14px] truncate">{p.name}</div>
+                      <div className="text-[12px] truncate" style={{ color: C.muted }}>{p.role}</div>
+                    </div>
+                    <ChevronRight size={16} strokeWidth={2} className="shrink-0 transition-transform group-hover:translate-x-0.5" style={{ color: C.faint }} />
+                  </button>
+                  {/* Represents — the department. Status lives here. */}
+                  <div className="px-3.5 pb-3">
+                    <div className="text-[11px] mb-1.5" style={{ color: C.faint }}>Represents</div>
+                    <div className="flex items-center gap-2.5">
+                      <OrgBadge code={p.entity} size={26} />
+                      <div className="flex-1 min-w-0">
+                        <div className="text-[13px] font-medium truncate">{dept?.name ?? p.entity}</div>
+                        <div className="text-[12px] truncate" style={{ color: C.detail }}>Owns {p.owns}</div>
+                      </div>
+                      {dept && <StatusTag status={dept.status} className="self-start shrink-0" />}
+                    </div>
                   </div>
-                  <div className="text-[12px]" style={{ color: C.muted }}>{p.role} · {p.entityName}</div>
-                  <div className="text-[12px] mt-1" style={{ color: C.detail }}>Owns: {p.owns}</div>
+                  {/* Action — separated CTA. */}
                   {p.ask && (
                     <button
                       type="button"
-                      onClick={(e) => { e.stopPropagation(); askMajlis(`On ${p.entity}: ${p.ask}`); }}
-                      className="mt-2 flex items-start gap-1.5 text-left text-[12px] cursor-pointer hover:opacity-70"
-                      style={{ color: C.accent }}
+                      onClick={() => askMajlis(`On ${p.entity}: ${p.ask}`)}
+                      className="flex items-start gap-2 text-left px-3.5 py-2.5 border-t cursor-pointer hover:bg-[var(--c-surface)]"
+                      style={{ borderColor: C.line }}
                     >
-                      <MessageSquareQuote size={13} strokeWidth={2} className="mt-0.5 shrink-0" />
-                      <span><span className="font-medium">Ask them:</span> <span style={{ color: C.detail }}>{p.ask}</span></span>
+                      <MessageSquareQuote size={14} strokeWidth={2} style={{ color: C.accent, marginTop: 1 }} className="shrink-0" />
+                      <span className="text-[12px] leading-snug">
+                        <span className="font-semibold" style={{ color: C.accent }}>Ask {p.name.split(" ")[0]}</span>
+                        <span style={{ color: C.detail }}> — {p.ask}</span>
+                      </span>
                     </button>
                   )}
                 </div>
-                <ChevronRight size={16} strokeWidth={2} className="shrink-0 mt-0.5 transition-transform group-hover:translate-x-0.5" style={{ color: C.faint }} />
-              </div>
-            ))}
+              );
+            })}
           </div>
         </Card>
 

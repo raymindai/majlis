@@ -58,7 +58,7 @@ const FEED: FeedItem[] = [
 /** Resolve a transcript speaker code to a name (+ profile id when it's a participant). */
 function speakerOf(code: string): { name: string; id?: string; role?: string } {
   const p = PARTICIPANTS.find((x) => x.id === code);
-  if (p) return { name: p.name, id: p.id, role: p.role };
+  if (p) return { name: p.name, id: p.id, role: `${p.role} · ${p.entity}` };
   if (code === "Chair") return { name: "You", role: "Chair · Programme Director-General" };
   return { name: code };
 }

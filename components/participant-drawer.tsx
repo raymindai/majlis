@@ -3,7 +3,7 @@
 import { CalendarRange, CircleAlert, CircleCheck, CircleDashed, Mail, MapPin, MessageSquareQuote, Phone, X } from "lucide-react";
 import { MEETINGS, PARTICIPANTS } from "@/lib/meetings";
 import { askMajlis } from "@/components/ask-bus";
-import { Avatar, statusColor, statusLabel } from "@/components/rail";
+import { Avatar, deptFor, OrgBadge, StatusTag } from "@/components/rail";
 import { C } from "@/components/ui";
 
 const serif = { fontFamily: "var(--font-newsreader), Georgia, serif" };
@@ -20,7 +20,8 @@ function Lbl({ children }: { children: string }) {
 export default function ParticipantDrawer({ id, onClose }: { id: string | null; onClose: () => void }) {
   const p = id ? PARTICIPANTS.find((x) => x.id === id) : null;
   if (!p) return null;
-  const restricted = p.status === "restricted";
+  const dept = deptFor(p.entity);
+  const restricted = dept?.status === "restricted";
   const first = p.name.split(" ")[0];
 
   return (
@@ -43,18 +44,18 @@ export default function ParticipantDrawer({ id, onClose }: { id: string | null; 
           </div>
         </div>
 
-        {/* entity + status + why-they're-here */}
+        {/* Represents — the department (status + situation live here, not on the person) */}
         <div className="mt-4 rounded-xl p-3.5" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
-          <div className="flex items-center justify-between gap-2">
-            <span className="font-semibold text-[13px]">{p.entityName}</span>
-            {p.status && (
-              <span className="inline-flex items-center gap-1 text-[11px] shrink-0" style={{ color: statusColor[p.status] }}>
-                <span className="h-1.5 w-1.5 rounded-full" style={{ background: statusColor[p.status] }} />
-                {statusLabel[p.status]}
-              </span>
-            )}
+          <div className="text-[11px] mb-2" style={{ color: C.faint }}>Represents</div>
+          <div className="flex items-start gap-2.5">
+            <OrgBadge code={p.entity} size={32} />
+            <div className="min-w-0 flex-1">
+              <div className="font-semibold text-[13px]">{dept?.name ?? p.entity}</div>
+              {dept && <StatusTag status={dept.status} className="mt-0.5" />}
+            </div>
           </div>
-          <div className="text-[12px] mt-1" style={{ color: C.detail }}>Owns {p.owns}</div>
+          <div className="text-[12px] mt-2.5" style={{ color: C.detail }}>Owns {p.owns}</div>
+          {dept?.headline && <div className="text-[12px] mt-1 leading-snug" style={{ color: C.muted }}>{dept.headline}</div>}
           <div className="text-[12px] mt-1.5 leading-snug" style={{ color: C.muted }}>{p.reportsVia}</div>
         </div>
 
