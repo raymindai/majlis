@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { type LucideIcon } from "lucide-react";
+import { ArrowRight, Layers, type LucideIcon } from "lucide-react";
+import { openAboutProgramme } from "@/components/programme-bus";
 import { ENTITIES, deptNameI18n, meetingFieldI18n } from "@/lib/corpus";
 import { MEETINGS, PARTICIPANTS } from "@/lib/meetings";
 import { MEETING_META } from "@/lib/mock";
@@ -132,13 +133,18 @@ export function MeetingContext() {
   // programme the session sits inside, so the two complement rather than repeat.
   return (
     <div className="rounded-xl p-3" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
-      <div className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: C.accent }}>{tr("programme")}</div>
-      <div className="text-[13px] font-semibold leading-tight mt-1">{meetingFieldI18n("programme", lang)}</div>
-      <div className="text-[11px] mt-0.5 leading-snug" style={{ color: C.muted }}>{meetingFieldI18n("subtitle", lang)}</div>
-      <div className="mt-2 pt-2 border-t text-[11px] space-y-0.5" style={{ borderColor: C.line, color: C.faint }}>
-        <div>{tr("sessionOf", { n: idx, m: MEETINGS.length })}</div>
-        <div>{tr("entitiesScale", { n: ENTITIES.length, b: Math.round(MEETING_META.totalBudgetAED / 1e6) })}</div>
+      <div className="inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wide" style={{ color: C.accent }}>
+        <Layers size={11} strokeWidth={2.25} /> {tr("initiativeInFocus")}
       </div>
+      <div className="text-[14px] font-semibold leading-tight mt-1">{meetingFieldI18n("programme", lang)}</div>
+      <div className="text-[11px] mt-1 leading-snug" style={{ color: C.muted }}>{tr("manarahTagline")}</div>
+      <div className="mt-2 pt-2 border-t text-[11px] space-y-0.5" style={{ borderColor: C.line, color: C.faint }}>
+        <div>{tr("entitiesScale", { n: ENTITIES.length, b: Math.round(MEETING_META.totalBudgetAED / 1e6) })}</div>
+        <div>{tr("sessionOf", { n: idx, m: MEETINGS.length })}</div>
+      </div>
+      <button type="button" onClick={openAboutProgramme} className="mt-2.5 inline-flex items-center gap-1 text-[11px] font-medium cursor-pointer hover:opacity-80" style={{ color: C.accent }}>
+        {tr("aboutManarah")} <ArrowRight size={12} strokeWidth={2} />
+      </button>
     </div>
   );
 }

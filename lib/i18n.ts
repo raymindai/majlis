@@ -171,6 +171,17 @@ const EN: Dict = {
   leave: "Leave",
   replayRecording: "Replay recording",
   replay: "Replay",
+  // programme anchor + about panel
+  initiativeInFocus: "Initiative in focus",
+  manarahTagline: "A cross-government programme unifying Abu Dhabi's digital public services across 5 entities.",
+  aboutManarah: "About Manarah",
+  manarahWhat: "It brings the five entities' services into one coherent digital layer: a shared sign-on, a unified parent portal, and joined-up municipal, health, and security services, so residents deal with one government rather than many.",
+  theEntities: "The entities",
+  governanceLabel: "Governance",
+  governanceText: "A steering committee chaired by the Programme Director-General meets each quarter. Today is session 4 of 6.",
+  whereMajlisFits: "Where Majlis fits",
+  whyMajlisText: "Majlis briefs the chair before, during, and after each steering session, grounded only in the committee pack. It would do the same for any programme of this kind.",
+  syntheticNote: "All names, figures, and documents here are synthetic, for this case study.",
 };
 
 const AR: Dict = {
@@ -316,6 +327,16 @@ const AR: Dict = {
   leave: "مغادرة",
   replayRecording: "إعادة تشغيل التسجيل",
   replay: "إعادة",
+  initiativeInFocus: "المبادرة قيد التركيز",
+  manarahTagline: "برنامج حكومي شامل يوحّد خدمات أبوظبي الحكومية الرقمية عبر 5 جهات.",
+  aboutManarah: "عن منارة",
+  manarahWhat: "يجمع منارة خدمات الجهات الخمس في طبقة رقمية موحّدة: دخول موحّد، وبوابة موحّدة لأولياء الأمور، وخدمات بلدية وصحية وأمنية مترابطة، ليتعامل المقيمون مع حكومة واحدة بدل عدة جهات.",
+  theEntities: "الجهات",
+  governanceLabel: "الحوكمة",
+  governanceText: "تجتمع لجنة توجيهية برئاسة المدير العام للبرنامج كل ربع سنة. اليوم هي الجلسة 4 من 6.",
+  whereMajlisFits: "أين يأتي مجلس",
+  whyMajlisText: "يُعِدّ مجلس إحاطةً للرئيس قبل كل جلسة توجيهية وأثناءها وبعدها، مستنداً إلى حزمة اللجنة فقط، وسيفعل المثل لأي برنامج من هذا النوع.",
+  syntheticNote: "جميع الأسماء والأرقام والمستندات هنا اصطناعية، لأغراض هذه الدراسة.",
 };
 
 const DICT: Record<Lang, Dict> = { en: EN, ar: AR };

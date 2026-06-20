@@ -14,6 +14,7 @@ import { FloatingWindow, type WinPos } from "@/components/floating-window";
 import NotesLayer from "@/components/notes-layer";
 import { Gloss } from "@/components/gloss";
 import ReviewerGuide from "@/components/reviewer-guide";
+import AboutProgramme from "@/components/about-programme";
 import SelectionAsk from "@/components/selection-ask";
 
 const serif = { fontFamily: "var(--font-newsreader), var(--font-arabic), Georgia, serif" };
@@ -115,6 +116,7 @@ export default function Desk({ children }: { children: ReactNode }) {
 
               <SelectionAsk />
               <NotesLayer />
+              <AboutProgramme />
               <ReviewerGuide />
           </OpenMeetingContext.Provider>
         </ParticipantContext.Provider>
