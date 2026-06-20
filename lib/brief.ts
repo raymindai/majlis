@@ -23,7 +23,7 @@ export interface Brief {
     hingesOn: string[];
     options: { label: string; consequence: string }[];
   };
-  attention: { entity: string; severity: "blocker" | "at-risk"; line: string; confidence: Confidence; citations: Cite[] }[];
+  attention: { entity: string; severity: "blocker" | "at-risk"; line: string; action: string; confidence: Confidence; citations: Cite[] }[];
   steady: { entity: string; line: string }[];
   agenda: { item: string; note: string }[];
   likelyQuestions: { q: string; line: string; citation: Cite | null }[];
@@ -52,7 +52,7 @@ export const MOCK_BRIEF: Brief = {
       { label: "Approve as proposed", consequence: "Moves money on a figure that conflicts across sources; hard to defend on audit." },
     ],
   },
-  attention: ATTENTION.map((a) => ({ entity: a.id, severity: a.severity, line: a.line, confidence: a.confidence, citations: a.citations })),
+  attention: ATTENTION.map((a) => ({ entity: a.id, severity: a.severity, line: a.line, action: a.action, confidence: a.confidence, citations: a.citations })),
   steady: STEADY.map((s) => ({ entity: s.id, line: s.line })),
   agenda: [
     { item: "Q2 status across the five entities", note: "Lead with the SSO blocker; it gates two go-lives." },

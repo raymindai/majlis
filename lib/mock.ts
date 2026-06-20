@@ -23,6 +23,7 @@ export interface AttentionItem {
   severity: "blocker" | "at-risk";
   confidence: Confidence;
   line: string;
+  action: string;
   citations: Citation[];
 }
 
@@ -64,6 +65,7 @@ export const ATTENTION: AttentionItem[] = [
     severity: "blocker",
     confidence: "confirmed",
     line: "SSO slipped to Q3, blocking HSA and EKD go-lives.",
+    action: "Press EDD for a firm SSO recovery date, and hold the HSA and EKD go-lives until it is committed.",
     citations: [
       { sourceId: "Q2-EDD", passageId: "slip" },
       { sourceId: "RISK", passageId: "R-07" },
@@ -75,6 +77,7 @@ export const ATTENTION: AttentionItem[] = [
     severity: "at-risk",
     confidence: "unverified",
     line: "Parent Portal slipped June→August, missing its March commitment; the informal July claim is unverified.",
+    action: "Ask EKD to confirm the August date on the record, and verify the informal July catch-up claim against a source before relying on it.",
     citations: [
       { sourceId: "Q2-EKD", passageId: "slip" },
       { sourceId: "PMO-NOTE", passageId: "claim" },
@@ -86,6 +89,7 @@ export const ATTENTION: AttentionItem[] = [
     severity: "at-risk",
     confidence: "unverified",
     line: "Budget 40 vs 52 across sources; reconcile before the vote.",
+    action: "Defer the reallocation vote until MTA reconciles the 40 vs 52 figure with the finance lead.",
     citations: [
       { sourceId: "CHARTER", passageId: "budget-mta" },
       { sourceId: "Q2-MTA", passageId: "budget" },

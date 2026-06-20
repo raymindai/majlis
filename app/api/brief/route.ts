@@ -45,6 +45,7 @@ export const BriefSchema = z.object({
         entity: z.string().describe("the entity code, e.g. EDD"),
         severity: z.enum(["blocker", "at-risk"]),
         line: z.string().describe("what needs attention, one sentence"),
+        action: z.string().describe("the concrete action the chair should take on this today, one imperative sentence (e.g. 'Press EDD for a firm SSO recovery date before approving any dependent go-live')"),
         confidence: conf,
         citations: z.array(cite),
       }),
@@ -70,6 +71,7 @@ Rules:
 - Use ONLY the pack. Never use outside knowledge. Ground every factual claim in a passage, citing its exact sourceId and passageId (e.g. sourceId "Q2-EKD", passageId "slip").
 - Confidence on each claim: "confirmed" (a current, authoritative source: the Q2 reports, the Risk Register, the Minutes), "likely" (supported but caveated, e.g. the Charter baseline which later reports may supersede), "unverified" (informal, undated, or conflicting across sources, e.g. the PMO note; figures that disagree).
 - Lead with the single dominant judgment. Rank the exceptions most urgent first. Where two sources conflict, flag it and mark it unverified, never silently pick one.
+- Every exception that needs attention must carry a concrete recommended action for the chair, not just a description of the problem.
 - The decision section must give a clear recommendation, the reasoning behind it (why this call over the alternatives, and what risk it manages), and the consequence of each option the chair could take.
 - Tone: terse, precise, deferential, audit-aware. No filler. Never use em-dashes or middle-dot separators; use commas, colons, or short sentences.
 

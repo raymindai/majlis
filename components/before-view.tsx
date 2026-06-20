@@ -223,7 +223,7 @@ export default function BeforeView() {
                     <SeverityPill severity={sev} />
                     <span className="text-[11px]" style={{ color: C.faint }}>{items.length} {items.length === 1 ? "entity" : "entities"}</span>
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <div className="grid grid-cols-[repeat(auto-fit,minmax(16rem,1fr))] gap-3">
                     {items.map((a) => {
                       const sources = a.citations.filter((c, i, arr) => arr.findIndex((x) => x.sourceId === c.sourceId) === i);
                       return (
@@ -235,6 +235,14 @@ export default function BeforeView() {
                             </div>
                           </div>
                           <p className="text-[13px] leading-snug mt-3"><Gloss>{a.line}</Gloss></p>
+                          {a.action && (
+                            <div className="mt-3 rounded-lg p-2.5" style={{ background: C.chipBg }}>
+                              <div className="text-[11px] font-semibold mb-1 inline-flex items-center gap-1" style={{ color: C.accent }}>
+                                <Sparkles size={11} strokeWidth={2.5} /> Recommended action
+                              </div>
+                              <p className="text-[13px] leading-snug" style={{ color: C.detail }}><Gloss>{a.action}</Gloss></p>
+                            </div>
+                          )}
                           {/* Evidence stays visible at every zoom: the claim is always linked to its source. */}
                           <div className="mt-3 pt-3 border-t" style={{ borderColor: C.line }}>
                             <div className="text-[11px] font-semibold mb-1.5" style={{ color: C.faint }}>Source</div>
@@ -261,7 +269,7 @@ export default function BeforeView() {
                   </span>
                   <span className="text-[11px]" style={{ color: C.faint }}>{brief.steady.length} {brief.steady.length === 1 ? "entity" : "entities"}</span>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="grid grid-cols-[repeat(auto-fit,minmax(15rem,1fr))] gap-3">
                   {brief.steady.map((s) => {
                     const dept = deptFor(s.entity);
                     return (
