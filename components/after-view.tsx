@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Database, FileText, Gavel, Handshake, ListChecks, Send, Sparkles } from "lucide-react";
+import { Copy, Database, FileText, Gavel, Handshake, ListChecks, Send, ShieldAlert, Sparkles, UserRoundCheck } from "lucide-react";
 import { loadState, resetMeeting, writeToMemory, type MeetingState } from "@/lib/store";
 import { MEETING_META } from "@/lib/mock";
 import { PARTICIPANTS } from "@/lib/meetings";
@@ -19,6 +19,7 @@ const NAV = [
   { label: "Decisions", icon: Gavel },
   { label: "New commitments", icon: Handshake },
   { label: "Action items", icon: ListChecks },
+  { label: "Your follow-ups", icon: UserRoundCheck },
   { label: "Distribution", icon: Send },
   { label: "Institutional memory", icon: Database },
 ];
@@ -28,8 +29,9 @@ export default function AfterView() {
   const { open: openSource } = useCitation();
   const [state, setState] = useState<MeetingState>({ commitments: [], writtenToMemory: false });
   const [sent, setSent] = useState(false);
-  const [minutes, setMinutes] = useState<{ headline: string; summary: string; distributionNote: string } | null>(null);
+  const [minutes, setMinutes] = useState<{ headline: string; summary: string; riskOutlook?: string; chairFollowUps?: string[]; distributionNote: string } | null>(null);
   const [drafting, setDrafting] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     const sync = () => setState(loadState());
@@ -41,6 +43,20 @@ export default function AfterView() {
   const decisions = state.commitments.filter((c) => c.entity === "Committee");
   const commitments = state.commitments.filter((c) => c.entity !== "Committee");
   const empty = state.commitments.length === 0;
+
+  // Export the minutes as plain text the chair can paste into mail or a memo.
+  const copyMinutes = () => {
+    const L: string[] = [];
+    if (minutes) L.push(minutes.headline, "", minutes.summary, "");
+    if (minutes?.riskOutlook) L.push(`Risk outlook: ${minutes.riskOutlook}`, "");
+    if (decisions.length) { L.push("DECISIONS"); decisions.forEach((d) => L.push(`- ${d.text}`)); L.push(""); }
+    if (commitments.length) { L.push("COMMITMENTS"); commitments.forEach((c) => L.push(`- ${c.entity}: ${c.text} (due ${c.due})`)); L.push(""); }
+    if (minutes?.chairFollowUps?.length) { L.push("CHAIR FOLLOW-UPS"); minutes.chairFollowUps.forEach((f) => L.push(`- ${f}`)); L.push(""); }
+    if (minutes?.distributionNote) L.push(minutes.distributionNote);
+    navigator.clipboard?.writeText(L.join("\n").trim());
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   // Draft the minutes live from what was captured, re-drafting if the set changes.
   const sig = state.commitments.map((c) => c.id).join(",");
@@ -106,11 +122,26 @@ export default function AfterView() {
   return (
     <AppShell stage="after" meta={meta} leftRail={leftRail}>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
-        <Card label="Minutes" span={2} icon={FileText}>
+        <Card
+          label="Minutes"
+          span={2}
+          icon={FileText}
+          aside={minutes && (
+            <button type="button" onClick={copyMinutes} className="inline-flex items-center gap-1.5 text-[12px] rounded-lg px-2.5 py-1 cursor-pointer hover:opacity-80" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}`, color: C.muted }}>
+              <Copy size={12} strokeWidth={2} /> {copied ? "Copied" : "Copy minutes"}
+            </button>
+          )}
+        >
           {minutes ? (
             <>
               <h1 style={serif} className="text-[24px] leading-snug"><Gloss>{minutes.headline}</Gloss></h1>
               <p className="mt-2 text-[15px] leading-relaxed" style={{ color: C.detail }}><Gloss>{minutes.summary}</Gloss></p>
+              {minutes.riskOutlook && (
+                <div className="mt-3 rounded-lg p-3 text-[13px] flex items-start gap-2" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
+                  <ShieldAlert size={14} strokeWidth={2.25} style={{ color: C.unverified, marginTop: 1 }} className="shrink-0" />
+                  <span style={{ color: C.detail }}><span className="font-medium" style={{ color: C.ink }}>Risk outlook: </span><Gloss>{minutes.riskOutlook}</Gloss></span>
+                </div>
+              )}
               <div className="mt-3 inline-flex items-center gap-1.5 text-[11px]" style={{ color: C.faint }}>
                 <Sparkles size={12} strokeWidth={2} /> Drafted by Majlis from what was captured{drafting ? ", updating…" : ""}
               </div>
@@ -176,6 +207,19 @@ export default function AfterView() {
             </tbody>
           </table>
         </Card>
+
+        {minutes?.chairFollowUps && minutes.chairFollowUps.length > 0 && (
+          <Card label="Your follow-ups" span={2} icon={UserRoundCheck} aside={<span className="text-[12px]" style={{ color: C.muted }}>What needs you, before the next cycle</span>}>
+            <ul className="space-y-2.5">
+              {minutes.chairFollowUps.map((f, i) => (
+                <li key={i} className="flex items-start gap-2.5 text-[14px]">
+                  <span className="mt-[7px] h-1.5 w-1.5 rounded-full shrink-0" style={{ background: C.accent }} />
+                  <span style={{ color: C.detail }}><Gloss>{f}</Gloss></span>
+                </li>
+              ))}
+            </ul>
+          </Card>
+        )}
 
         <Card label="Distribution" icon={Send}>
           {minutes?.distributionNote && (

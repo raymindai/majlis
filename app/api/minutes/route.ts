@@ -12,6 +12,8 @@ const client = new Anthropic(); // reads ANTHROPIC_API_KEY
 const MinutesSchema = z.object({
   headline: z.string().describe("one line capturing the meeting's outcome"),
   summary: z.string().describe("2 to 4 sentences of narrative minutes: what was decided and what each entity committed to, most important first"),
+  riskOutlook: z.string().describe("one sentence on how the programme's risk picture changed as a result of this meeting, for the chair"),
+  chairFollowUps: z.array(z.string()).describe("2 to 4 specific things the chair (Programme Director-General) personally needs to do or chase before the next cycle, each a short imperative line"),
   distributionNote: z.string().describe("a brief, formal cover note to accompany the minutes when circulated to participants"),
 });
 
@@ -20,6 +22,8 @@ const SYSTEM = `You are Majlis, drafting the official minutes of an Abu Dhabi go
 Write:
 - headline: one line capturing the meeting's outcome.
 - summary: 2 to 4 sentences of narrative minutes, what was decided and what each entity committed to, most important first. Use the entity codes as given.
+- riskOutlook: one sentence on how the programme's risk picture changed as a result of this meeting, written for the chair.
+- chairFollowUps: 2 to 4 specific things the chair personally needs to do or chase before the next cycle, each a short imperative line (for example, "Confirm MTA's reconciliation date with the finance lead"). These are the chair's own actions, not the entities' commitments.
 - distributionNote: a brief, formal cover note to accompany the minutes when circulated to participants.
 
 Tone: terse, precise, official, audit-aware. Use only the captured items below. Never use em-dashes or middle-dot separators.`;

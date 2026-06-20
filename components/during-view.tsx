@@ -2,8 +2,9 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { AudioLines, CircleCheck, ClipboardCheck, Lightbulb, MessageSquareQuote, TriangleAlert } from "lucide-react";
+import { AudioLines, CircleCheck, ClipboardCheck, Gavel, Lightbulb, MessageSquareQuote, Sparkles, TriangleAlert } from "lucide-react";
 import { addCommitment, loadState, type Commitment } from "@/lib/store";
+import { type Brief, BRIEF_CACHE_KEY, MOCK_BRIEF } from "@/lib/brief";
 import { MEETING_META } from "@/lib/mock";
 import { PARTICIPANTS } from "@/lib/meetings";
 import { askMajlis } from "@/components/ask-bus";
@@ -47,6 +48,7 @@ export default function DuringView() {
   const [revealed, setRevealed] = useState(1);
   const [captured, setCaptured] = useState<Commitment[]>([]);
   const [observations, setObservations] = useState<Record<string, Obs | "loading">>({});
+  const [brief, setBrief] = useState<Brief>(MOCK_BRIEF);
   const requested = useRef<Set<string>>(new Set());
 
   useEffect(() => {
@@ -54,6 +56,17 @@ export default function DuringView() {
     sync();
     window.addEventListener("majlis-store", sync);
     return () => window.removeEventListener("majlis-store", sync);
+  }, []);
+
+  // Reuse the brief the chair was just reading, so the decision in the room is the
+  // same one Before recommended. Falls back to the mock if Before was skipped.
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(BRIEF_CACHE_KEY);
+      if (raw) setBrief(JSON.parse(raw) as Brief);
+    } catch {
+      /* keep mock */
+    }
   }, []);
 
   // Observe each utterance live as it is revealed.
@@ -87,6 +100,14 @@ export default function DuringView() {
   const flagsRaised = obsList.filter((o) => o.stance === "contradicts").length;
   const insights = obsList.filter((o) => o.stance !== "neutral");
   const suggestions = obsList.map((o) => o.suggestedQuestion).filter((q): q is string => !!q);
+
+  // The decision the chair is steering toward, tracked from the brief to the moment it lands.
+  const decisionId = "decision-reallocation";
+  const chairText = FEED.find((f) => f.id === "chair")?.text ?? "";
+  const entitiesTotal = FEED.filter((f) => f.speaker !== "Chair").length;
+  const entitiesHeard = shown.filter((f) => f.speaker !== "Chair").length;
+  const chairSpoke = revealed >= FEED.length;
+  const decisionRecorded = capturedIds.has(decisionId);
 
   const leftRail = (
     <div className="space-y-6">
@@ -225,6 +246,60 @@ export default function DuringView() {
           ) : (
             <div className="mt-4 text-[12px]" style={{ color: C.muted }}>End of agenda.</div>
           )}
+        </Card>
+
+        <Card
+          label="Decision on the table"
+          span={2}
+          icon={Gavel}
+          aside={
+            <span className="text-[12px]" style={{ color: chairSpoke ? C.confirmed : C.muted }}>
+              {chairSpoke ? "Decided" : `${entitiesHeard} of ${entitiesTotal} inputs heard`}
+            </span>
+          }
+        >
+          <p className="text-[15px] font-medium leading-snug"><Gloss>{brief.decision.text}</Gloss></p>
+          {brief.decision.hingesOn.length > 0 && (
+            <p className="mt-1.5 text-[12px]" style={{ color: C.muted }}>Hinges on: <Gloss>{brief.decision.hingesOn.join("; ")}</Gloss></p>
+          )}
+
+          <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-2">
+            {brief.decision.options.map((o) => (
+              <div key={o.label} className="rounded-lg p-3" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
+                <div className="text-[13px] font-semibold"><Gloss>{o.label}</Gloss></div>
+                <div className="text-[12px] mt-0.5" style={{ color: C.muted }}><Gloss>{o.consequence}</Gloss></div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-3 rounded-lg p-3 text-[13px] flex items-start gap-2" style={{ background: C.chipBg }}>
+            <Sparkles size={14} strokeWidth={2} style={{ color: C.accent, marginTop: 1 }} className="shrink-0" />
+            <span style={{ color: C.detail }}><span className="font-medium" style={{ color: C.ink }}>Majlis recommends: </span><Gloss>{brief.decision.recommendation}</Gloss></span>
+          </div>
+
+          <div className="mt-3 pt-3 border-t flex items-center gap-3 flex-wrap" style={{ borderColor: C.line }}>
+            {!chairSpoke ? (
+              <span className="text-[12px]" style={{ color: C.muted }}>
+                {flagsRaised > 0 ? `${flagsRaised} inconsistency flagged so far. ` : ""}Majlis is gathering the inputs the vote depends on.
+              </span>
+            ) : decisionRecorded ? (
+              <span className="inline-flex items-center gap-1.5 text-[13px]" style={{ color: C.confirmed }}>
+                <CircleCheck size={15} strokeWidth={2.25} /> Decision recorded, it will appear in the minutes.
+              </span>
+            ) : (
+              <>
+                <span className="text-[13px]" style={{ color: C.ink }}>The chair ruled: <span style={{ color: C.detail }}>&ldquo;<Gloss>{chairText}</Gloss>&rdquo;</span></span>
+                <button
+                  type="button"
+                  onClick={() => addCommitment({ id: decisionId, entity: "Committee", text: chairText, due: "Next session", confidence: "confirmed", capturedAt: "during", citation: brief.bottomLine.citations[0] })}
+                  className="text-[12px] rounded-lg px-2.5 py-1 cursor-pointer"
+                  style={{ background: C.accent, color: C.onAccent }}
+                >
+                  Record decision
+                </button>
+              </>
+            )}
+          </div>
         </Card>
 
         <Card label="Insights & suggested questions" icon={Lightbulb}>
