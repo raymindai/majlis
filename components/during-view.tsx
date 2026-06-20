@@ -15,6 +15,7 @@ import { useDetail } from "@/components/detail-context";
 import { useLang } from "@/components/lang-context";
 import { Gloss } from "@/components/gloss";
 import RailCalendar from "@/components/rail-calendar";
+import MeetingTimer from "@/components/meeting-timer";
 import AppShell from "@/components/app-shell";
 
 type Cite = { sourceId: string; passageId: string };
@@ -118,21 +119,41 @@ export default function DuringView() {
       <MeetingContext />
       <div>
         <RailLabel>{tr("speakingOrder")}</RailLabel>
-        <ol className="space-y-1.5 text-[13px]">
+        <ol className="space-y-0.5 -mx-2">
           {FEED.map((f, i) => {
             const sp = speakerOf(f.speaker);
+            const done = i < revealed;
+            const current = i === revealed - 1;
             return (
-              <li key={f.id} className="flex items-center gap-2" style={{ color: i < revealed ? C.ink : C.faint, fontWeight: i === revealed - 1 ? 600 : 400 }}>
-                <span aria-hidden className="text-[9px]" style={{ color: i < revealed ? C.confirmed : C.line }}>{i < revealed ? "●" : "○"}</span>
-                <span className="truncate">{sp.name}</span>
+              <li key={f.id} className="flex items-start gap-2 rounded-lg px-2 py-1.5" style={current ? { background: C.surfaceAlt } : undefined}>
+                <span aria-hidden className="mt-1.5 w-1.5 h-1.5 rounded-full shrink-0" style={{ background: current ? C.unverified : done ? C.confirmed : C.line }} />
+                <span className="min-w-0 leading-tight flex-1">
+                  <span className="block text-[13px] truncate" style={{ color: done ? C.ink : C.faint, fontWeight: current ? 600 : 400 }}>{sp.name}</span>
+                  {sp.role && <span className="block text-[11px] truncate" style={{ color: C.faint }}><Gloss>{sp.role}</Gloss></span>}
+                </span>
+                {current && (
+                  <span className="inline-flex items-center gap-1 text-[10px] shrink-0 mt-0.5" style={{ color: C.unverified }}>
+                    <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: C.unverified }} />
+                    {tr("speakingNow")}
+                  </span>
+                )}
               </li>
             );
           })}
         </ol>
       </div>
-      <div className="text-[12px] space-y-1" style={{ color: C.muted }}>
-        <div>{tr("captured")}: <span className="font-semibold" style={{ color: C.ink }}>{captured.length}</span></div>
-        <div>{tr("flagsRaised")}: <span className="font-semibold" style={{ color: flagsRaised ? C.unverified : C.ink }}>{flagsRaised}</span></div>
+      <div>
+        <RailLabel>{tr("liveTally")}</RailLabel>
+        <div className="rounded-xl p-3 grid grid-cols-2 gap-3" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
+          <div>
+            <div className="text-[22px] font-semibold leading-none" style={{ color: C.ink }}>{captured.length}</div>
+            <div className="text-[11px] mt-1.5" style={{ color: C.muted }}>{tr("captured")}</div>
+          </div>
+          <div>
+            <div className="text-[22px] font-semibold leading-none" style={{ color: flagsRaised ? C.unverified : C.ink }}>{flagsRaised}</div>
+            <div className="text-[11px] mt-1.5" style={{ color: C.muted }}>{tr("flagsRaised")}</div>
+          </div>
+        </div>
       </div>
       <RailCalendar />
       <TheRoom />
@@ -147,9 +168,12 @@ export default function DuringView() {
           span={2}
           icon={AudioLines}
           aside={
-            <span className="inline-flex items-center gap-1.5 text-[12px]" style={{ color: C.unverified }}>
-              <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: C.unverified }} />
-              {tr("majlisListening")}
+            <span className="inline-flex items-center gap-2.5 text-[12px]">
+              <span className="inline-flex items-center gap-1.5 font-medium" style={{ color: C.unverified }}>
+                <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: C.unverified }} />
+                <MeetingTimer />
+              </span>
+              <span className="hidden sm:inline" style={{ color: C.muted }}>{tr("majlisListening")}</span>
             </span>
           }
         >
