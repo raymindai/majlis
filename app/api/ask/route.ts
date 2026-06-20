@@ -1,6 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
-import { after } from "next/server";
 import { z } from "zod";
 import { corpusForPrompt } from "@/lib/corpus";
 import { logQa } from "@/lib/supabase";
@@ -11,12 +10,8 @@ export const maxDuration = 60;
 const client = new Anthropic(); // reads ANTHROPIC_API_KEY
 
 const AnswerSchema = z.object({
-  notInMaterial: z
-    .boolean()
-    .describe("true if the committee pack does not contain the answer"),
-  summary: z
-    .string()
-    .describe("a direct one or two sentence answer for a time-pressured official; empty if notInMaterial"),
+  notInMaterial: z.boolean().describe("true if the committee pack does not contain the answer"),
+  summary: z.string().describe("a direct one or two sentence answer for a time-pressured official; empty if notInMaterial"),
   claims: z
     .array(
       z.object({
@@ -53,28 +48,45 @@ export async function POST(req: Request) {
     if (!question || typeof question !== "string") {
       return Response.json({ error: "Missing question" }, { status: 400 });
     }
-
+    const stage = typeof body?.stage === "string" ? body.stage : null;
     const started = Date.now();
-    const message = await client.messages.parse({
+
+    // Stream the structured answer. The client renders the summary as it arrives,
+    // then parses the full JSON for the grounded claims (confidence + citations).
+    const stream = client.messages.stream({
       model: "claude-opus-4-8",
       max_tokens: 2048,
       system: SYSTEM,
       output_config: { format: zodOutputFormat(AnswerSchema) },
       messages: [{ role: "user", content: question }],
     });
-    const latencyMs = Date.now() - started;
 
-    const answer =
-      message.parsed_output ?? {
-        notInMaterial: true,
-        summary: "I couldn't produce a grounded answer to that.",
-        claims: [],
-      };
+    const encoder = new TextEncoder();
+    const rs = new ReadableStream<Uint8Array>({
+      async start(controller) {
+        let buf = "";
+        stream.on("text", (delta: string) => {
+          buf += delta;
+          controller.enqueue(encoder.encode(delta));
+        });
+        try {
+          await stream.finalMessage();
+          let answer: { notInMaterial?: boolean; summary?: string; claims?: { confidence: string }[] };
+          try {
+            answer = JSON.parse(buf);
+          } catch {
+            answer = { notInMaterial: true, summary: "", claims: [] };
+          }
+          await logQa({ stage, question, answer, latencyMs: Date.now() - started }).catch(() => {});
+        } catch (e) {
+          console.error("ask stream error:", e);
+        } finally {
+          controller.close();
+        }
+      },
+    });
 
-    // Audit trail, logged after the response is sent, so it adds no latency.
-    after(() => logQa({ stage: typeof body?.stage === "string" ? body.stage : null, question, answer, latencyMs }));
-
-    return Response.json(answer);
+    return new Response(rs, { headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "no-store" } });
   } catch (err) {
     console.error("ask route error:", err);
     return Response.json({ error: "assistant_error" }, { status: 500 });
