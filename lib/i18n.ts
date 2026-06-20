@@ -117,7 +117,7 @@ const EN: Dict = {
   tierBriefTip: "Shown from the Brief zoom",
   openSource: "Open the source document",
   // during
-  speakingOrder: "Speaking order",
+  speakingOrder: "Speakers",
   nextSpeaker: "Next speaker",
   endOfAgenda: "End of agenda.",
   captured: "Captured",
@@ -277,7 +277,7 @@ const AR: Dict = {
   tierFullTip: "يظهر في التكبير الكامل",
   tierBriefTip: "يظهر من تكبير الموجز",
   openSource: "افتح المستند المصدر",
-  speakingOrder: "ترتيب المتحدثين",
+  speakingOrder: "المتحدثون",
   nextSpeaker: "المتحدث التالي",
   endOfAgenda: "نهاية جدول الأعمال.",
   captured: "المرصود",

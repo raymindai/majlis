@@ -179,7 +179,7 @@ export default function DuringView() {
       <div>
         <RailLabel>{tr("speakingOrder")}</RailLabel>
         <ol className="space-y-0.5 -mx-2">
-          {FEED.map((f, i) => {
+          {FEED.slice(0, revealed).map((f, i) => {
             const sp = speakerOf(f.speaker);
             const done = i < revealed;
             const current = i === revealed - 1;
