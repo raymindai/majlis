@@ -49,6 +49,9 @@ Session: 2026-06-19 → 2026-06-20.
 **User:** "let's push it to git first."
 **Claude:** committed corpus + process archive + grounding backbone locally (secrets verified out — `.env.local` gitignored/untracked); created a **private** GitHub repo and pushed `main` → github.com/raymindai/majlis.
 
+### Turn 46 — 2026-06-20 · After: live AI minutes
+**Claude:** built `/api/minutes`, Claude drafts the minutes from the captured decisions and commitments as structured output: a headline, a 2 to 4 sentence narrative summary, and a formal distribution cover note. After now drafts the minutes live (re-drafting if the captured set changes), shows a "Drafted by Majlis" mark, and uses the AI cover note in the Distribution card. Verified live (clean headline + narrative + note). Build clean. **All three stages are now genuinely live AI:** Before (brief synthesis + streamed Q&A), During (utterance observer), After (minutes draft). The During/After gap is closed.
+
 ### Turn 45 — 2026-06-20 · During: live AI observer
 **User:** close the During/After gap (make the AI live), then proceed.
 **Claude:** built `/api/observe`, Claude assesses each utterance against the pack and returns structured output: stance (confirms / contradicts / neutral), a one-line note (what the record actually shows), a citation, a sharp suggested question, and any commitment or decision to capture. Refactored During so the transcript flags, insights, and captures are LIVE per utterance, with a "Majlis is checking the record" state as each is revealed, replacing the hardcoded notes. Verified live: EKD's "on track" claim is flagged as contradicting (cites Q2-EKD#slip with a pointed follow-up); the chair's deferral yields a captured decision. Audit-logged to qa_log (stage during). Build clean. Next: After, live minutes.

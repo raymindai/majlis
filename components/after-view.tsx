@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Database, Gavel, Handshake, ListChecks, Send } from "lucide-react";
+import { Database, FileText, Gavel, Handshake, ListChecks, Send, Sparkles } from "lucide-react";
 import { loadState, resetMeeting, writeToMemory, type MeetingState } from "@/lib/store";
 import { MEETING_META } from "@/lib/mock";
 import { PARTICIPANTS } from "@/lib/meetings";
@@ -26,6 +26,8 @@ export default function AfterView() {
   const { open: openProfile } = useParticipant();
   const [state, setState] = useState<MeetingState>({ commitments: [], writtenToMemory: false });
   const [sent, setSent] = useState(false);
+  const [minutes, setMinutes] = useState<{ headline: string; summary: string; distributionNote: string } | null>(null);
+  const [drafting, setDrafting] = useState(false);
 
   useEffect(() => {
     const sync = () => setState(loadState());
@@ -37,6 +39,31 @@ export default function AfterView() {
   const decisions = state.commitments.filter((c) => c.entity === "Committee");
   const commitments = state.commitments.filter((c) => c.entity !== "Committee");
   const empty = state.commitments.length === 0;
+
+  // Draft the minutes live from what was captured, re-drafting if the set changes.
+  const sig = state.commitments.map((c) => c.id).join(",");
+  useEffect(() => {
+    if (!sig) {
+      setMinutes(null);
+      return;
+    }
+    let cancelled = false;
+    setDrafting(true);
+    const items = state.commitments.map((c) => ({ entity: c.entity, text: c.text, due: c.due, kind: c.entity === "Committee" ? "decision" : "commitment" }));
+    fetch("/api/minutes", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ items }) })
+      .then((r) => r.json())
+      .then((m) => {
+        if (!cancelled && m && !m.error) setMinutes(m);
+      })
+      .catch(() => {})
+      .finally(() => {
+        if (!cancelled) setDrafting(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sig]);
 
   const leftRail = (
     <div className="space-y-6">
@@ -77,10 +104,21 @@ export default function AfterView() {
   return (
     <AppShell stage="after" meta={meta} leftRail={leftRail}>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
-        <div className="lg:col-span-2">
-          <h1 style={serif} className="text-[26px] leading-snug">Q2 Steering Committee outcomes</h1>
-          <p className="mt-1 text-[15px]" style={{ color: C.muted }}>Drafted from what Majlis captured in the room.</p>
-        </div>
+        <Card label="Minutes" span={2} icon={FileText}>
+          {minutes ? (
+            <>
+              <h1 style={serif} className="text-[24px] leading-snug"><Gloss>{minutes.headline}</Gloss></h1>
+              <p className="mt-2 text-[15px] leading-relaxed" style={{ color: C.detail }}><Gloss>{minutes.summary}</Gloss></p>
+              <div className="mt-3 inline-flex items-center gap-1.5 text-[11px]" style={{ color: C.faint }}>
+                <Sparkles size={12} strokeWidth={2} /> Drafted by Majlis from what was captured{drafting ? ", updating…" : ""}
+              </div>
+            </>
+          ) : (
+            <div className="text-[14px] flex items-center gap-2 py-2" style={{ color: C.muted }}>
+              <span className="h-2 w-2 rounded-full animate-pulse" style={{ background: C.accent }} /> Majlis is drafting the minutes…
+            </div>
+          )}
+        </Card>
 
         {decisions.length > 0 && (
           <Card label="Decisions" icon={Gavel}>
@@ -132,6 +170,11 @@ export default function AfterView() {
         </Card>
 
         <Card label="Distribution" icon={Send}>
+          {minutes?.distributionNote && (
+            <div className="text-[13px] leading-snug mb-3 rounded-lg p-3" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}`, color: C.detail }}>
+              <Gloss>{minutes.distributionNote}</Gloss>
+            </div>
+          )}
           <div className="text-[11px] font-semibold mb-2.5" style={{ color: C.faint }}>Recipients</div>
           <div className="flex flex-wrap gap-2">
             {PARTICIPANTS.map((p) => (
