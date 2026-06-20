@@ -1,7 +1,7 @@
 "use client";
 
 import { type ReactNode } from "react";
-import { C, StageSpine } from "@/components/ui";
+import { C } from "@/components/ui";
 import MeetingBar from "@/components/meeting-bar";
 import DetailControl from "@/components/detail-control";
 import UserMenu from "@/components/user-menu";
@@ -33,8 +33,6 @@ export default function AppShell({
             <span style={serif} className="text-xl shrink-0">Majlis</span>
             <span className="h-6 w-px shrink-0" style={{ background: C.line }} />
             <MeetingBar stage={stage} />
-            <span className="h-6 w-px shrink-0 hidden lg:block" style={{ background: C.line }} />
-            <div className="hidden lg:block"><StageSpine active={stage} /></div>
           </div>
 
           <div className="shrink-0 hidden md:block">

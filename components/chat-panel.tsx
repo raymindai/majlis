@@ -1,13 +1,15 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { StickyNote } from "lucide-react";
+import { Sparkles, StickyNote } from "lucide-react";
 import { ASK_EVENT } from "@/components/ask-bus";
 import { C, CitationChip, ConfidenceBadge } from "@/components/ui";
 import { useCitation } from "@/components/citation-context";
 import { addNote, loadNotes } from "@/lib/notes";
 import { Gloss } from "@/components/gloss";
 import type { Confidence } from "@/lib/corpus";
+
+const serif = { fontFamily: "var(--font-newsreader), Georgia, serif" };
 
 type Claim = { text: string; confidence: Confidence; sourceId: string; passageId: string };
 type Answer = { notInMaterial: boolean; summary: string; claims: Claim[] };
@@ -84,6 +86,15 @@ export default function ChatPanel({ stage }: { stage: "before" | "during" | "aft
     }
   }
 
+  // Add the typed text straight to the notes layer, without asking the AI.
+  function addAsNote() {
+    const t = q.trim();
+    if (!t) return;
+    const n = loadNotes().length;
+    addNote({ title: "My note", summary: t, claims: [], pos: { x: 300 + (n % 5) * 28, y: 120 + (n % 5) * 28 } });
+    setQ("");
+  }
+
   const askRef = useRef(ask);
   askRef.current = ask;
   useEffect(() => {
@@ -97,9 +108,23 @@ export default function ChatPanel({ stage }: { stage: "before" | "during" | "aft
 
   return (
     <div className="flex flex-col min-h-0 h-full">
-      <div className="shrink-0 px-4 py-3 border-b" style={{ borderColor: C.line }}>
-        <div className="text-[13px] font-semibold" style={{ color: C.ink }}>Ask Majlis</div>
-        <div className="text-[12px] mt-0.5" style={{ color: C.muted }}>Grounded in the committee pack. Every answer cites its source.</div>
+      {/* Branded header: a gradient wash, a generated brand motif, and a girih star. */}
+      <div className="shrink-0 relative overflow-hidden border-b" style={{ borderColor: C.line }}>
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${C.chipBg}, ${C.surface} 72%)` }} />
+        <div className="absolute inset-0 bg-cover bg-center opacity-[0.14]" style={{ backgroundImage: "url(/ask-majlis-brand.jpg)" }} />
+        <svg aria-hidden className="absolute -right-5 -top-5 opacity-[0.07]" width="128" height="128" viewBox="0 0 100 100" style={{ color: C.accent }}>
+          <g fill="none" stroke="currentColor" strokeWidth="2.5">
+            <rect x="22" y="22" width="56" height="56" />
+            <rect x="22" y="22" width="56" height="56" transform="rotate(45 50 50)" />
+          </g>
+        </svg>
+        <div className="relative px-4 pt-3 pb-3">
+          <span className="inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wide rounded-full px-2 py-0.5" style={{ background: C.surface, color: C.accent, border: `1px solid ${C.line}` }}>
+            <Sparkles size={11} strokeWidth={2.5} /> Majlis AI
+          </span>
+          <div style={serif} className="text-[19px] leading-tight mt-1.5" >Ask Majlis</div>
+          <div className="text-[12px] mt-0.5" style={{ color: C.muted }}>Grounded in the committee pack. Every answer cites its source.</div>
+        </div>
       </div>
 
       <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-3 space-y-4">
@@ -181,20 +206,33 @@ export default function ChatPanel({ stage }: { stage: "before" | "during" | "aft
           e.preventDefault();
           ask();
         }}
-        className="shrink-0 p-3 border-t flex items-center gap-2"
+        className="shrink-0 p-3 border-t"
         style={{ borderColor: C.line }}
       >
-        <input
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          placeholder={STAGE_HINT[stage]}
-          disabled={loading}
-          className="flex-1 bg-transparent outline-none text-[14px]"
-          style={{ color: C.ink }}
-        />
-        <button type="submit" disabled={loading} className="text-[14px] px-2 py-1 rounded cursor-pointer disabled:opacity-50" style={{ color: C.accent }}>
-          ↵
-        </button>
+        <div className="flex items-center gap-2">
+          <input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder={STAGE_HINT[stage]}
+            disabled={loading}
+            className="flex-1 bg-transparent outline-none text-[14px]"
+            style={{ color: C.ink }}
+          />
+          <button
+            type="button"
+            onClick={addAsNote}
+            disabled={!q.trim()}
+            title="Add your text as a note, without asking the AI"
+            className="inline-flex items-center gap-1 text-[12px] px-2 py-1 rounded-md cursor-pointer disabled:opacity-40 hover:opacity-80"
+            style={{ color: C.muted, border: `1px solid ${C.line}` }}
+          >
+            <StickyNote size={13} strokeWidth={2} /> Note
+          </button>
+          <button type="submit" disabled={loading} className="text-[14px] px-2 py-1 rounded cursor-pointer disabled:opacity-50" style={{ color: C.accent }}>
+            ↵
+          </button>
+        </div>
+        <div className="mt-1.5 text-[10.5px]" style={{ color: C.faint }}>Enter to ask Majlis, or save your text as a note.</div>
       </form>
     </div>
   );

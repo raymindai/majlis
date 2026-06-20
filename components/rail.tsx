@@ -6,7 +6,7 @@ import { type LucideIcon } from "lucide-react";
 import { ENTITIES } from "@/lib/corpus";
 import { MEETINGS, PARTICIPANTS } from "@/lib/meetings";
 import { MEETING_META } from "@/lib/mock";
-import { C, RailLabel } from "@/components/ui";
+import { C, RailLabel, TierTag } from "@/components/ui";
 import { useParticipant } from "@/components/participant-context";
 import { useDetail } from "@/components/detail-context";
 import { Tip } from "@/components/tip";
@@ -131,22 +131,26 @@ export function MeetingContext() {
 }
 
 export function NavList({ items }: { items: { label: string; icon: LucideIcon; min?: number }[] }) {
-  // The table of contents tracks the zoom: only list sections visible at this level.
+  // The table of contents tracks the zoom: list only the sections visible at this
+  // level, and tier each item so a Headlines, Brief, or Full section reads differently.
   const { level } = useDetail();
   const shown = items.filter((n) => !n.min || level >= n.min);
   return (
     <nav className="-mx-2 space-y-0.5">
       {shown.map((n) => {
         const Icon = n.icon;
+        const tier = n.min ?? 1;
+        const tone = tier >= 3 ? C.faint : tier === 2 ? C.muted : C.detail;
         return (
           <a
             key={n.label}
             href={`#${slug(n.label)}`}
             className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg text-[13px] hover:bg-[var(--c-surface-alt)]"
-            style={{ color: C.muted }}
+            style={{ color: tone, fontWeight: tier === 1 ? 500 : 400 }}
           >
-            <Icon size={15} strokeWidth={2} style={{ color: C.faint }} className="shrink-0" />
-            {n.label}
+            <Icon size={15} strokeWidth={2} style={{ color: tier === 1 ? C.accent : C.faint }} className="shrink-0" />
+            <span className="flex-1 truncate">{n.label}</span>
+            <TierTag min={n.min} />
           </a>
         );
       })}
@@ -156,9 +160,7 @@ export function NavList({ items }: { items: { label: string; icon: LucideIcon; m
 
 export function TheRoom() {
   const { open } = useParticipant();
-  const { level } = useDetail();
-  // The room is reference detail; at the Headlines zoom the rail stays minimal.
-  if (level < 2) return null;
+  // Participants stay visible at every zoom level; the room is always worth seeing.
   return (
     <div>
       <RailLabel>The room</RailLabel>

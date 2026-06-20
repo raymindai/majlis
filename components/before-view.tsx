@@ -5,6 +5,7 @@ import {
   CalendarClock,
   CalendarRange,
   ChevronRight,
+  CircleCheck,
   FileText,
   Gavel,
   History,
@@ -115,6 +116,22 @@ export default function BeforeView() {
 
   return (
     <AppShell stage="before" leftRail={leftRail}>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="inline-flex items-center gap-1.5 text-[12px]" style={{ color: C.faint }}>
+          <Sparkles size={13} strokeWidth={2} />
+          {live ? "Briefing synthesised live by Majlis from the committee pack" : "Sample briefing, regenerating live from the committee pack"}
+        </div>
+        <button
+          type="button"
+          onClick={regenerate}
+          disabled={syncing}
+          className="inline-flex items-center gap-1.5 text-[12px] rounded-lg px-3 py-1.5 cursor-pointer hover:opacity-80 disabled:opacity-50"
+          style={{ background: C.surfaceAlt, border: `1px solid ${C.line}`, color: C.muted }}
+        >
+          {syncing ? <Loader2 size={13} className="animate-spin" /> : <RefreshCw size={13} strokeWidth={2} />}
+          {syncing ? "Synthesising" : "Regenerate brief"}
+        </button>
+      </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
         {prior.length > 0 && (
           <Card label="Carried over, verify these were kept" span={2} icon={History}>
@@ -130,32 +147,16 @@ export default function BeforeView() {
           </Card>
         )}
 
-        <Card
-          label="The bottom line"
-          span={2}
-          icon={Target}
-          aside={
-            <button
-              type="button"
-              onClick={regenerate}
-              disabled={syncing}
-              className="inline-flex items-center gap-1.5 text-[12px] cursor-pointer hover:opacity-70 disabled:opacity-50"
-              style={{ color: C.muted }}
-            >
-              {syncing ? <Loader2 size={13} className="animate-spin" /> : <RefreshCw size={13} strokeWidth={2} />}
-              {syncing ? "Synthesising" : "Regenerate"}
-            </button>
-          }
-        >
+        <Card label="The bottom line" span={2} icon={Target}>
           <h1 style={serif} className="text-[30px] leading-tight"><Gloss>{bl.lead}</Gloss></h1>
           {level >= 2 && <p className="mt-3 text-[16px] leading-relaxed" style={{ color: C.detail }}><Gloss>{bl.detail}</Gloss></p>}
           <div className="mt-4 flex flex-wrap items-center gap-2">
             <ConfidenceBadge confidence={bl.confidence} />
-            {level >= 2 &&
-              bl.citations.map((c, i) => (
-                <CitationChip key={i} sourceId={c.sourceId} onClick={(pos) => open(c, pos)} />
-              ))}
-            {level >= 2 && bl.conflict && (
+            <span className="text-[11px] font-medium ml-1" style={{ color: C.faint }}>Sources</span>
+            {bl.citations.map((c, i) => (
+              <CitationChip key={i} sourceId={c.sourceId} onClick={(pos) => open(c, pos)} />
+            ))}
+            {bl.conflict && (
               <>
                 <span
                   className="inline-flex items-center gap-1.5 text-[11px] rounded-full px-2 py-0.5"
@@ -170,12 +171,6 @@ export default function BeforeView() {
               </>
             )}
           </div>
-          {level >= 2 && (
-            <div className="mt-3 inline-flex items-center gap-1.5 text-[11px]" style={{ color: C.faint }}>
-              <Sparkles size={12} strokeWidth={2} />
-              {live ? "Synthesised by Majlis from the committee pack" : "Sample brief, regenerating from the pack"}
-            </div>
-          )}
         </Card>
 
         <Card label="Your decision" span={2} icon={Gavel}>
@@ -208,40 +203,78 @@ export default function BeforeView() {
         </Card>
 
         <Card label="Needs attention" span={2} icon={TriangleAlert} aside={<span className="text-[12px]" style={{ color: C.muted }}>{brief.attention.length} of {PARTICIPANTS.length} need action</span>}>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            {brief.attention.map((a) => {
-              const sources = a.citations.filter((c, i, arr) => arr.findIndex((x) => x.sourceId === c.sourceId) === i);
+          <div className="space-y-5">
+            {(["blocker", "at-risk"] as const).map((sev) => {
+              const items = brief.attention.filter((a) => a.severity === sev);
+              if (items.length === 0) return null;
+              const tint =
+                sev === "blocker"
+                  ? { background: C.flagBg, border: `1px solid ${C.flagBorder}` }
+                  : { background: C.surfaceAlt, border: `1px solid ${C.line}` };
               return (
-                <div key={a.entity} className="rounded-xl p-3.5 flex flex-col" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
-                  {/* Identity: the department (its short code lives in the badge), then its severity. */}
-                  <div className="flex items-start gap-2.5">
-                    <OrgBadge code={a.entity} size={34} />
-                    <div className="min-w-0 flex-1">
-                      <div className="font-semibold text-[14px] leading-tight">{deptFor(a.entity)?.name ?? a.entity}</div>
-                      <div className="mt-1.5"><SeverityPill severity={a.severity} /></div>
-                    </div>
+                <div key={sev}>
+                  <div className="flex items-center gap-2 mb-2.5">
+                    <SeverityPill severity={sev} />
+                    <span className="text-[11px]" style={{ color: C.faint }}>{items.length} {items.length === 1 ? "entity" : "entities"}</span>
                   </div>
-                  {/* The issue. */}
-                  <p className="text-[13px] leading-snug mt-3"><Gloss>{a.line}</Gloss></p>
-                  {/* Evidence: how grounded, and in what. */}
-                  {level >= 2 && (
-                    <div className="mt-3 pt-3 border-t" style={{ borderColor: C.line }}>
-                      <div className="text-[11px] font-semibold mb-1.5" style={{ color: C.faint }}>Evidence</div>
-                      <div className="flex flex-wrap items-center gap-1.5">
-                        <ConfidenceBadge confidence={a.confidence} />
-                        {sources.map((c, i) => (
-                          <CitationChip key={i} sourceId={c.sourceId} onClick={(pos) => open(c, pos)} />
-                        ))}
-                      </div>
-                    </div>
-                  )}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    {items.map((a) => {
+                      const sources = a.citations.filter((c, i, arr) => arr.findIndex((x) => x.sourceId === c.sourceId) === i);
+                      return (
+                        <div key={a.entity} className="rounded-xl p-3.5 flex flex-col" style={tint}>
+                          <div className="flex items-start gap-2.5">
+                            <OrgBadge code={a.entity} size={34} />
+                            <div className="min-w-0 flex-1">
+                              <div className="font-semibold text-[14px] leading-tight">{deptFor(a.entity)?.name ?? a.entity}</div>
+                            </div>
+                          </div>
+                          <p className="text-[13px] leading-snug mt-3"><Gloss>{a.line}</Gloss></p>
+                          {/* Evidence stays visible at every zoom: the claim is always linked to its source. */}
+                          <div className="mt-3 pt-3 border-t" style={{ borderColor: C.line }}>
+                            <div className="text-[11px] font-semibold mb-1.5" style={{ color: C.faint }}>Source</div>
+                            <div className="flex flex-wrap items-center gap-1.5">
+                              <ConfidenceBadge confidence={a.confidence} />
+                              {sources.map((c, i) => (
+                                <CitationChip key={i} sourceId={c.sourceId} onClick={(pos) => open(c, pos)} />
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               );
             })}
+
+            {brief.steady.length > 0 && (
+              <div className="pt-4 border-t" style={{ borderColor: C.line }}>
+                <div className="flex items-center gap-2 mb-2.5">
+                  <span className="inline-flex items-center gap-1.5 text-[11px] font-medium rounded-full px-2 py-0.5" style={{ background: C.surfaceAlt, color: C.confirmed, border: `1px solid ${C.line}` }}>
+                    <CircleCheck size={12} strokeWidth={2.25} /> On track
+                  </span>
+                  <span className="text-[11px]" style={{ color: C.faint }}>{brief.steady.length} {brief.steady.length === 1 ? "entity" : "entities"}</span>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {brief.steady.map((s) => {
+                    const dept = deptFor(s.entity);
+                    return (
+                      <div key={s.entity} className="rounded-xl p-3 flex items-start gap-2.5" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
+                        <OrgBadge code={s.entity} size={28} />
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="font-semibold text-[13px]">{dept?.name ?? s.entity}</span>
+                            {dept && <StatusTag status={dept.status} />}
+                          </div>
+                          <p className="text-[12px] mt-0.5" style={{ color: C.muted }}><Gloss>{s.line}</Gloss></p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
-          {brief.steady.length > 0 && (
-            <div className="mt-3 text-[12px]" style={{ color: C.muted }}>Also: <Gloss>{brief.steady.map((s) => `${s.entity} ${s.line}`).join(";  ")}</Gloss></div>
-          )}
         </Card>
 
         <Card label="Today's agenda" span={2} icon={CalendarClock} minLevel={2}>

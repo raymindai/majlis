@@ -87,11 +87,12 @@ export function CitationChip({ sourceId, onClick }: { sourceId: string; onClick?
     <button
       type="button"
       onClick={(e) => onClick?.({ x: e.clientX, y: e.clientY })}
-      className="inline-flex items-center gap-1 text-[11px] rounded-md border px-1.5 py-0.5 cursor-pointer hover:opacity-70"
-      style={{ borderColor: C.line, color: C.muted, background: C.surface }}
+      title="Open the source document"
+      className="inline-flex items-center gap-1 text-[11px] rounded-md px-1.5 py-0.5 cursor-pointer transition hover:brightness-95"
+      style={{ color: C.accent, background: C.chipBg, border: `1px solid ${C.line}` }}
     >
-      <FileText size={11} strokeWidth={2} style={{ color: C.faint }} />
-      {sourceLabel(sourceId)}
+      <FileText size={11} strokeWidth={2.25} />
+      <span className="underline decoration-dotted underline-offset-2">{sourceLabel(sourceId)}</span>
     </button>
   );
 }
@@ -125,7 +126,21 @@ export function RailLabel({ children }: { children: ReactNode }) {
   return <div className="text-[11px] font-semibold mb-2.5" style={{ color: C.faint }}>{children}</div>;
 }
 
-function Header({ label, aside, icon: Icon }: { label: string; aside?: ReactNode; icon?: LucideIcon }) {
+/** A tiny tag marking which zoom tier reveals an item, so Headlines/Brief/Full items read differently. */
+export function TierTag({ min }: { min?: number }) {
+  if (!min || min <= 1) return null;
+  return (
+    <span
+      className="text-[9px] font-semibold uppercase tracking-wide rounded px-1 py-[1px] shrink-0"
+      style={{ color: C.faint, background: C.surfaceAlt, border: `1px solid ${C.line}` }}
+      title={min >= 3 ? "Shown at the Full zoom" : "Shown from the Brief zoom"}
+    >
+      {min >= 3 ? "Full" : "Brief"}
+    </span>
+  );
+}
+
+function Header({ label, aside, icon: Icon, min }: { label: string; aside?: ReactNode; icon?: LucideIcon; min?: number }) {
   return (
     <div className="flex items-center gap-2.5 mb-4 pb-3 border-b" style={{ borderColor: C.line }}>
       {Icon ? (
@@ -134,6 +149,7 @@ function Header({ label, aside, icon: Icon }: { label: string; aside?: ReactNode
         <span aria-hidden className="inline-block w-[3px] h-4 rounded-full shrink-0" style={{ background: C.accent }} />
       )}
       <h2 className="text-[13px] font-semibold tracking-[-0.01em]" style={{ color: C.ink }}>{label}</h2>
+      <TierTag min={min} />
       {aside && <div className="ml-auto">{aside}</div>}
     </div>
   );
@@ -174,7 +190,7 @@ export function Card({
       className={`rounded-2xl p-6 scroll-mt-4 ${span === 2 ? "lg:col-span-2" : ""}`}
       style={{ background: C.surface, border: `1px solid ${C.line}`, boxShadow: C.shadow }}
     >
-      {label && <Header label={label} aside={aside} icon={icon} />}
+      {label && <Header label={label} aside={aside} icon={icon} min={minLevel} />}
       {children}
     </section>
   );
