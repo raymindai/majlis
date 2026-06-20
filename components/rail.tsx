@@ -68,9 +68,18 @@ export function StatusTag({ status, className = "" }: { status: string; classNam
   );
 }
 
+/** Resolve a loose label (e.g. "MTA delivery" from a live brief) to a clean entity code. */
+export function canonicalCode(raw: string): string {
+  if (deptFor(raw)) return raw;
+  const hit = ENTITIES.find((e) => new RegExp(`\\b${e.id}\\b`, "i").test(raw));
+  if (hit) return hit.id;
+  return raw.split(/\s+/)[0].slice(0, 4).toUpperCase();
+}
+
 /** Rounded-square code badge, represents a DEPARTMENT (status-tinted). Never used for a person. */
 export function OrgBadge({ code, size = 28 }: { code: string; size?: number }) {
-  const dept = deptFor(code);
+  const c = canonicalCode(code);
+  const dept = deptFor(c);
   const color = dept ? statusColor[dept.status] : C.muted;
   return (
     <Tip
@@ -79,7 +88,7 @@ export function OrgBadge({ code, size = 28 }: { code: string; size?: number }) {
       className="inline-flex items-center justify-center rounded-md font-semibold shrink-0"
       style={{ width: size, height: size, fontSize: Math.max(9, Math.round(size * 0.3)), background: `color-mix(in srgb, ${color} 14%, transparent)`, color, letterSpacing: "-0.02em", cursor: "help" }}
     >
-      {code}
+      {c}
     </Tip>
   );
 }
