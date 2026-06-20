@@ -185,7 +185,7 @@ export default function BeforeView() {
         <Card labelKey="yourDecision" span={2} icon={Gavel}>
           <div style={serif} className="text-[20px] leading-snug"><Gloss>{brief.decision.text}</Gloss></div>
           <div className="mt-4">
-            <div className="text-[11px] font-semibold mb-1" style={{ color: C.accent }}>{tr("recommendation")}</div>
+            <div className="text-[11px] font-semibold mb-1" style={{ color: C.accent }}>{tr("majlisRecommends")}</div>
             <p className="text-[14px] leading-snug"><Gloss>{brief.decision.recommendation}</Gloss></p>
             {brief.decision.rationale && (
               <p className="text-[13px] leading-relaxed mt-2" style={{ color: C.detail }}>
@@ -272,7 +272,7 @@ export default function BeforeView() {
                           </div>
                           {a.action && (
                             <div className="mt-3 -mx-3.5 -mb-3.5 px-3.5 py-3 border-t flex-1" style={{ borderColor: C.line, background: C.surface }}>
-                              <div className="text-[11px] font-semibold mb-1" style={{ color: C.accent }}>{tr("recommendedAction")}</div>
+                              <div className="text-[11px] font-semibold mb-1" style={{ color: C.accent }}>{tr("majlisRecommends")}</div>
                               <p className="text-[13px] leading-snug" style={{ color: C.detail }}><Gloss>{a.action}</Gloss></p>
                             </div>
                           )}
