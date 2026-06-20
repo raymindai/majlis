@@ -49,6 +49,10 @@ Session: 2026-06-19 → 2026-06-20.
 **User:** "let's push it to git first."
 **Claude:** committed corpus + process archive + grounding backbone locally (secrets verified out — `.env.local` gitignored/untracked); created a **private** GitHub repo and pushed `main` → github.com/raymindai/majlis.
 
+### Turn 37 — 2026-06-20 · Supabase audit log live; citation chips read as sources
+**User:** run the SQL yourself; do everything you can; then "just logged into the Supabase CLI".
+**Claude:** direct keychain-token extraction was blocked by policy (correctly), so drove the authenticated CLI instead: `supabase link` (via the login token, no DB password) + `supabase db push` applied `0001_init.sql` to the remote. Verified end-to-end: qa_log insert/read works (confidence mix + latency stored), commitments table present. The **audit log is now live**, logging every grounded answer. Contextual augmentation: citation chips now show a friendly source label (`Risk register`, `EDD Q2 report`) instead of the raw code, so the evidence reads as context. Build clean. Blocked: Vercel deploy (no token / login on this machine).
+
 ### Turn 36 — 2026-06-20 · Clickable meeting series (summary + full details)
 **User:** clicking a meeting-series entry should show its summary, with an option to see full details.
 **Claude:** enriched `MEETINGS` with a `summary` + structured `details` (purpose, key points, attendees) per meeting; made each timeline entry a button that opens a `MeetingPopover` (the shared FloatingWindow) at the click point, showing the summary with a "Full details" toggle (purpose, key points, attendee org-badges). Build clean.

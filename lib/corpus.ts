@@ -156,6 +156,20 @@ export const SOURCES: Source[] = [
   },
 ];
 
+/** Friendly short labels for citation chips, so a source reads as context, not a code. */
+const SOURCE_LABELS: Record<string, string> = {
+  CHARTER: "Charter",
+  "Q1-MIN": "Q1 minutes",
+  "Q2-HSA": "HSA Q2 report",
+  "Q2-EKD": "EKD Q2 report",
+  "Q2-MTA": "MTA Q2 report",
+  "Q2-PSD": "PSD Q2 report",
+  "Q2-EDD": "EDD Q2 report",
+  RISK: "Risk register",
+  "PMO-NOTE": "PMO note",
+};
+export const sourceLabel = (id: string): string => SOURCE_LABELS[id] ?? id;
+
 export const getSource = (id: string): Source | undefined =>
   SOURCES.find((s) => s.id === id);
 

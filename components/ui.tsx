@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { CircleAlert, CircleCheck, CircleDashed, FileText, type LucideIcon, OctagonAlert, TriangleAlert } from "lucide-react";
-import type { Confidence } from "@/lib/corpus";
+import { sourceLabel, type Confidence } from "@/lib/corpus";
 
 /** All colours resolve through CSS variables (set per theme in globals.css). */
 export const C = {
@@ -96,7 +96,7 @@ export function CitationChip({ sourceId, onClick }: { sourceId: string; onClick?
       style={{ borderColor: C.line, color: C.muted, background: C.surface }}
     >
       <FileText size={11} strokeWidth={2} style={{ color: C.faint }} />
-      {sourceId}
+      {sourceLabel(sourceId)}
     </button>
   );
 }
