@@ -1,6 +1,7 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { ASK_EVENT } from "@/components/ask-bus";
 import { C, CitationChip, ConfidenceBadge } from "@/components/ui";
 import { useCitation } from "@/components/citation-context";
 import type { Confidence } from "@/lib/corpus";
@@ -43,6 +44,17 @@ export default function ChatPanel({ stage }: { stage: "before" | "during" | "aft
       requestAnimationFrame(() => scrollRef.current?.scrollTo(0, scrollRef.current.scrollHeight));
     }
   }
+
+  const askRef = useRef(ask);
+  askRef.current = ask;
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const q = (e as CustomEvent).detail;
+      if (typeof q === "string") askRef.current(q);
+    };
+    window.addEventListener(ASK_EVENT, handler);
+    return () => window.removeEventListener(ASK_EVENT, handler);
+  }, []);
 
   return (
     <div className="flex flex-col min-h-0 h-full">

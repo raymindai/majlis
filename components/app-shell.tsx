@@ -6,6 +6,7 @@ import { C, StageSpine } from "@/components/ui";
 import { CitationContext } from "@/components/citation-context";
 import ThemeSwitcher from "@/components/theme-switcher";
 import ChatPanel from "@/components/chat-panel";
+import SelectionAsk from "@/components/selection-ask";
 
 const serif = { fontFamily: "var(--font-newsreader), Georgia, serif" };
 
@@ -75,6 +76,7 @@ export default function AppShell({
           </aside>
         </>
       )}
+      <SelectionAsk />
     </CitationContext.Provider>
   );
 }
