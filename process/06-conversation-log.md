@@ -49,6 +49,10 @@ Session: 2026-06-19 → 2026-06-20.
 **User:** "let's push it to git first."
 **Claude:** committed corpus + process archive + grounding backbone locally (secrets verified out — `.env.local` gitignored/untracked); created a **private** GitHub repo and pushed `main` → github.com/raymindai/majlis.
 
+### Turn 47 — 2026-06-20 · Deploy verified live + attention-card rework
+**User:** the API keys are already in Vercel; the domain is https://majlis-xi.vercel.app/. (Also: the Needs-attention cards repeat the same info, reconsider them.)
+**Claude:** found the Vercel project is GitHub-connected and auto-deploys (no CLI needed); the protected `majlis-*-raymindai.vercel.app` URLs were Vercel Deployment Protection, and `majlis.vercel.app` is an unrelated app. Smoke-tested the real domain **https://majlis-xi.vercel.app**: home 200, /process 200, /api/brief 200 with a valid live-Claude brief, confirming live AI + Supabase work in production. Deploy (#10) done. Reworked the Needs-attention cards: lead with the full department name (badge keeps the mark + code), severity directly under it, sources under an "Evidence" label, and deduped citation chips (no more "EDD Q2 report" twice).
+
 ### Turn 46 — 2026-06-20 · After: live AI minutes
 **Claude:** built `/api/minutes`, Claude drafts the minutes from the captured decisions and commitments as structured output: a headline, a 2 to 4 sentence narrative summary, and a formal distribution cover note. After now drafts the minutes live (re-drafting if the captured set changes), shows a "Drafted by Majlis" mark, and uses the AI cover note in the Distribution card. Verified live (clean headline + narrative + note). Build clean. **All three stages are now genuinely live AI:** Before (brief synthesis + streamed Q&A), During (utterance observer), After (minutes draft). The During/After gap is closed.
 
