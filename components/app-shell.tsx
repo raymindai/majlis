@@ -2,7 +2,8 @@
 
 import { useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
-import { resolveCitation, type Citation } from "@/lib/mock";
+import { type Citation } from "@/lib/mock";
+import { getSource, SOURCE_META, AUTHORITY_LABEL } from "@/lib/corpus";
 import { C, StageSpine } from "@/components/ui";
 import { CitationContext } from "@/components/citation-context";
 import { ParticipantContext } from "@/components/participant-context";
@@ -90,22 +91,48 @@ export default function AppShell({
           {windows.map((w) => {
             if (w.kind === "participant") return <ParticipantPopover key={w.instanceId} id={w.payload} pos={w.pos} onClose={() => closeWin(w.instanceId)} />;
             if (w.kind === "meeting") return <MeetingPopover key={w.instanceId} id={w.payload} pos={w.pos} onClose={() => closeWin(w.instanceId)} />;
-            const s = resolveCitation(w.payload.sourceId, w.payload.passageId);
+            const s = getSource(w.payload.sourceId);
+            const m = SOURCE_META[w.payload.sourceId];
             return (
               <FloatingWindow
                 key={w.instanceId}
-                title="Source"
+                title="Document"
                 anchor={w.pos}
                 onClose={() => closeWin(w.instanceId)}
-                initialW={400}
-                initialH={320}
-                headerRight={<span className="text-[11px]" style={{ color: C.muted }}>{w.payload.sourceId}</span>}
+                initialW={430}
+                initialH={400}
+                headerRight={m && <span className="text-[11px]" style={{ color: C.muted }}>{m.ref}</span>}
               >
-                <div style={serif} className="text-[18px] leading-snug">{s.title}</div>
-                <div className="text-[12px] mt-1" style={{ color: C.muted }}>{s.date ?? "undated"}{s.authority ? `, ${s.authority}` : ""}</div>
-                <p className="mt-3 text-[14px] leading-relaxed p-3 rounded-lg" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
-                  <Gloss>{s.text || "This passage isn't in the loaded pack."}</Gloss>
-                </p>
+                {s ? (
+                  <>
+                    <div style={serif} className="text-[18px] leading-snug">{s.title}</div>
+                    <div className="text-[11px] mt-1.5 flex flex-wrap items-center gap-x-1.5 gap-y-0.5" style={{ color: C.muted }}>
+                      {m && <span>{m.docType}</span>}
+                      {m && <span>·</span>}
+                      {m && <span>{m.issuer}</span>}
+                      <span>·</span>
+                      <span>{s.date ?? "undated"}</span>
+                    </div>
+                    <span className="text-[11px] mt-2 inline-block rounded px-2 py-0.5" style={{ background: C.surfaceAlt, color: C.muted }}>{AUTHORITY_LABEL[s.authority]}</span>
+                    <div className="text-[11px] font-semibold mt-4 mb-2" style={{ color: C.faint }}>Document</div>
+                    <div className="space-y-2">
+                      {s.passages.map((p) => {
+                        const cited = p.id === w.payload.passageId;
+                        return (
+                          <p
+                            key={p.id}
+                            className="text-[13px] leading-relaxed p-2.5 rounded-lg"
+                            style={cited ? { background: C.flagBg, border: `1px solid ${C.flagBorder}` } : { background: C.surfaceAlt, border: `1px solid ${C.line}` }}
+                          >
+                            <Gloss>{p.text}</Gloss>
+                          </p>
+                        );
+                      })}
+                    </div>
+                  </>
+                ) : (
+                  <p className="text-[14px]" style={{ color: C.muted }}>This document is not in the loaded pack.</p>
+                )}
               </FloatingWindow>
             );
           })}

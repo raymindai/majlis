@@ -170,6 +170,26 @@ const SOURCE_LABELS: Record<string, string> = {
 };
 export const sourceLabel = (id: string): string => SOURCE_LABELS[id] ?? id;
 
+/** Document metadata, so a citation resolves to an actual, identifiable document. */
+export const SOURCE_META: Record<string, { docType: string; issuer: string; ref: string }> = {
+  CHARTER: { docType: "Programme charter", issuer: "Programme Office", ref: "MANARAH/CHTR/2.1" },
+  "Q1-MIN": { docType: "Committee minutes", issuer: "Programme Office", ref: "MANARAH/MIN/Q1-2026" },
+  "Q2-HSA": { docType: "Quarterly status report", issuer: "HSA PMO", ref: "HSA/Q2/2026" },
+  "Q2-EKD": { docType: "Quarterly status report", issuer: "EKD PMO", ref: "EKD/Q2/2026" },
+  "Q2-MTA": { docType: "Quarterly status report", issuer: "MTA PMO", ref: "MTA/Q2/2026" },
+  "Q2-PSD": { docType: "Quarterly status report (restricted)", issuer: "PSD", ref: "PSD/Q2/2026-R" },
+  "Q2-EDD": { docType: "Quarterly status report", issuer: "EDD PMO", ref: "EDD/Q2/2026" },
+  RISK: { docType: "Risk register", issuer: "Programme Office", ref: "MANARAH/RISK/2026-06" },
+  "PMO-NOTE": { docType: "Informal email", issuer: "PMO", ref: "uncontrolled" },
+};
+
+export const AUTHORITY_LABEL: Record<Authority, string> = {
+  foundational: "Baseline, may be superseded",
+  "official-record": "Official record",
+  "official-current": "Official, current",
+  "informal-unverified": "Informal, unverified",
+};
+
 export const getSource = (id: string): Source | undefined =>
   SOURCES.find((s) => s.id === id);
 
