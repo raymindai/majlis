@@ -19,7 +19,7 @@ export const deptFor = (code: string) => ENTITIES.find((e) => e.id === code);
 
 export function initials(name: string) {
   const parts = name.replace(/\(.*?\)/g, "").trim().split(/\s+/).filter(Boolean);
-  if (!parts.length) return "—";
+  if (!parts.length) return "?";
   return (parts[0][0] + (parts.length > 1 ? parts[parts.length - 1][0] : "")).toUpperCase();
 }
 
@@ -48,7 +48,7 @@ export function Avatar({ id, name, size = 44 }: { id: string; name: string; size
   );
 }
 
-/** A status dot + label — always a DEPARTMENT's delivery status, never a person's. */
+/** A status dot + label, always a DEPARTMENT's delivery status, never a person's. */
 export function StatusTag({ status, className = "" }: { status: string; className?: string }) {
   return (
     <span className={`inline-flex items-center gap-1 text-[11px] ${className}`} style={{ color: statusColor[status] }}>
@@ -58,7 +58,7 @@ export function StatusTag({ status, className = "" }: { status: string; classNam
   );
 }
 
-/** Rounded-square code badge — represents a DEPARTMENT (status-tinted). Never used for a person. */
+/** Rounded-square code badge, represents a DEPARTMENT (status-tinted). Never used for a person. */
 export function OrgBadge({ code, size = 28 }: { code: string; size?: number }) {
   const dept = deptFor(code);
   const color = dept ? statusColor[dept.status] : C.muted;
@@ -73,7 +73,7 @@ export function OrgBadge({ code, size = 28 }: { code: string; size?: number }) {
   );
 }
 
-/** Department row — square badge + full name + status. Use wherever a department is the subject. */
+/** Department row, square badge + full name + status. Use wherever a department is the subject. */
 export function OrgRow({ code, size = 28 }: { code: string; size?: number }) {
   const dept = deptFor(code);
   return (
@@ -87,7 +87,7 @@ export function OrgRow({ code, size = 28 }: { code: string; size?: number }) {
   );
 }
 
-/** Person row — circular face + name + sub-line. Use wherever a person is the subject. */
+/** Person row, circular face + name + sub-line. Use wherever a person is the subject. */
 export function PersonRow({ id, size = 28, sub }: { id: string; size?: number; sub?: string }) {
   const p = PARTICIPANTS.find((x) => x.id === id);
   if (!p) return null;
@@ -111,7 +111,7 @@ export function MeetingContext() {
         <div className="min-w-0">
           <div className="text-[13px] font-semibold leading-tight">{MEETING_META.session}</div>
           <div className="text-[12px] mt-0.5" style={{ color: C.muted }}>
-            in {MEETING_META.minutesUntil} min · {idx} of {MEETINGS.length} in the series
+            in {MEETING_META.minutesUntil} min, {idx} of {MEETINGS.length} in the series
           </div>
         </div>
       </div>

@@ -58,7 +58,7 @@ export const severityGlyph: Record<string, string> = {
 
 const tint = (color: string, pct = 13) => `color-mix(in srgb, ${color} ${pct}%, transparent)`;
 
-/** A small tinted status tag with an icon — communicates state at a glance. */
+/** A small tinted status tag with an icon, communicates state at a glance. */
 export function Pill({ color, icon: Icon, children }: { color: string; icon?: LucideIcon; children: ReactNode }) {
   return (
     <span
@@ -125,7 +125,7 @@ export function StageSpine({ active }: { active: "before" | "during" | "after" }
   );
 }
 
-/** Small left-rail group label — sentence case, no all-caps. */
+/** Small left-rail group label, sentence case, no all-caps. */
 export function RailLabel({ children }: { children: ReactNode }) {
   return <div className="text-[11px] font-semibold mb-2.5" style={{ color: C.faint }}>{children}</div>;
 }

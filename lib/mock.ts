@@ -31,11 +31,11 @@ export const MEETING_META = {
   minutesUntil: 18,
 };
 
-/** ① The bottom line — the single dominant judgment. */
+/** ① The bottom line, the single dominant judgment. */
 export const BOTTOM_LINE = {
   lead: "One blocker dominates today, and the budget vote rests on a number that doesn't reconcile.",
   detail:
-    "EDD's Single Sign-On has slipped to Q3 — it stalls HSA and EKD go-lives. And the Q2 reallocation hinges on an MTA budget figure that conflicts across sources.",
+    "EDD's Single Sign-On has slipped to Q3, stalling HSA and EKD go-lives. The Q2 reallocation hinges on an MTA budget figure that conflicts across sources.",
   confidence: "confirmed" as Confidence,
   citations: [
     { sourceId: "Q2-EDD", passageId: "slip" },
@@ -56,14 +56,14 @@ export const DECISION = {
   hingesOn: ["the MTA figure (unreconciled)", "EDD's SSO slip"],
 };
 
-/** ③ Needs attention — exceptions, ranked. */
+/** ③ Needs attention, exceptions, ranked. */
 export const ATTENTION: AttentionItem[] = [
   {
     id: "EDD",
     name: "Economic Development Dept",
     severity: "blocker",
     confidence: "confirmed",
-    line: "SSO slipped to Q3 — blocks HSA & EKD go-lives.",
+    line: "SSO slipped to Q3, blocking HSA and EKD go-lives.",
     citations: [
       { sourceId: "Q2-EDD", passageId: "slip" },
       { sourceId: "RISK", passageId: "R-07" },
@@ -74,7 +74,7 @@ export const ATTENTION: AttentionItem[] = [
     name: "Education & Knowledge Dept",
     severity: "at-risk",
     confidence: "unverified",
-    line: "Parent Portal June→August — missed its March commitment; informal July claim is unverified.",
+    line: "Parent Portal slipped June→August, missing its March commitment; the informal July claim is unverified.",
     citations: [
       { sourceId: "Q2-EKD", passageId: "slip" },
       { sourceId: "PMO-NOTE", passageId: "claim" },
@@ -85,7 +85,7 @@ export const ATTENTION: AttentionItem[] = [
     name: "Municipalities & Transport Authority",
     severity: "at-risk",
     confidence: "unverified",
-    line: "Budget 40 vs 52 across sources — reconcile before the vote.",
+    line: "Budget 40 vs 52 across sources; reconcile before the vote.",
     citations: [
       { sourceId: "CHARTER", passageId: "budget-mta" },
       { sourceId: "Q2-MTA", passageId: "budget" },
@@ -93,7 +93,7 @@ export const ATTENTION: AttentionItem[] = [
   },
 ];
 
-/** Tertiary — collapsed, on-track / restricted. */
+/** Tertiary, collapsed, on-track / restricted. */
 export const STEADY = [
   { id: "HSA", line: "on track, met its commitment" },
   { id: "PSD", line: "restricted, not in the shared pack" },
@@ -109,7 +109,7 @@ export const SAMPLE_QA: MockQA = {
       passageId: "commit-ekd",
     },
     {
-      text: "Its Q2 status report shows the portal slipped to August — so the commitment was not met.",
+      text: "Its Q2 status report shows the portal slipped to August, so the commitment was not met.",
       confidence: "confirmed",
       sourceId: "Q2-EKD",
       passageId: "slip",

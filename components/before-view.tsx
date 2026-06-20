@@ -27,13 +27,13 @@ const serif = { fontFamily: "var(--font-newsreader), Georgia, serif" };
 
 const PREP = [
   "Reconcile MTA's budget figure (40 vs 52) before the reallocation vote.",
-  "Get a firm SSO recovery date from EDD — it gates HSA and EKD.",
+  "Get a firm SSO recovery date from EDD; it gates HSA and EKD.",
   "Note EKD missed its June commitment; the July 'catch-up' is unverified.",
 ];
 
 const LIKELY_QS = [
-  { q: "Why defer the reallocation?", line: "MTA's figure doesn't reconcile yet — we vote once it does." },
-  { q: "Is the SSO slip contained?", line: "No — it blocks HSA and EKD go-lives; EDD owes a recovery date." },
+  { q: "Why defer the reallocation?", line: "MTA's figure doesn't reconcile yet; we vote once it does." },
+  { q: "Is the SSO slip contained?", line: "No. It blocks HSA and EKD go-lives, and EDD owes a recovery date." },
   { q: "Is EKD on track?", line: "It missed the June portal commitment; the July catch-up is unverified." },
 ];
 
@@ -77,7 +77,7 @@ export default function BeforeView() {
   const meta = (
     <>
       <div style={{ color: C.ink }} className="font-medium">{MEETING_META.session}</div>
-      <div>Manarah · in {MEETING_META.minutesUntil} min</div>
+      <div>Manarah, in {MEETING_META.minutesUntil} min</div>
     </>
   );
 
@@ -85,7 +85,7 @@ export default function BeforeView() {
     <AppShell stage="before" meta={meta} leftRail={leftRail}>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
         {prior.length > 0 && (
-          <Card label="Carried over — verify these were kept" span={2} icon={History}>
+          <Card label="Carried over, verify these were kept" span={2} icon={History}>
             <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-1.5">
               {prior.map((c) => (
                 <li key={c.id} className="text-[13px] flex items-baseline gap-2">
@@ -123,7 +123,7 @@ export default function BeforeView() {
 
         <Card label="Your decision" span={2} icon={Gavel}>
           <div style={serif} className="text-[20px] leading-snug">{DECISION.text}</div>
-          <div className="mt-2 text-[13px]" style={{ color: C.muted }}>Hinges on → {DECISION.hingesOn.join(" · ")}</div>
+          <div className="mt-2 text-[13px]" style={{ color: C.muted }}>Hinges on → {DECISION.hingesOn.join(", ")}</div>
         </Card>
 
         <Card label="Needs attention" span={2} icon={TriangleAlert} aside={<span className="text-[12px]" style={{ color: C.muted }}>3 of 5 need action</span>}>
@@ -150,7 +150,7 @@ export default function BeforeView() {
               </div>
             ))}
           </div>
-          <div className="mt-3 text-[12px]" style={{ color: C.muted }}>Also: {STEADY.map((s) => `${s.id} — ${s.line}`).join("  ·  ")}</div>
+          <div className="mt-3 text-[12px]" style={{ color: C.muted }}>Also: {STEADY.map((s) => `${s.id} ${s.line}`).join(";  ")}</div>
         </Card>
 
         <Card label="Who's in the room" span={2} icon={Users} aside={<span className="text-[12px]" style={{ color: C.muted }}>tap a person for their full profile</span>}>
@@ -159,7 +159,7 @@ export default function BeforeView() {
               const dept = deptFor(p.entity);
               return (
                 <div key={p.id} className="rounded-xl flex flex-col overflow-hidden" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
-                  {/* Identity — the person. Click → full profile. */}
+                  {/* Identity, the person. Click → full profile. */}
                   <button type="button" onClick={(e) => openProfile(p.id, { x: e.clientX, y: e.clientY })} className="group flex items-center gap-3 p-3.5 text-left cursor-pointer hover:bg-[var(--c-surface)]">
                     <Avatar id={p.id} name={p.name} size={44} />
                     <div className="flex-1 min-w-0">
@@ -168,7 +168,7 @@ export default function BeforeView() {
                     </div>
                     <ChevronRight size={16} strokeWidth={2} className="shrink-0 transition-transform group-hover:translate-x-0.5" style={{ color: C.faint }} />
                   </button>
-                  {/* Represents — the department. Status lives here. */}
+                  {/* Represents, the department. Status lives here. */}
                   <div className="px-3.5 pb-3">
                     <div className="text-[11px] mb-1.5" style={{ color: C.faint }}>Represents</div>
                     <div className="flex items-center gap-2.5">
@@ -180,7 +180,7 @@ export default function BeforeView() {
                       {dept && <StatusTag status={dept.status} className="self-start shrink-0" />}
                     </div>
                   </div>
-                  {/* Action — separated CTA. */}
+                  {/* Action, separated CTA. */}
                   {p.ask && (
                     <button
                       type="button"
@@ -190,8 +190,8 @@ export default function BeforeView() {
                     >
                       <MessageSquareQuote size={14} strokeWidth={2} style={{ color: C.accent, marginTop: 1 }} className="shrink-0" />
                       <span className="text-[12px] leading-snug">
-                        <span className="font-semibold" style={{ color: C.accent }}>Ask {p.name.split(" ")[0]}</span>
-                        <span style={{ color: C.detail }}> — {p.ask}</span>
+                        <span className="font-semibold" style={{ color: C.accent }}>Ask {p.name.split(" ")[0]}:</span>{" "}
+                        <span style={{ color: C.detail }}>{p.ask}</span>
                       </span>
                     </button>
                   )}

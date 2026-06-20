@@ -63,7 +63,7 @@ export default function AfterView() {
       <AppShell stage="after" meta={meta} leftRail={leftRail}>
         <Card>
           <div className="text-center py-6">
-            <p className="text-[15px]" style={{ color: C.muted }}>Nothing captured yet — the minutes draft from what Majlis logs in the room.</p>
+            <p className="text-[15px]" style={{ color: C.muted }}>Nothing captured yet. The minutes draft from what Majlis logs in the room.</p>
             <Link href="/during" className="mt-3 inline-block text-[13px] rounded-lg px-3 py-2" style={{ background: C.ink, color: C.bg }}>
               Go to the live meeting →
             </Link>
@@ -77,7 +77,7 @@ export default function AfterView() {
     <AppShell stage="after" meta={meta} leftRail={leftRail}>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
         <div className="lg:col-span-2">
-          <h1 style={serif} className="text-[26px] leading-snug">Q2 Steering Committee — outcomes</h1>
+          <h1 style={serif} className="text-[26px] leading-snug">Q2 Steering Committee outcomes</h1>
           <p className="mt-1 text-[15px]" style={{ color: C.muted }}>Drafted from what Majlis captured in the room.</p>
         </div>
 
@@ -100,7 +100,7 @@ export default function AfterView() {
               <li key={c.id} className="rounded-lg p-4" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
                 <div className="flex items-baseline gap-2">
                   <span className="font-semibold text-[14px]">{c.entity}</span>
-                  <span className="text-[12px]" style={{ color: C.muted }}>· due {c.due}</span>
+                  <span className="text-[12px]" style={{ color: C.muted }}>due {c.due}</span>
                 </div>
                 <p className="text-[14px] mt-0.5">{c.text}</p>
                 <div className="mt-1.5"><ConfidenceBadge confidence={c.confidence} /></div>
@@ -162,7 +162,7 @@ export default function AfterView() {
             <div className="rounded-xl p-4" style={{ background: C.priorBg, border: `1px solid ${C.priorBorder}` }}>
               <div className="font-medium text-[14px]" style={{ color: C.priorInk }}>✓ Written to institutional memory</div>
               <p className="text-[13px] mt-1" style={{ color: C.muted }}>
-                These carry forward — they appear in the next Before brief&rsquo;s prior-commitment check, closing the loop.
+                These carry forward. They appear in the next Before brief&rsquo;s prior-commitment check, closing the loop.
               </p>
               <Link href="/" className="mt-3 inline-block text-[13px] rounded-lg px-3 py-2" style={{ background: C.ink, color: C.bg }}>
                 See them in the next brief →

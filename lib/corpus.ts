@@ -1,5 +1,5 @@
 /**
- * The Manarah Programme — Q2 Steering Committee corpus.
+ * The Manarah Programme, Q2 Steering Committee corpus.
  *
  * SYNTHETIC demo data. This module is the single source of truth the assistant
  * grounds on; every citation references a { sourceId, passageId } pair here, so
@@ -57,7 +57,7 @@ export const ENTITIES: Entity[] = [
   { id: "EKD", name: "Education & Knowledge Department", scope: "Education incl. Parent Portal", status: "at-risk", headline: "Parent Portal slipped June → August; recovery only informally claimed" },
   { id: "MTA", name: "Municipalities & Transport Authority", scope: "Municipal & transport services", status: "at-risk", headline: "Delivering, but budget figures conflict across sources (40M vs 52M)" },
   { id: "PSD", name: "Public Security Directorate", scope: "Security-related services", status: "restricted", headline: "Detailed status redacted from the shared pack" },
-  { id: "EDD", name: "Economic Development Department", scope: "Licensing + shared SSO", status: "slipped", headline: "SSO integration slipped — a dependency blocking others" },
+  { id: "EDD", name: "Economic Development Department", scope: "Licensing + shared SSO", status: "slipped", headline: "SSO integration slipped, a dependency blocking others" },
 ];
 
 export const SOURCES: Source[] = [
@@ -68,7 +68,7 @@ export const SOURCES: Source[] = [
     authority: "foundational",
     passages: [
       { id: "scope", text: "Manarah consolidates priority government services from 5 entities onto a single unified resident platform, with a shared identity layer (Single Sign-On) delivered by EDD." },
-      { id: "budget-mta", text: "Initial budget allocation — MTA (Municipalities & Transport Authority): AED 40M." },
+      { id: "budget-mta", text: "Initial budget allocation for MTA (Municipalities & Transport Authority): AED 40M." },
       { id: "budget-total", text: "Total programme budget: AED 240M (including AED 30M central)." },
       { id: "governance", text: "Quarterly steering committee, chaired by the Programme DG. Budget reallocations require committee approval. Quarterly reports supersede baseline figures where they differ." },
     ],
@@ -87,7 +87,7 @@ export const SOURCES: Source[] = [
   },
   {
     id: "Q2-HSA",
-    title: "Q2 Status Report — HSA",
+    title: "Q2 Status Report, HSA",
     date: "2026-06-15",
     authority: "official-current",
     passages: [
@@ -97,7 +97,7 @@ export const SOURCES: Source[] = [
   },
   {
     id: "Q2-EKD",
-    title: "Q2 Status Report — EKD",
+    title: "Q2 Status Report, EKD",
     date: "2026-06-15",
     authority: "official-current",
     passages: [
@@ -107,17 +107,17 @@ export const SOURCES: Source[] = [
   },
   {
     id: "Q2-MTA",
-    title: "Q2 Status Report — MTA",
+    title: "Q2 Status Report, MTA",
     date: "2026-06-15",
     authority: "official-current",
     passages: [
       { id: "status", text: "MTA on track: 8/9 services live, the 9th in final testing." },
-      { id: "budget", text: "MTA budget AED 52M committed/forecast — exceeds the Charter allocation of AED 40M. Flagged for reconciliation." },
+      { id: "budget", text: "MTA budget AED 52M committed/forecast, exceeding the Charter allocation of AED 40M. Flagged for reconciliation." },
     ],
   },
   {
     id: "Q2-PSD",
-    title: "Q2 Status Report — PSD",
+    title: "Q2 Status Report, PSD",
     date: "2026-06-15",
     authority: "official-current",
     passages: [
@@ -126,11 +126,11 @@ export const SOURCES: Source[] = [
   },
   {
     id: "Q2-EDD",
-    title: "Q2 Status Report — EDD",
+    title: "Q2 Status Report, EDD",
     date: "2026-06-15",
     authority: "official-current",
     passages: [
-      { id: "slip", text: "EDD shared SSO integration delayed — now forecast end of Q3 (was end of Q2). This blocks dependent go-lives at HSA and EKD." },
+      { id: "slip", text: "EDD shared SSO integration delayed, now forecast end of Q3 (was end of Q2). This blocks dependent go-lives at HSA and EKD." },
       { id: "spend", text: "EDD spend AED 41M of 45M. Blocker: identity-vendor contract amendment pending." },
     ],
   },
@@ -147,7 +147,7 @@ export const SOURCES: Source[] = [
   },
   {
     id: "PMO-NOTE",
-    title: "Informal PMO Note — EKD",
+    title: "Informal PMO Note, EKD",
     date: null,
     authority: "informal-unverified",
     passages: [
@@ -165,7 +165,7 @@ export const getPassage = (sourceId: string, passageId: string): Passage | undef
 /** The grounding text handed to the model. */
 export function corpusForPrompt(): string {
   return SOURCES.map((s) => {
-    const head = `### [${s.id}] ${s.title} — ${s.date ?? "undated"} — authority: ${s.authority}`;
+    const head = `### [${s.id}] ${s.title}, ${s.date ?? "undated"}, authority: ${s.authority}`;
     const body = s.passages.map((p) => `- (${s.id}#${p.id}) ${p.text}`).join("\n");
     return `${head}\n${body}`;
   }).join("\n\n");

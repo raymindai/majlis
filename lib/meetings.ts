@@ -1,10 +1,10 @@
 /**
  * The DG's meeting portfolio + the people in today's room.
- * SYNTHETIC demo data — fictional, no real person implied.
+ * SYNTHETIC demo data. Fictional, no real person implied.
  *
  * IA rule (see process/14): a PERSON represents a DEPARTMENT.
  * - Person facts live here (name, role, contacts, track record, the question to ask).
- * - Department facts — full name, delivery STATUS, scope — live in lib/corpus ENTITIES,
+ * - Department facts (full name, delivery STATUS, scope) live in lib/corpus ENTITIES,
  *   the single source of truth. Look them up by `entity` code. Status is never a
  *   property of a person.
  */
@@ -31,7 +31,7 @@ export const MEETINGS: MeetingRef[] = [
     when: "13 weeks ago",
     status: "past",
     kind: "Steering",
-    relation: "Last cycle — the commitments made here are what today checks against.",
+    relation: "Last cycle: the commitments made here are what today checks against.",
   },
   {
     id: "budget-review",
@@ -40,16 +40,16 @@ export const MEETINGS: MeetingRef[] = [
     when: "6 days ago",
     status: "past",
     kind: "Review",
-    relation: "Where the MTA 40-vs-52 figure first surfaced — it feeds today's reallocation vote.",
+    relation: "Where the MTA 40-vs-52 figure first surfaced, and it feeds today's reallocation vote.",
   },
   {
     id: "sso-sync",
-    title: "EDD–HSA Single Sign-On Sync",
+    title: "EDD-HSA Single Sign-On Sync",
     date: "2026-06-18",
     when: "2 days ago",
     status: "past",
     kind: "Sync",
-    relation: "Where EDD's SSO slip was first flagged — it's today's headline blocker.",
+    relation: "Where EDD's SSO slip was first flagged; it's today's headline blocker.",
   },
   {
     id: "q2-steering",
@@ -77,7 +77,7 @@ export const MEETINGS: MeetingRef[] = [
     when: "in 3 weeks",
     status: "upcoming",
     kind: "Council",
-    relation: "Manarah reports up to this — today's decisions land here.",
+    relation: "Manarah reports up to this; today's decisions land here.",
   },
 ];
 
@@ -88,7 +88,7 @@ export interface Pledge {
 }
 
 export interface Participant {
-  id: string; // entity code — also the avatar key (public/avatars/<id>.png)
+  id: string; // entity code, also the avatar key (public/avatars/<id>.png)
   name: string;
   role: string;
   entity: string; // department code → join to lib/corpus ENTITIES for name + status
@@ -103,7 +103,7 @@ export interface Participant {
   attended: string[]; // ids of meetings in the series they're part of
 }
 
-/** Who's in today's room — names, how to reach them, and their track record. */
+/** Who's in today's room, names, how to reach them, and their track record. */
 export const PARTICIPANTS: Participant[] = [
   {
     id: "EDD",
@@ -111,11 +111,11 @@ export const PARTICIPANTS: Participant[] = [
     role: "Director-General",
     entity: "EDD",
     owns: "the shared Single Sign-On",
-    ask: "Give a firm SSO recovery date — is the identity-vendor contract signed?",
+    ask: "Give a firm SSO recovery date. Is the identity-vendor contract signed?",
     email: "k.almarri@edd.gov.ae",
     phone: "+971 2 555 0143",
-    location: "EDD HQ · Al Maryah Island",
-    reportsVia: "Owns the identity layer every other entity's go-live depends on — the programme's critical path.",
+    location: "EDD HQ, Al Maryah Island",
+    reportsVia: "Owns the identity layer every other entity's go-live depends on. It is the programme's critical path.",
     history: "Chaired the SSO sync two days ago; has owed a recovery date since.",
     pledges: [
       { text: "Single Sign-On live across all five entities", due: "due 15 Jun", status: "missed" },
@@ -132,7 +132,7 @@ export const PARTICIPANTS: Participant[] = [
     ask: "Is the July soft-launch real, or is August the true date?",
     email: "a.alhammadi@ekd.gov.ae",
     phone: "+971 2 555 0177",
-    location: "EKD Tower · Corniche",
+    location: "EKD Tower, Corniche",
     reportsVia: "Parent Portal go-live can't complete until EDD's SSO lands.",
     history: "Missed the June portal commitment; the July catch-up date is unverified.",
     pledges: [
@@ -150,7 +150,7 @@ export const PARTICIPANTS: Participant[] = [
     ask: "Reconcile the 40M vs 52M figure before the reallocation vote.",
     email: "o.saif@mta.gov.ae",
     phone: "+971 2 555 0192",
-    location: "MTA Complex · Mussafah",
+    location: "MTA Complex, Mussafah",
     reportsVia: "Holds the budget line the reallocation vote would move.",
     history: "Surfaced the 40-vs-52 discrepancy at the budget review six days ago.",
     pledges: [
@@ -168,8 +168,8 @@ export const PARTICIPANTS: Participant[] = [
     ask: "Does EDD's SSO slip put either of your two pending go-lives at risk?",
     email: "s.khoury@hsa.gov.ae",
     phone: "+971 2 555 0120",
-    location: "HSA Centre · Khalifa City",
-    reportsVia: "On track — but both pending go-lives ride on the shared SSO.",
+    location: "HSA Centre, Khalifa City",
+    reportsVia: "On track, but both pending go-lives ride on the shared SSO.",
     history: "Delivering to plan; flagged the EDD dependency at the SSO sync.",
     pledges: [
       { text: "Health-records migration wave 1", due: "May", status: "kept" },
@@ -188,8 +188,8 @@ export const PARTICIPANTS: Participant[] = [
     phone: "(restricted)",
     location: "(restricted)",
     reportsVia: "Attends in a restricted capacity; status reported under a separate annex.",
-    history: "Detail withheld — request the annex if it bears on today's decision.",
-    pledges: [{ text: "Status annex — access on request", due: "—", status: "open" }],
+    history: "Detail withheld; request the annex if it bears on today's decision.",
+    pledges: [{ text: "Status annex, access on request", due: "on request", status: "open" }],
     attended: ["q2-steering"],
   },
 ];

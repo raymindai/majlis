@@ -3,7 +3,7 @@ import { inter, newsreader } from "@/lib/fonts";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Majlis — Briefing companion",
+  title: "Majlis, Briefing companion",
   description: "An AI briefing companion for high-stakes government meetings.",
 };
 

@@ -49,6 +49,10 @@ Session: 2026-06-19 → 2026-06-20.
 **User:** "let's push it to git first."
 **Claude:** committed corpus + process archive + grounding backbone locally (secrets verified out — `.env.local` gitignored/untracked); created a **private** GitHub repo and pushed `main` → github.com/raymindai/majlis.
 
+### Turn 34 — 2026-06-20 · Draggable + resizable profile window; no em-dashes or middle dots
+**User:** make the profile popup draggable and resizable so it can be kept open. Separately: never use em-dashes or middle dots. And: the right sidebar is reserved for the chat.
+**Claude:** rebuilt the profile popover as a floating window, draggable by its header and resizable from the corner (CSS resize), persistent (closes only on X / Escape, no outside-click). Swept all copy (data + components + the AI system prompt) to remove em-dashes, en-dashes, and middle dots, replaced with commas / colons / hyphens; the prompt now instructs the model to avoid them too, so live answers comply. Build clean. Next: move the source/citation popup off the right sidebar (popover like the profile) and add "save the answer as a note" as floating note windows.
+
 ### Turn 33 — 2026-06-20 · Profile as a click-anchored popover (not a drawer)
 **User:** clicking a participant should open near where I clicked, not as a right sidebar. (Also, separately: never use em-dashes or middle dots.)
 **Claude:** replaced the right `ParticipantDrawer` with a `ParticipantPopover` anchored at the click point (passes clientX/Y; flips up/left near viewport edges; closes on outside-click / Escape). Repointed every click site (room rail, participant card, transcript speaker, distribution chip) to pass coordinates. Build clean. Next: sweep all copy for em-dashes + middle dots; redesign the Needs-attention cards and give the citation chips real context (friendly source names).

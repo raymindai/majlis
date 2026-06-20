@@ -27,24 +27,24 @@ const FEED: FeedItem[] = [
   {
     id: "edd",
     speaker: "EDD",
-    text: "SSO has slipped — we now forecast completion at the end of Q3.",
+    text: "SSO has slipped, and we now forecast completion at the end of Q3.",
     note: { kind: "confirm", text: "Matches the record (R-07). It blocks HSA and EKD go-lives.", cite: { sourceId: "RISK", passageId: "R-07" } },
-    suggest: "Ask EDD for a firm recovery date — is the identity-vendor contract signed?",
+    suggest: "Ask EDD for a firm recovery date. Is the identity-vendor contract signed?",
     capture: { id: "c-edd-sso", entity: "EDD", text: "Deliver the shared SSO integration", due: "end of Q3", confidence: "confirmed", capturedAt: "during" },
   },
   {
     id: "ekd",
     speaker: "EKD",
     text: "We're confident the Parent Portal is on track for the original timeline.",
-    note: { kind: "flag", text: "Inconsistent with the record — the Q2 report shows the portal slipped to August.", cite: { sourceId: "Q2-EKD", passageId: "slip" } },
+    note: { kind: "flag", text: "Inconsistent with the record: the Q2 report shows the portal slipped to August.", cite: { sourceId: "Q2-EKD", passageId: "slip" } },
     suggest: "Ask EKD to reconcile that confidence with the August date on record.",
   },
   {
     id: "mta",
     speaker: "MTA",
     text: "Our programme spend is well within budget.",
-    note: { kind: "flag", text: "The MTA budget conflicts across sources — Charter 40M vs Q2 report 52M.", cite: { sourceId: "Q2-MTA", passageId: "budget" } },
-    suggest: "Ask MTA which figure is correct — 40M or 52M — before the reallocation vote.",
+    note: { kind: "flag", text: "The MTA budget conflicts across sources: Charter 40M vs Q2 report 52M.", cite: { sourceId: "Q2-MTA", passageId: "budget" } },
+    suggest: "Ask MTA which figure is correct, 40M or 52M, before the reallocation vote.",
     capture: { id: "c-mta-budget", entity: "MTA", text: "Reconcile the 40M vs 52M budget figure", due: "within 2 weeks", confidence: "confirmed", capturedAt: "during" },
   },
   {
@@ -58,8 +58,8 @@ const FEED: FeedItem[] = [
 /** Resolve a transcript speaker code to a name (+ profile id when it's a participant). */
 function speakerOf(code: string): { name: string; id?: string; role?: string } {
   const p = PARTICIPANTS.find((x) => x.id === code);
-  if (p) return { name: p.name, id: p.id, role: `${p.role} · ${p.entity}` };
-  if (code === "Chair") return { name: "You", role: "Chair · Programme Director-General" };
+  if (p) return { name: p.name, id: p.id, role: `${p.role}, ${p.entity}` };
+  if (code === "Chair") return { name: "You", role: "Chair, Programme Director-General" };
   return { name: code };
 }
 
@@ -86,7 +86,7 @@ export default function DuringView() {
     <div className="space-y-6">
       <MeetingContext />
       <div>
-        <RailLabel>Agenda — who speaks</RailLabel>
+        <RailLabel>Speaking order</RailLabel>
         <ol className="space-y-1.5 text-[13px]">
           {FEED.map((f, i) => {
             const sp = speakerOf(f.speaker);
@@ -160,7 +160,7 @@ export default function DuringView() {
                         )}
                         <div>
                           <span style={{ color: item.note.kind === "flag" ? C.unverified : C.ink, fontWeight: 500 }}>
-                            {item.note.kind === "flag" ? "Inconsistency — " : "Confirmed — "}
+                            {item.note.kind === "flag" ? "Inconsistency: " : "Confirmed: "}
                           </span>
                           <span style={{ color: C.detail }}>{item.note.text}</span>{" "}
                           <span className="inline-block align-middle">

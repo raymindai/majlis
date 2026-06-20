@@ -1,5 +1,5 @@
 /**
- * Supabase — server-side admin client + helpers.
+ * Supabase, server-side admin client + helpers.
  * SERVER ONLY: uses the service-role key (bypasses RLS). Never import from client code.
  * Everything degrades gracefully: if Supabase isn't configured or the table is
  * missing, calls no-op and the app keeps working.
@@ -22,7 +22,7 @@ type AnswerShape = {
   claims?: { confidence: string }[];
 };
 
-/** Append one grounded answer to the audit log (qa_log). Resilient — never throws. */
+/** Append one grounded answer to the audit log (qa_log). Resilient, never throws. */
 export async function logQa(entry: {
   stage?: string | null;
   question: string;

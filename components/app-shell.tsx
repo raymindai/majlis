@@ -61,7 +61,7 @@ export default function AppShell({
         </div>
       </div>
 
-      {/* shared source drawer — opened by any citation chip, anywhere */}
+      {/* shared source drawer, opened by any citation chip, anywhere */}
       {drawer && openCite && (
         <>
           <div className="fixed inset-0 bg-black/30 z-40" onClick={() => setOpenCite(null)} />
@@ -74,7 +74,7 @@ export default function AppShell({
             </div>
             <div style={serif} className="text-xl">{drawer.title}</div>
             <div className="text-[12px] mt-1" style={{ color: C.muted }}>
-              {drawer.date ?? "undated"} · {openCite.sourceId}
+              {drawer.date ?? "undated"}, {openCite.sourceId}
             </div>
             <p className="mt-4 text-[15px] leading-relaxed p-4 rounded-lg" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
               {drawer.text || "This passage isn't in the loaded pack."}
