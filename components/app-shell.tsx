@@ -1,11 +1,10 @@
 "use client";
 
 import { type ReactNode } from "react";
-import { Info } from "lucide-react";
 import { C, StageSpine } from "@/components/ui";
+import MeetingBar from "@/components/meeting-bar";
 import DetailControl from "@/components/detail-control";
 import UserMenu from "@/components/user-menu";
-import { useAbout } from "@/components/about-context";
 import ThemeSwitcher from "@/components/theme-switcher";
 import ChatPanel from "@/components/chat-panel";
 
@@ -18,33 +17,31 @@ const serif = { fontFamily: "var(--font-newsreader), Georgia, serif" };
  */
 export default function AppShell({
   stage,
-  meta,
   leftRail,
   children,
 }: {
   stage: "before" | "during" | "after";
-  meta?: ReactNode;
   leftRail?: ReactNode;
   children: ReactNode;
 }) {
-  const { open: openAbout } = useAbout();
-
   return (
     <div className="h-dvh flex flex-col" style={{ background: C.bg, color: C.ink, fontFamily: "var(--font-inter), system-ui, sans-serif" }}>
-      {/* header */}
+      {/* header: left = title + meeting + stage, center = zoom, right = theme + profile */}
       <header className="shrink-0 border-b" style={{ borderColor: C.line, background: C.surface }}>
-        <div className="px-5 h-14 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <span style={serif} className="text-xl">Majlis</span>
-            <StageSpine active={stage} />
+        <div className="relative px-5 h-14 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3 min-w-0">
+            <span style={serif} className="text-xl shrink-0">Majlis</span>
+            <span className="h-6 w-px shrink-0" style={{ background: C.line }} />
+            <MeetingBar stage={stage} />
+            <span className="h-6 w-px shrink-0 hidden lg:block" style={{ background: C.line }} />
+            <div className="hidden lg:block"><StageSpine active={stage} /></div>
           </div>
-          <div className="flex items-center gap-3">
-            {meta && <div className="text-[12px] text-right leading-tight hidden xl:block" style={{ color: C.muted }}>{meta}</div>}
+
+          <div className="absolute left-1/2 -translate-x-1/2 hidden md:block">
             <DetailControl />
-            <button type="button" onClick={openAbout} className="inline-flex items-center gap-1.5 text-[12px] cursor-pointer hover:opacity-70" style={{ color: C.muted }} title="What this is and how to use it">
-              <Info size={15} strokeWidth={2} />
-              <span className="hidden lg:inline">For reviewers</span>
-            </button>
+          </div>
+
+          <div className="flex items-center gap-3 shrink-0">
             <ThemeSwitcher />
             <UserMenu />
           </div>

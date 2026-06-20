@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Copy, Database, FileText, Gavel, Handshake, ListChecks, Send, ShieldAlert, Sparkles, UserRoundCheck } from "lucide-react";
 import { loadState, resetMeeting, writeToMemory, type MeetingState } from "@/lib/store";
-import { MEETING_META } from "@/lib/mock";
 import { PARTICIPANTS } from "@/lib/meetings";
 import { C, Card, CitationChip, ConfidenceBadge, RailLabel } from "@/components/ui";
 import { Avatar, MeetingContext, NavList, TheRoom } from "@/components/rail";
@@ -99,16 +98,9 @@ export default function AfterView() {
     </div>
   );
 
-  const meta = (
-    <>
-      <div className="font-medium" style={{ color: C.ink }}>Draft minutes</div>
-      <div style={{ color: C.muted }}>{MEETING_META.session}</div>
-    </>
-  );
-
   if (empty) {
     return (
-      <AppShell stage="after" meta={meta} leftRail={leftRail}>
+      <AppShell stage="after" leftRail={leftRail}>
         <Card>
           <div className="text-center py-6">
             <p className="text-[15px]" style={{ color: C.muted }}>Nothing captured yet. The minutes draft from what Majlis logs in the room.</p>
@@ -122,7 +114,7 @@ export default function AfterView() {
   }
 
   return (
-    <AppShell stage="after" meta={meta} leftRail={leftRail}>
+    <AppShell stage="after" leftRail={leftRail}>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
         <Card
           label="Minutes"

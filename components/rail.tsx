@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { CalendarClock, type LucideIcon } from "lucide-react";
+import { type LucideIcon } from "lucide-react";
 import { ENTITIES } from "@/lib/corpus";
 import { MEETINGS, PARTICIPANTS } from "@/lib/meetings";
 import { MEETING_META } from "@/lib/mock";
@@ -115,16 +115,16 @@ export function PersonRow({ id, size = 28, sub }: { id: string; size?: number; s
 
 export function MeetingContext() {
   const idx = MEETINGS.findIndex((m) => m.current) + 1;
+  // The header carries the session, room, and time. Here the rail frames the wider
+  // programme the session sits inside, so the two complement rather than repeat.
   return (
     <div className="rounded-xl p-3" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
-      <div className="flex items-start gap-2">
-        <CalendarClock size={15} strokeWidth={2} style={{ color: C.accent, marginTop: 1 }} className="shrink-0" />
-        <div className="min-w-0">
-          <div className="text-[13px] font-semibold leading-tight">{MEETING_META.session}</div>
-          <div className="text-[12px] mt-0.5" style={{ color: C.muted }}>
-            in {MEETING_META.minutesUntil} min, {idx} of {MEETINGS.length} in the series
-          </div>
-        </div>
+      <div className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: C.accent }}>Programme</div>
+      <div className="text-[13px] font-semibold leading-tight mt-1">{MEETING_META.programme}</div>
+      <div className="text-[11px] mt-0.5 leading-snug" style={{ color: C.muted }}>{MEETING_META.subtitle}</div>
+      <div className="mt-2 pt-2 border-t text-[11px] space-y-0.5" style={{ borderColor: C.line, color: C.faint }}>
+        <div>Session {idx} of {MEETINGS.length} in the series</div>
+        <div>{ENTITIES.length} entities, AED {Math.round(MEETING_META.totalBudgetAED / 1e6)}M programme</div>
       </div>
     </div>
   );

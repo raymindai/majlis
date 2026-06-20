@@ -40,6 +40,7 @@ export const MEETING = {
   programme: "Manarah Programme",
   subtitle: "Unified Abu Dhabi government digital services",
   session: "Q2 2026 Steering Committee",
+  room: "Majlis Hall, Qasr Al Hosn",
   date: "2026-06-20",
   chairRole: "Programme Director-General",
   totalBudgetAED: 240_000_000,

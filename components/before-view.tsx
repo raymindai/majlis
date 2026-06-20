@@ -18,7 +18,6 @@ import {
   TriangleAlert,
   Users,
 } from "lucide-react";
-import { MEETING_META } from "@/lib/mock";
 import { MEETINGS, PARTICIPANTS } from "@/lib/meetings";
 import { loadState, type Commitment } from "@/lib/store";
 import { type Brief, BRIEF_CACHE_KEY, MOCK_BRIEF } from "@/lib/brief";
@@ -112,17 +111,10 @@ export default function BeforeView() {
     </div>
   );
 
-  const meta = (
-    <>
-      <div style={{ color: C.ink }} className="font-medium">{MEETING_META.session}</div>
-      <div>Manarah, in {MEETING_META.minutesUntil} min</div>
-    </>
-  );
-
   const bl = brief.bottomLine;
 
   return (
-    <AppShell stage="before" meta={meta} leftRail={leftRail}>
+    <AppShell stage="before" leftRail={leftRail}>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
         {prior.length > 0 && (
           <Card label="Carried over, verify these were kept" span={2} icon={History}>

@@ -5,7 +5,6 @@ import Link from "next/link";
 import { AudioLines, CircleCheck, ClipboardCheck, Gavel, Lightbulb, MessageSquareQuote, Sparkles, TriangleAlert } from "lucide-react";
 import { addCommitment, loadState, type Commitment } from "@/lib/store";
 import { type Brief, BRIEF_CACHE_KEY, MOCK_BRIEF } from "@/lib/brief";
-import { MEETING_META } from "@/lib/mock";
 import { PARTICIPANTS } from "@/lib/meetings";
 import { askMajlis } from "@/components/ask-bus";
 import { C, Card, CitationChip, RailLabel } from "@/components/ui";
@@ -136,17 +135,8 @@ export default function DuringView() {
     </div>
   );
 
-  const meta = (
-    <>
-      <div className="font-medium inline-flex items-center gap-1.5" style={{ color: C.unverified }}>
-        <span className="h-2 w-2 rounded-full animate-pulse" style={{ background: C.unverified }} /> Recording
-      </div>
-      <div style={{ color: C.muted }}>{MEETING_META.session}</div>
-    </>
-  );
-
   return (
-    <AppShell stage="during" meta={meta} leftRail={leftRail}>
+    <AppShell stage="during" leftRail={leftRail}>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
         <Card
           label="Live transcript"

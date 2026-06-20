@@ -8,13 +8,12 @@ import { CitationContext } from "@/components/citation-context";
 import { ParticipantContext } from "@/components/participant-context";
 import { OpenMeetingContext } from "@/components/meeting-context";
 import { DetailContext, type DetailLevel } from "@/components/detail-context";
-import { AboutContext } from "@/components/about-context";
 import ParticipantPopover from "@/components/participant-popover";
 import MeetingPopover from "@/components/meeting-popover";
 import { FloatingWindow, type WinPos } from "@/components/floating-window";
 import NotesLayer from "@/components/notes-layer";
 import { Gloss } from "@/components/gloss";
-import AboutWindow from "@/components/about-window";
+import ReviewerGuide from "@/components/reviewer-guide";
 import SelectionAsk from "@/components/selection-ask";
 
 const serif = { fontFamily: "var(--font-newsreader), Georgia, serif" };
@@ -34,7 +33,6 @@ export default function Desk({ children }: { children: ReactNode }) {
   const [windows, setWindows] = useState<WinItem[]>([]);
   const idRef = useRef(0);
   const [level, setLevelState] = useState<DetailLevel>(3);
-  const [aboutOpen, setAboutOpen] = useState(false);
 
   useEffect(() => {
     const saved = typeof window !== "undefined" ? Number(localStorage.getItem("majlis-detail")) : 0;
@@ -68,7 +66,6 @@ export default function Desk({ children }: { children: ReactNode }) {
       <CitationContext.Provider value={{ open: (c, pos) => { if (c) open("source", c, pos); } }}>
         <ParticipantContext.Provider value={{ open: (id, pos) => { if (id) open("participant", id, pos); } }}>
           <OpenMeetingContext.Provider value={{ open: (id, pos) => { if (id) open("meeting", id, pos); } }}>
-            <AboutContext.Provider value={{ open: () => setAboutOpen(true) }}>
               {children}
 
               {/* Stackable floating windows: profiles, sources, meetings. Each persists until closed. */}
@@ -118,8 +115,7 @@ export default function Desk({ children }: { children: ReactNode }) {
 
               <SelectionAsk />
               <NotesLayer />
-              <AboutWindow open={aboutOpen} onClose={() => setAboutOpen(false)} />
-            </AboutContext.Provider>
+              <ReviewerGuide />
           </OpenMeetingContext.Provider>
         </ParticipantContext.Provider>
       </CitationContext.Provider>
