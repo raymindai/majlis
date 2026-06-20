@@ -33,10 +33,10 @@ export default function MeetingBar({ stage }: { stage: "before" | "during" | "af
 
   const join =
     stage === "before"
-      ? { href: "/during", labelKey: "joinCall", Icon: Video, style: { background: C.accent, color: C.onAccent } }
+      ? { href: "/during", labelKey: "join", Icon: Video, style: { background: C.accent, color: C.onAccent } }
       : stage === "during"
-        ? { href: "/after", labelKey: "leave", Icon: LogOut, style: { background: C.flagBg, color: C.unverified } }
-        : { href: "/during", labelKey: "replayRecording", Icon: Play, style: { background: C.surfaceAlt, color: C.detail } };
+        ? { href: "/after", labelKey: "leave", Icon: LogOut, style: { background: C.unverified, color: C.onAccent } }
+        : { href: "/during", labelKey: "replay", Icon: Play, style: { background: C.confirmed, color: C.onAccent } };
   const JoinIcon = join.Icon;
 
   return (
@@ -59,8 +59,7 @@ export default function MeetingBar({ stage }: { stage: "before" | "during" | "af
             style={statusStyle}
           >
             {live && <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: C.unverified }} />}
-            {tr(current.statusKey)}
-            {stage === "before" && <span className="opacity-80">{tr("inMinutes", { n: MEETING_META.minutesUntil })}</span>}
+            {stage === "before" ? tr("inMinutes", { n: MEETING_META.minutesUntil }) : tr(current.statusKey)}
             <ChevronDown size={13} strokeWidth={2} className="opacity-80" />
           </button>
           <Link

@@ -23,7 +23,7 @@ const EN: Dict = {
   upcoming: "Upcoming",
   inSession: "In session",
   concluded: "Concluded",
-  inMinutes: "in {n} min",
+  inMinutes: "In {n} min",
   changeStatus: "Change the meeting status",
   // calendar
   calendar: "Calendar",
@@ -167,8 +167,10 @@ const EN: Dict = {
   tapPerson: "tap a person for their full profile",
   joinMeeting: "Join meeting",
   joinCall: "Join call",
+  join: "Join",
   leave: "Leave",
   replayRecording: "Replay recording",
+  replay: "Replay",
 };
 
 const AR: Dict = {
@@ -310,8 +312,10 @@ const AR: Dict = {
   tapPerson: "اضغط على شخص لعرض ملفه الكامل",
   joinMeeting: "انضمّ إلى الاجتماع",
   joinCall: "انضمّ إلى المكالمة",
+  join: "انضمام",
   leave: "مغادرة",
   replayRecording: "إعادة تشغيل التسجيل",
+  replay: "إعادة",
 };
 
 const DICT: Record<Lang, Dict> = { en: EN, ar: AR };
