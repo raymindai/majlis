@@ -184,11 +184,11 @@ export default function BeforeView() {
 
         <Card labelKey="yourDecision" span={2} icon={Gavel}>
           <div style={serif} className="text-[20px] leading-snug"><Gloss>{brief.decision.text}</Gloss></div>
-          <div className="mt-3 rounded-xl p-3.5" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
+          <div className="mt-4 pl-3.5 border-l-2" style={{ borderColor: C.accent }}>
             <div className="text-[11px] font-semibold mb-1" style={{ color: C.accent }}>{tr("recommendation")}</div>
             <p className="text-[14px] leading-snug"><Gloss>{brief.decision.recommendation}</Gloss></p>
             {brief.decision.rationale && (
-              <p className="text-[13px] leading-relaxed mt-2.5 pt-2.5 border-t" style={{ borderColor: C.line, color: C.detail }}>
+              <p className="text-[13px] leading-relaxed mt-2" style={{ color: C.detail }}>
                 <span className="font-medium" style={{ color: C.ink }}>{tr("why")}: </span>
                 <Gloss>{brief.decision.rationale}</Gloss>
               </p>
@@ -196,7 +196,17 @@ export default function BeforeView() {
           </div>
           {level >= 2 && (
             <>
-              <div className="mt-3 text-[13px]" style={{ color: C.muted }}>{tr("hingesOn")} → <Gloss>{brief.decision.hingesOn.join(", ")}</Gloss></div>
+              <div className="mt-4">
+                <div className="text-[11px] font-semibold mb-1.5" style={{ color: C.faint }}>{tr("hingesOn")}</div>
+                <ul className="space-y-1">
+                  {brief.decision.hingesOn.map((h, i) => (
+                    <li key={i} className="flex items-start gap-2 text-[13px]" style={{ color: C.detail }}>
+                      <span className="mt-[7px] h-1 w-1 rounded-full shrink-0" style={{ background: C.faint }} />
+                      <span><Gloss>{h}</Gloss></span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
               {brief.decision.options.length > 0 && (
                 <div className="mt-4">
                   <div className="text-[11px] font-semibold mb-2" style={{ color: C.faint }}>{tr("yourOptions")}</div>
