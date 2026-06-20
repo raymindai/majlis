@@ -205,27 +205,33 @@ export default function BeforeView() {
 
         <Card label="Needs attention" span={2} icon={TriangleAlert} aside={<span className="text-[12px]" style={{ color: C.muted }}>{brief.attention.length} of {PARTICIPANTS.length} need action</span>}>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            {brief.attention.map((a) => (
-              <div key={a.entity} className="rounded-xl p-3.5" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
-                <div className="flex items-start gap-2.5">
-                  <OrgBadge code={a.entity} size={34} />
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-semibold text-[14px]"><Gloss>{a.entity}</Gloss></span>
-                      <SeverityPill severity={a.severity} />
+            {brief.attention.map((a) => {
+              const sources = a.citations.filter((c, i, arr) => arr.findIndex((x) => x.sourceId === c.sourceId) === i);
+              return (
+                <div key={a.entity} className="rounded-xl p-3.5 flex flex-col" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
+                  {/* Identity: the department (its short code lives in the badge), then its severity. */}
+                  <div className="flex items-start gap-2.5">
+                    <OrgBadge code={a.entity} size={34} />
+                    <div className="min-w-0 flex-1">
+                      <div className="font-semibold text-[14px] leading-tight">{deptFor(a.entity)?.name ?? a.entity}</div>
+                      <div className="mt-1.5"><SeverityPill severity={a.severity} /></div>
                     </div>
-                    <div className="text-[11px] leading-tight mt-0.5" style={{ color: C.muted }}>{deptFor(a.entity)?.name ?? a.entity}</div>
+                  </div>
+                  {/* The issue. */}
+                  <p className="text-[13px] leading-snug mt-3"><Gloss>{a.line}</Gloss></p>
+                  {/* Evidence: how grounded, and in what. */}
+                  <div className="mt-3 pt-3 border-t" style={{ borderColor: C.line }}>
+                    <div className="text-[11px] font-semibold mb-1.5" style={{ color: C.faint }}>Evidence</div>
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <ConfidenceBadge confidence={a.confidence} />
+                      {sources.map((c, i) => (
+                        <CitationChip key={i} sourceId={c.sourceId} onClick={(pos) => open(c, pos)} />
+                      ))}
+                    </div>
                   </div>
                 </div>
-                <p className="text-[13px] leading-snug mt-2.5"><Gloss>{a.line}</Gloss></p>
-                <div className="mt-2 flex flex-wrap items-center gap-1.5">
-                  <ConfidenceBadge confidence={a.confidence} />
-                  {a.citations.map((c, i) => (
-                    <CitationChip key={i} sourceId={c.sourceId} onClick={(pos) => open(c, pos)} />
-                  ))}
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
           {brief.steady.length > 0 && (
             <div className="mt-3 text-[12px]" style={{ color: C.muted }}>Also: <Gloss>{brief.steady.map((s) => `${s.entity} ${s.line}`).join(";  ")}</Gloss></div>
