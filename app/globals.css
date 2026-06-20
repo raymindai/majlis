@@ -98,3 +98,21 @@ input,
 ::-webkit-scrollbar-thumb:hover {
   background: var(--c-faint);
 }
+
+/* Live meeting animations: STT transcription, thinking, insight reveal */
+@keyframes majlis-fade-up {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.majlis-fade-up { animation: majlis-fade-up 0.35s ease-out both; }
+@keyframes majlis-eq {
+  0%, 100% { transform: scaleY(0.35); }
+  50% { transform: scaleY(1); }
+}
+@keyframes majlis-bounce {
+  0%, 100% { transform: translateY(0); opacity: 0.5; }
+  50% { transform: translateY(-3px); opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .majlis-fade-up { animation: none; }
+}

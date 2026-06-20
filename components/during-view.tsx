@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { AudioLines, CircleCheck, ClipboardCheck, Gavel, Lightbulb, MessageSquareQuote, Sparkles, TriangleAlert } from "lucide-react";
 import { addCommitment, loadState, type Commitment } from "@/lib/store";
@@ -45,6 +45,46 @@ function speakerOf(code: string): { name: string; id?: string; role?: string } {
   return { name: code };
 }
 
+/** A small live audio-level meter, shown while a speaker is "talking". */
+function AudioBars() {
+  return (
+    <span className="inline-flex items-end gap-[2px] h-3.5" aria-hidden>
+      {[0, 1, 2, 3].map((i) => (
+        <span
+          key={i}
+          className="w-[2px] h-full rounded-full origin-bottom"
+          style={{ background: "var(--c-unverified)", animation: "majlis-eq 0.7s ease-in-out infinite", animationDelay: `${i * 130}ms` }}
+        />
+      ))}
+    </span>
+  );
+}
+
+/** Reveals the utterance word by word, as if transcribed live, then signals completion. */
+function TranscribingQuote({ text, onDone }: { text: string; onDone: () => void }) {
+  const words = useMemo(() => text.split(" "), [text]);
+  const [n, setN] = useState(1);
+  const done = useRef(false);
+  useEffect(() => {
+    if (n >= words.length) {
+      if (!done.current) {
+        done.current = true;
+        onDone();
+      }
+      return;
+    }
+    const t = setTimeout(() => setN((x) => x + 1), 70);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [n, words.length]);
+  return (
+    <>
+      {words.slice(0, n).join(" ")}
+      <span className="inline-block w-[2px] h-[0.95em] ml-0.5 align-[-0.15em] animate-pulse" style={{ background: "var(--c-accent)" }} />
+    </>
+  );
+}
+
 export default function DuringView() {
   const { open } = useCitation();
   const { open: openProfile } = useParticipant();
@@ -53,6 +93,7 @@ export default function DuringView() {
   const [revealed, setRevealed] = useState(1);
   const [captured, setCaptured] = useState<Commitment[]>([]);
   const [observations, setObservations] = useState<Record<string, Obs | "loading">>({});
+  const [transcribed, setTranscribed] = useState<Set<string>>(() => new Set());
   const [brief, setBrief] = useState<Brief>(MOCK_BRIEF);
   const requested = useRef<Set<string>>(new Set());
 
@@ -74,30 +115,31 @@ export default function DuringView() {
     }
   }, [lang]);
 
-  // Observe each utterance live as it is revealed.
+  // Once an utterance finishes "transcribing", Majlis observes it against the record.
   useEffect(() => {
-    const item = FEED[revealed - 1];
-    if (!item || requested.current.has(item.id)) return;
-    requested.current.add(item.id);
-    setObservations((o) => ({ ...o, [item.id]: "loading" }));
-    fetch("/api/observe", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ speaker: item.speaker, text: item.text, lang }) })
-      .then((r) => r.json())
-      .then((obs: Obs & { error?: string }) => {
-        setObservations((o) => {
-          if (obs && !obs.error) return { ...o, [item.id]: obs };
-          const n = { ...o };
-          delete n[item.id];
-          return n;
+    FEED.slice(0, revealed).forEach((item) => {
+      if (!transcribed.has(item.id) || requested.current.has(item.id)) return;
+      requested.current.add(item.id);
+      setObservations((o) => ({ ...o, [item.id]: "loading" }));
+      fetch("/api/observe", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ speaker: item.speaker, text: item.text, lang }) })
+        .then((r) => r.json())
+        .then((obs: Obs & { error?: string }) => {
+          setObservations((o) => {
+            if (obs && !obs.error) return { ...o, [item.id]: obs };
+            const n = { ...o };
+            delete n[item.id];
+            return n;
+          });
+        })
+        .catch(() => {
+          setObservations((o) => {
+            const n = { ...o };
+            delete n[item.id];
+            return n;
+          });
         });
-      })
-      .catch(() => {
-        setObservations((o) => {
-          const n = { ...o };
-          delete n[item.id];
-          return n;
-        });
-      });
-  }, [revealed]);
+    });
+  }, [transcribed, revealed, lang]);
 
   const capturedIds = new Set(captured.map((c) => c.id));
   const shown = FEED.slice(0, revealed);
@@ -181,31 +223,54 @@ export default function DuringView() {
             {shown.map((item) => {
               const sp = speakerOf(item.speaker);
               const obs = observations[item.id];
+              const typing = !transcribed.has(item.id);
               return (
                 <div key={item.id} className="rounded-xl p-4" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
-                  {sp.id ? (
-                    <button type="button" onClick={(e) => openProfile(sp.id!, { x: e.clientX, y: e.clientY })} className="flex items-center gap-2.5 text-left cursor-pointer hover:opacity-70">
-                      <Avatar id={sp.id} name={sp.name} size={28} />
+                  <div className="flex items-center justify-between gap-2">
+                    {sp.id ? (
+                      <button type="button" onClick={(e) => openProfile(sp.id!, { x: e.clientX, y: e.clientY })} className="flex items-center gap-2.5 text-left cursor-pointer hover:opacity-70">
+                        <Avatar id={sp.id} name={sp.name} size={28} />
+                        <span className="leading-tight">
+                          <span className="font-semibold text-[13px]">{sp.name}</span>
+                          {sp.role && <span className="block text-[11px]" style={{ color: C.muted }}><Gloss>{sp.role}</Gloss></span>}
+                        </span>
+                      </button>
+                    ) : (
                       <span className="leading-tight">
                         <span className="font-semibold text-[13px]">{sp.name}</span>
                         {sp.role && <span className="block text-[11px]" style={{ color: C.muted }}><Gloss>{sp.role}</Gloss></span>}
                       </span>
-                    </button>
-                  ) : (
-                    <span className="leading-tight">
-                      <span className="font-semibold text-[13px]">{sp.name}</span>
-                      {sp.role && <span className="block text-[11px]" style={{ color: C.muted }}><Gloss>{sp.role}</Gloss></span>}
-                    </span>
-                  )}
-                  <p className="text-[15px] mt-2 leading-relaxed">&ldquo;<Gloss>{item.text}</Gloss>&rdquo;</p>
+                    )}
+                    {typing && (
+                      <span className="inline-flex items-center gap-1.5 text-[11px] shrink-0" style={{ color: C.unverified }}>
+                        <AudioBars />
+                        <span className="hidden sm:inline">{tr("transcribing")}</span>
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-[15px] mt-2 leading-relaxed">
+                    &ldquo;
+                    {typing ? (
+                      <TranscribingQuote text={item.text} onDone={() => setTranscribed((s) => { const n = new Set(s); n.add(item.id); return n; })} />
+                    ) : (
+                      <Gloss>{item.text}</Gloss>
+                    )}
+                    &rdquo;
+                  </p>
 
                   {obs === "loading" && (
-                    <div className="mt-3 text-[12px] flex items-center gap-2" style={{ color: C.muted }}>
-                      <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: C.accent }} /> Majlis is checking the record…
+                    <div className="mt-3 inline-flex items-center gap-2 text-[12px]" style={{ color: C.muted }}>
+                      <Sparkles size={13} strokeWidth={2} className="animate-pulse" style={{ color: C.accent }} />
+                      <span>{tr("thinking")}</span>
+                      <span className="inline-flex items-end gap-0.5">
+                        {[0, 1, 2].map((i) => (
+                          <span key={i} className="w-1 h-1 rounded-full" style={{ background: C.accent, animation: "majlis-bounce 0.9s ease-in-out infinite", animationDelay: `${i * 150}ms` }} />
+                        ))}
+                      </span>
                     </div>
                   )}
                   {obs && obs !== "loading" && (
-                    <>
+                    <div className="majlis-fade-up">
                       {obs.stance !== "neutral" ? (
                         <div className="mt-3 rounded-lg p-3 text-[13px]" style={obs.stance === "contradicts" ? { background: C.flagBg, border: `1px solid ${C.flagBorder}` } : { background: C.surface, border: `1px solid ${C.line}` }}>
                           <div className="flex items-start gap-2">
@@ -216,7 +281,7 @@ export default function DuringView() {
                             )}
                             <div>
                               <span style={{ color: obs.stance === "contradicts" ? C.unverified : C.ink, fontWeight: 500 }}>
-                                {obs.stance === "contradicts" ? "Inconsistency: " : "Confirmed: "}
+                                {obs.stance === "contradicts" ? `${tr("inconsistency")}: ` : `${tr("confirmedColon")}: `}
                               </span>
                               <span style={{ color: C.detail }}><Gloss>{obs.note}</Gloss></span>{" "}
                               {obs.citation && (
@@ -234,7 +299,7 @@ export default function DuringView() {
                       {obs.suggestedQuestion && level >= 2 && (
                         <button type="button" onClick={() => askMajlis(obs.suggestedQuestion!)} className="mt-2 flex items-start gap-1.5 text-left text-[12px] cursor-pointer hover:opacity-70" style={{ color: C.accent }}>
                           <MessageSquareQuote size={13} strokeWidth={2} className="mt-0.5 shrink-0" />
-                          <span><span className="font-medium">Suggested:</span> <span style={{ color: C.detail }}><Gloss>{obs.suggestedQuestion}</Gloss></span></span>
+                          <span><span className="font-medium">{tr("suggested")}:</span> <span style={{ color: C.detail }}><Gloss>{obs.suggestedQuestion}</Gloss></span></span>
                         </button>
                       )}
 
@@ -249,11 +314,11 @@ export default function DuringView() {
                             className="text-[12px] rounded-lg px-2.5 py-1 cursor-pointer disabled:opacity-50"
                             style={{ background: C.chipBg, color: C.ink }}
                           >
-                            {capturedIds.has(`c-${item.id}`) ? "✓ Captured" : "+ Capture commitment"}
+                            {capturedIds.has(`c-${item.id}`) ? `✓ ${tr("capturedTick")}` : `+ ${tr("captureCommitment")}`}
                           </button>
                         </div>
                       )}
-                    </>
+                    </div>
                   )}
                 </div>
               );
