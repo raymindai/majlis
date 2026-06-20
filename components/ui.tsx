@@ -1,23 +1,29 @@
 import Link from "next/link";
+import type { ReactNode } from "react";
 import type { Confidence } from "@/lib/corpus";
 
-/**
- * Editorial palette. Core surfaces resolve through CSS variables (set per theme
- * in globals.css) with the Institutional values as fallbacks, so the live skin
- * switcher can re-theme the whole app without touching components.
- */
+/** All colours resolve through CSS variables (set per theme in globals.css),
+ *  so Institutional / Dossier / Dark all re-theme the whole app. */
 export const C = {
-  bg: "var(--c-bg, #F6F2E9)",
-  surface: "var(--c-surface, #FFFFFF)",
-  surfaceAlt: "var(--c-surface-alt, #FCFAF4)",
-  ink: "var(--c-ink, #14233A)",
-  muted: "var(--c-muted, #5B6573)",
-  faint: "var(--c-faint, #9A8C70)",
-  line: "var(--c-line, #E4DCCB)",
-  accent: "var(--c-accent, #B08D4F)",
-  confirmed: "#2F6B4F",
-  likely: "#B5852F",
-  unverified: "#A23B2D",
+  bg: "var(--c-bg)",
+  surface: "var(--c-surface)",
+  surfaceAlt: "var(--c-surface-alt)",
+  ink: "var(--c-ink)",
+  detail: "var(--c-detail)",
+  muted: "var(--c-muted)",
+  faint: "var(--c-faint)",
+  line: "var(--c-line)",
+  accent: "var(--c-accent)",
+  onAccent: "var(--c-on-accent)",
+  confirmed: "var(--c-confirmed)",
+  likely: "var(--c-likely)",
+  unverified: "var(--c-unverified)",
+  flagBg: "var(--c-flag-bg)",
+  flagBorder: "var(--c-flag-border)",
+  priorBg: "var(--c-prior-bg)",
+  priorBorder: "var(--c-prior-border)",
+  priorInk: "var(--c-prior-ink)",
+  chipBg: "var(--c-chip-bg)",
 };
 
 export const confColor: Record<Confidence, string> = {
@@ -32,8 +38,8 @@ export const confLabel: Record<Confidence, string> = {
 };
 
 export const severityColor: Record<string, string> = {
-  blocker: "#A23B2D",
-  "at-risk": "#B5852F",
+  blocker: C.unverified,
+  "at-risk": C.likely,
 };
 // Shape + colour, so severity never reads on colour alone.
 export const severityGlyph: Record<string, string> = {
@@ -58,8 +64,8 @@ export function CitationChip({ sourceId, onClick }: { sourceId: string; onClick?
     <button
       type="button"
       onClick={onClick}
-      className="inline-flex items-center gap-1 text-[11px] rounded border px-1.5 py-0.5 transition-colors cursor-pointer"
-      style={{ borderColor: C.line, color: C.muted }}
+      className="inline-flex items-center gap-1 text-[11px] rounded border px-1.5 py-0.5 transition-opacity cursor-pointer hover:opacity-70"
+      style={{ borderColor: C.line, color: C.muted, background: C.surface }}
     >
       {sourceId} <span style={{ color: C.accent }}>›</span>
     </button>
@@ -87,5 +93,28 @@ export function StageSpine({ active }: { active: "before" | "during" | "after" }
         </span>
       ))}
     </div>
+  );
+}
+
+/** A labelled section block with a clear divider — the spine of the new layout. */
+export function Section({
+  label,
+  aside,
+  children,
+}: {
+  label: string;
+  aside?: ReactNode;
+  children: ReactNode;
+}) {
+  return (
+    <section id={label.toLowerCase().replace(/[^a-z0-9]+/g, "-")} className="scroll-mt-20">
+      <div className="flex items-baseline justify-between gap-2 pb-2 mb-3 border-b" style={{ borderColor: C.line }}>
+        <h2 className="text-[11px] uppercase font-medium" style={{ color: C.faint, letterSpacing: "0.12em" }}>
+          {label}
+        </h2>
+        {aside}
+      </div>
+      {children}
+    </section>
   );
 }

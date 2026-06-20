@@ -49,6 +49,10 @@ Session: 2026-06-19 → 2026-06-20.
 **User:** "let's push it to git first."
 **Claude:** committed corpus + process archive + grounding backbone locally (secrets verified out — `.env.local` gitignored/untracked); created a **private** GitHub repo and pushed `main` → github.com/raymindai/majlis.
 
+### Turn 21 — 2026-06-20 · Layout redesign (user's morning feedback)
+**User:** dark mode in the header; layout not optimized for laptop aspect ratio; clearer section dividers + labels; a persistent "ask anything" AI chat on every screen; more per-stage contextual features. (Keys 3/4/5 added → fal + Supabase unblocked.)
+**Claude:** rebuilt into a **laptop 3-zone AppShell** (header with light/dossier/dark switcher · left context rail · labelled sections with dividers · persistent right-side **AI chat** grounded in the pack, opens the shared source drawer). Full CSS-variable theming incl. a proper **Dark** skin. Per-stage features — Before: prep checklist + likely questions; During: agenda tracker + flag/capture tally; After: action-items table + distribution. All three stages rebuilt; production build clean. Next: wire fal imagery + Supabase persistence.
+
 ### Turn 20 — 2026-06-20 (overnight) · Readout + wrap
 **Claude:** wrote `GOOD-MORNING.md` (run instructions, the ~3-min demo path, what's built, the open choices, and what was deliberately not built). Updated the build plan. Stopping the autonomous build here — everything buildable without the missing keys (fal, Supabase) or the user's input (microsite shape, product name, dark theme, deploy env) is done, working, and pushed. The product is live and deploy-ready.
 
