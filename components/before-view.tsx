@@ -104,7 +104,7 @@ export default function BeforeView() {
           <div className="mt-4 flex flex-wrap items-center gap-2">
             <ConfidenceBadge confidence={BOTTOM_LINE.confidence} />
             {BOTTOM_LINE.citations.map((c, i) => (
-              <CitationChip key={i} sourceId={c.sourceId} onClick={() => open(c)} />
+              <CitationChip key={i} sourceId={c.sourceId} onClick={(pos) => open(c, pos)} />
             ))}
             <span
               className="inline-flex items-center gap-1.5 text-[11px] rounded-full px-2 py-0.5"
@@ -113,7 +113,7 @@ export default function BeforeView() {
               <span className="h-1.5 w-1.5 rounded-full" style={{ background: C.unverified }} />
               {BOTTOM_LINE.conflict.label}
               {BOTTOM_LINE.conflict.citations.map((c, i) => (
-                <button key={i} type="button" onClick={() => open(c)} className="underline decoration-dotted underline-offset-2 cursor-pointer">
+                <button key={i} type="button" onClick={(e) => open(c, { x: e.clientX, y: e.clientY })} className="underline decoration-dotted underline-offset-2 cursor-pointer">
                   {c.sourceId}
                 </button>
               ))}
@@ -144,7 +144,7 @@ export default function BeforeView() {
                 <div className="mt-2 flex flex-wrap items-center gap-1.5">
                   <ConfidenceBadge confidence={a.confidence} />
                   {a.citations.map((c, i) => (
-                    <CitationChip key={i} sourceId={c.sourceId} onClick={() => open(c)} />
+                    <CitationChip key={i} sourceId={c.sourceId} onClick={(pos) => open(c, pos)} />
                   ))}
                 </div>
               </div>

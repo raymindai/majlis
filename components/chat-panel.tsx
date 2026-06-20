@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { StickyNote } from "lucide-react";
 import { ASK_EVENT } from "@/components/ask-bus";
 import { C, CitationChip, ConfidenceBadge } from "@/components/ui";
 import { useCitation } from "@/components/citation-context";
+import { addNote, loadNotes } from "@/lib/notes";
 import type { Confidence } from "@/lib/corpus";
 
 type Claim = { text: string; confidence: Confidence; sourceId: string; passageId: string };
@@ -86,11 +88,26 @@ export default function ChatPanel({ stage }: { stage: "before" | "during" | "aft
                       <p className="text-[13px] leading-relaxed">{c.text}</p>
                       <div className="mt-1.5 flex items-center gap-2">
                         <ConfidenceBadge confidence={c.confidence} />
-                        <CitationChip sourceId={c.sourceId} onClick={() => open({ sourceId: c.sourceId, passageId: c.passageId })} />
+                        <CitationChip sourceId={c.sourceId} onClick={(pos) => open({ sourceId: c.sourceId, passageId: c.passageId }, pos)} />
                       </div>
                     </div>
                   ))}
                 </div>
+              )}
+              {!m.answer.notInMaterial && m.answer.summary && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    const prev = msgs[i - 1];
+                    const title = i > 0 && prev.role === "user" ? prev.text : "Saved answer";
+                    const n = loadNotes().length;
+                    addNote({ title, summary: m.answer.summary, claims: m.answer.claims ?? [], pos: { x: 140 + (n % 5) * 26, y: 130 + (n % 5) * 26 } });
+                  }}
+                  className="mt-2 inline-flex items-center gap-1.5 text-[12px] cursor-pointer hover:opacity-70"
+                  style={{ color: C.muted }}
+                >
+                  <StickyNote size={13} strokeWidth={2} /> Save as note
+                </button>
               )}
             </div>
           ),

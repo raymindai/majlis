@@ -49,6 +49,10 @@ Session: 2026-06-19 → 2026-06-20.
 **User:** "let's push it to git first."
 **Claude:** committed corpus + process archive + grounding backbone locally (secrets verified out — `.env.local` gitignored/untracked); created a **private** GitHub repo and pushed `main` → github.com/raymindai/majlis.
 
+### Turn 35 — 2026-06-20 · FloatingWindow: source viewer off the right rail; save answers as notes
+**User:** the right sidebar is reserved for the chat; a "note" should appear like the profile popover; once the LLM answers, let the user save the answer as a note. (Also flagged fal recraft v4.1 text-to-vector for vector assets, noted for branding/microsite.)
+**Claude:** extracted a reusable `FloatingWindow` (draggable, resizable, persistent) and routed three surfaces through it: the participant profile, the **source/citation viewer** (moved off the right drawer to a popover at the click point), and **notes**. Added `lib/notes.ts` (localStorage-backed, persists across stages) + `NotesLayer`; every chat answer now has "Save as note", which pins it as a floating window with its confidence + citations intact (draggable, resizable, position remembered). Build clean.
+
 ### Turn 34 — 2026-06-20 · Draggable + resizable profile window; no em-dashes or middle dots
 **User:** make the profile popup draggable and resizable so it can be kept open. Separately: never use em-dashes or middle dots. And: the right sidebar is reserved for the chat.
 **Claude:** rebuilt the profile popover as a floating window, draggable by its header and resizable from the corner (CSS resize), persistent (closes only on X / Escape, no outside-click). Swept all copy (data + components + the AI system prompt) to remove em-dashes, en-dashes, and middle dots, replaced with commas / colons / hyphens; the prompt now instructs the model to avoid them too, so live answers comply. Build clean. Next: move the source/citation popup off the right sidebar (popover like the profile) and add "save the answer as a note" as floating note windows.

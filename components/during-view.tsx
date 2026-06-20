@@ -164,7 +164,7 @@ export default function DuringView() {
                           </span>
                           <span style={{ color: C.detail }}>{item.note.text}</span>{" "}
                           <span className="inline-block align-middle">
-                            <CitationChip sourceId={item.note.cite.sourceId} onClick={() => open(item.note!.cite)} />
+                            <CitationChip sourceId={item.note.cite.sourceId} onClick={(pos) => open(item.note!.cite, pos)} />
                           </span>
                         </div>
                       </div>

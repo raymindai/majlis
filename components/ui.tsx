@@ -87,11 +87,11 @@ export function SeverityPill({ severity }: { severity: string }) {
   );
 }
 
-export function CitationChip({ sourceId, onClick }: { sourceId: string; onClick?: () => void }) {
+export function CitationChip({ sourceId, onClick }: { sourceId: string; onClick?: (pos: { x: number; y: number }) => void }) {
   return (
     <button
       type="button"
-      onClick={onClick}
+      onClick={(e) => onClick?.({ x: e.clientX, y: e.clientY })}
       className="inline-flex items-center gap-1 text-[11px] rounded-md border px-1.5 py-0.5 cursor-pointer hover:opacity-70"
       style={{ borderColor: C.line, color: C.muted, background: C.surface }}
     >

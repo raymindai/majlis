@@ -6,6 +6,8 @@ import { C, StageSpine } from "@/components/ui";
 import { CitationContext } from "@/components/citation-context";
 import { ParticipantContext, type ParticipantPos } from "@/components/participant-context";
 import ParticipantPopover from "@/components/participant-popover";
+import { FloatingWindow, type WinPos } from "@/components/floating-window";
+import NotesLayer from "@/components/notes-layer";
 import ThemeSwitcher from "@/components/theme-switcher";
 import ChatPanel from "@/components/chat-panel";
 import SelectionAsk from "@/components/selection-ask";
@@ -23,14 +25,14 @@ export default function AppShell({
   leftRail?: ReactNode;
   children: ReactNode;
 }) {
-  const [openCite, setOpenCite] = useState<Citation | null>(null);
+  const [cite, setCite] = useState<{ citation: Citation; pos: WinPos } | null>(null);
   const [participant, setParticipant] = useState<{ id: string; pos: ParticipantPos } | null>(null);
-  const drawer = openCite ? resolveCitation(openCite.sourceId, openCite.passageId) : null;
+  const src = cite ? resolveCitation(cite.citation.sourceId, cite.citation.passageId) : null;
   const openParticipant = (id: string | null, pos?: ParticipantPos) =>
     setParticipant(id ? { id, pos: pos ?? { x: window.innerWidth - 220, y: 120 } } : null);
 
   return (
-    <CitationContext.Provider value={{ open: setOpenCite }}>
+    <CitationContext.Provider value={{ open: (c, pos) => setCite(c ? { citation: c, pos: pos ?? { x: window.innerWidth - 420, y: 120 } } : null) }}>
       <ParticipantContext.Provider value={{ open: openParticipant }}>
       <div className="h-dvh flex flex-col" style={{ background: C.bg, color: C.ink, fontFamily: "var(--font-inter), system-ui, sans-serif" }}>
         {/* header */}
@@ -61,29 +63,26 @@ export default function AppShell({
         </div>
       </div>
 
-      {/* shared source drawer, opened by any citation chip, anywhere */}
-      {drawer && openCite && (
-        <>
-          <div className="fixed inset-0 bg-black/30 z-40" onClick={() => setOpenCite(null)} />
-          <aside className="fixed right-0 top-0 h-dvh w-full max-w-md p-6 overflow-y-auto shadow-2xl z-50" style={{ background: C.surface, color: C.ink }}>
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-[11px] font-semibold" style={{ color: C.faint }}>Source</span>
-              <button type="button" onClick={() => setOpenCite(null)} className="text-[13px] cursor-pointer" style={{ color: C.muted }}>
-                Close ✕
-              </button>
-            </div>
-            <div style={serif} className="text-xl">{drawer.title}</div>
-            <div className="text-[12px] mt-1" style={{ color: C.muted }}>
-              {drawer.date ?? "undated"}, {openCite.sourceId}
-            </div>
-            <p className="mt-4 text-[15px] leading-relaxed p-4 rounded-lg" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
-              {drawer.text || "This passage isn't in the loaded pack."}
-            </p>
-          </aside>
-        </>
+      {/* shared source viewer, opened by any citation chip, anywhere (off the right rail) */}
+      {src && cite && (
+        <FloatingWindow
+          title="Source"
+          anchor={cite.pos}
+          onClose={() => setCite(null)}
+          initialW={400}
+          initialH={320}
+          headerRight={<span className="text-[11px]" style={{ color: C.muted }}>{cite.citation.sourceId}</span>}
+        >
+          <div style={serif} className="text-[18px] leading-snug">{src.title}</div>
+          <div className="text-[12px] mt-1" style={{ color: C.muted }}>{src.date ?? "undated"}{src.authority ? `, ${src.authority}` : ""}</div>
+          <p className="mt-3 text-[14px] leading-relaxed p-3 rounded-lg" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
+            {src.text || "This passage isn't in the loaded pack."}
+          </p>
+        </FloatingWindow>
       )}
       <SelectionAsk />
       <ParticipantPopover id={participant?.id ?? null} pos={participant?.pos ?? null} onClose={() => setParticipant(null)} />
+      <NotesLayer />
       </ParticipantContext.Provider>
     </CitationContext.Provider>
   );
