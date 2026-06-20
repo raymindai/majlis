@@ -6,6 +6,9 @@ import { C } from "@/components/ui";
 
 export type WinPos = { x: number; y: number };
 
+// Shared z-order: clicking any window raises it above the others.
+let WIN_Z = 50;
+
 /**
  * A floating window: opens near an anchor point, draggable by its header,
  * resizable from the corner (CSS resize), persistent (closes on X / Escape).
@@ -21,6 +24,7 @@ export function FloatingWindow({
   initialH = 460,
   headerRight,
   onMove,
+  raise = 0,
 }: {
   title: string;
   anchor: WinPos;
@@ -30,9 +34,21 @@ export function FloatingWindow({
   initialH?: number;
   headerRight?: ReactNode;
   onMove?: (pos: WinPos) => void;
+  raise?: number;
 }) {
   const [box, setBox] = useState<{ top: number; left: number } | null>(null);
+  const [z, setZ] = useState(() => ++WIN_Z);
   const drag = useRef<{ dx: number; dy: number } | null>(null);
+  const firstRaise = useRef(true);
+
+  // When the same window is "opened" again, bring it to the front instead of duplicating.
+  useEffect(() => {
+    if (firstRaise.current) {
+      firstRaise.current = false;
+      return;
+    }
+    setZ(++WIN_Z);
+  }, [raise]);
 
   useEffect(() => {
     const vw = window.innerWidth, vh = window.innerHeight;
@@ -82,7 +98,8 @@ export function FloatingWindow({
   return (
     <div
       ref={setNode}
-      className="fixed z-50 rounded-2xl shadow-2xl flex flex-col"
+      onMouseDown={() => setZ(++WIN_Z)}
+      className="fixed rounded-2xl flex flex-col"
       style={{
         top: box.top,
         left: box.left,
@@ -92,9 +109,11 @@ export function FloatingWindow({
         maxHeight: "88vh",
         resize: "both",
         overflow: "hidden",
+        zIndex: z,
         background: C.surface,
         color: C.ink,
         border: `1px solid ${C.line}`,
+        boxShadow: "0 16px 50px rgba(0, 0, 0, 0.24), 0 4px 14px rgba(0, 0, 0, 0.14)",
       }}
       role="dialog"
     >

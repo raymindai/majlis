@@ -76,7 +76,7 @@ export function Tip({
               borderRadius: "7px",
               maxWidth: "240px",
               width: "max-content",
-              zIndex: 90,
+              zIndex: 99999,
               pointerEvents: "none",
               boxShadow: "0 6px 20px rgba(0,0,0,0.22)",
               textAlign: "center",

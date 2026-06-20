@@ -11,7 +11,7 @@ import { Gloss } from "@/components/gloss";
 const serif = { fontFamily: "var(--font-newsreader), Georgia, serif" };
 
 /** A meeting from the series: its summary, with a toggle for full details. */
-export default function MeetingPopover({ id, pos, onClose }: { id: string | null; pos: WinPos | null; onClose: () => void }) {
+export default function MeetingPopover({ id, pos, onClose, raise }: { id: string | null; pos: WinPos | null; onClose: () => void; raise?: number }) {
   const [expanded, setExpanded] = useState(false);
   const m = id ? MEETINGS.find((x) => x.id === id) : null;
   if (!m || !pos) return null;
@@ -23,6 +23,7 @@ export default function MeetingPopover({ id, pos, onClose }: { id: string | null
       onClose={onClose}
       initialW={380}
       initialH={340}
+      raise={raise}
       headerRight={<span className="text-[11px]" style={{ color: C.faint }}>{m.when}</span>}
     >
       <div style={serif} className="text-[17px] leading-snug">{m.title}</div>

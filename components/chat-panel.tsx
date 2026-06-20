@@ -163,7 +163,7 @@ export default function ChatPanel({ stage }: { stage: "before" | "during" | "aft
                     const prev = msgs[i - 1];
                     const title = i > 0 && prev.role === "user" ? prev.text : "Saved answer";
                     const n = loadNotes().length;
-                    addNote({ title, summary: m.answer.summary, claims: m.answer.claims ?? [], pos: { x: 140 + (n % 5) * 26, y: 130 + (n % 5) * 26 } });
+                    addNote({ title, summary: m.answer.summary, claims: m.answer.claims ?? [], pos: { x: 300 + (n % 5) * 28, y: 120 + (n % 5) * 28 } });
                   }}
                   className="mt-2 inline-flex items-center gap-1.5 text-[12px] cursor-pointer hover:opacity-70"
                   style={{ color: C.muted }}

@@ -20,7 +20,7 @@ function Lbl({ children }: { children: string }) {
 }
 
 /** Participant profile in a draggable, resizable floating window. */
-export default function ParticipantPopover({ id, pos, onClose }: { id: string | null; pos: ParticipantPos | null; onClose: () => void }) {
+export default function ParticipantPopover({ id, pos, onClose, raise }: { id: string | null; pos: ParticipantPos | null; onClose: () => void; raise?: number }) {
   const p = id ? PARTICIPANTS.find((x) => x.id === id) : null;
   if (!p || !pos) return null;
   const dept = deptFor(p.entity);
@@ -28,7 +28,7 @@ export default function ParticipantPopover({ id, pos, onClose }: { id: string | 
   const first = p.name.split(" ")[0];
 
   return (
-    <FloatingWindow title="Participant" anchor={pos} onClose={onClose} initialW={360} initialH={480}>
+    <FloatingWindow title="Participant" anchor={pos} onClose={onClose} initialW={360} initialH={480} raise={raise}>
       {/* Identity */}
       <div className="flex items-center gap-3">
         <Avatar id={p.id} name={p.name} size={52} />

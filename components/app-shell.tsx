@@ -22,9 +22,9 @@ import SelectionAsk from "@/components/selection-ask";
 const serif = { fontFamily: "var(--font-newsreader), Georgia, serif" };
 
 type WinItem =
-  | { instanceId: string; kind: "participant"; payload: string; pos: WinPos }
-  | { instanceId: string; kind: "meeting"; payload: string; pos: WinPos }
-  | { instanceId: string; kind: "source"; payload: Citation; pos: WinPos };
+  | { instanceId: string; kind: "participant"; payload: string; pos: WinPos; raise: number }
+  | { instanceId: string; kind: "meeting"; payload: string; pos: WinPos; raise: number }
+  | { instanceId: string; kind: "source"; payload: Citation; pos: WinPos; raise: number };
 
 export default function AppShell({
   stage,
@@ -55,10 +55,14 @@ export default function AppShell({
   function open(kind: "source", payload: Citation, pos?: WinPos): void;
   function open(kind: WinItem["kind"], payload: string | Citation, pos?: WinPos): void {
     setWindows((ws) => {
+      // If this exact window is already open, bring it to the front instead of duplicating.
+      const key = JSON.stringify(payload);
+      const existing = ws.find((w) => w.kind === kind && JSON.stringify(w.payload) === key);
+      if (existing) return ws.map((w) => (w === existing ? ({ ...w, raise: w.raise + 1 } as WinItem) : w));
       const fallback = { x: (typeof window !== "undefined" ? window.innerWidth : 1200) - 420, y: 120 };
       const base = pos ?? fallback;
       const cascade = ws.length % 6;
-      const next = { instanceId: String(++idRef.current), kind, payload, pos: { x: base.x + cascade * 8, y: base.y + cascade * 8 } } as WinItem;
+      const next = { instanceId: String(++idRef.current), kind, payload, pos: { x: base.x + cascade * 8, y: base.y + cascade * 8 }, raise: 0 } as WinItem;
       return [...ws, next];
     });
   }
@@ -102,8 +106,8 @@ export default function AppShell({
 
           {/* Stackable floating windows: profiles, sources, meetings. Each persists until closed. */}
           {windows.map((w) => {
-            if (w.kind === "participant") return <ParticipantPopover key={w.instanceId} id={w.payload} pos={w.pos} onClose={() => closeWin(w.instanceId)} />;
-            if (w.kind === "meeting") return <MeetingPopover key={w.instanceId} id={w.payload} pos={w.pos} onClose={() => closeWin(w.instanceId)} />;
+            if (w.kind === "participant") return <ParticipantPopover key={w.instanceId} id={w.payload} pos={w.pos} raise={w.raise} onClose={() => closeWin(w.instanceId)} />;
+            if (w.kind === "meeting") return <MeetingPopover key={w.instanceId} id={w.payload} pos={w.pos} raise={w.raise} onClose={() => closeWin(w.instanceId)} />;
             const s = getSource(w.payload.sourceId);
             const m = SOURCE_META[w.payload.sourceId];
             return (
@@ -111,6 +115,7 @@ export default function AppShell({
                 key={w.instanceId}
                 title="Document"
                 anchor={w.pos}
+                raise={w.raise}
                 onClose={() => closeWin(w.instanceId)}
                 initialW={430}
                 initialH={400}
