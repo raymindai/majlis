@@ -57,6 +57,14 @@ Legend: ✅ locked · 🔶 open · 👤 user call · 🤖 Claude recommendation
 - **Choice:** rebuilt the Before screen on an **exception-led IA** (`12`): bottom-line + decision (primary) → ranked attention (secondary) → interrogate (on demand), with a provenance flow (claim → confidence → citation → source drawer). Skin = **editorial-institutional** (per criteria `11`: trust, calm, scales, avoids generic-AI). Re-skinnable component system.
 - **Live at** `/` (dev :3001); Q&A on mock pending live wiring.
 
+## D11 — Participant avatars · ✅ 👤-requested
+- **Date:** 2026-06-20
+- **Decision:** generate per-participant avatars via **fal (Nano Banana 2)** for "Who's in the room."
+- **Intent:** humanize the room so the DG maps people → what they own; ground the "ask the right person" flow.
+- **Style:** a cohesive, dignified **editorial portrait** set — refined, lightly stylized (NOT photoreal), neutral warm background, head-and-shoulders, calm/authoritative. The restricted PSD liaison → an anonymous silhouette (signals "restricted"). Clearly synthetic.
+- **Why not photoreal:** avoids the uncanny valley + authenticity concerns; a consistent stylized set reads more premium and honestly synthetic.
+- **Build:** generation script → `public/avatars/<id>.png`, wired into the participant cards with the monogram as fallback.
+
 ## Earlier framing decisions (context)
 - **AI is the product, not a feature** — the scenario must make the AI's judgment the experience. 🤖
 - **Scope down to 1–2 capabilities built deeply.** 🤖

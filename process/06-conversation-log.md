@@ -49,6 +49,10 @@ Session: 2026-06-19 → 2026-06-20.
 **User:** "let's push it to git first."
 **Claude:** committed corpus + process archive + grounding backbone locally (secrets verified out — `.env.local` gitignored/untracked); created a **private** GitHub repo and pushed `main` → github.com/raymindai/majlis.
 
+### Turn 27 — 2026-06-20 · Elevated Before sidebar + fal lookup
+**User:** the left sidebar is too primitive; the bare codes/initials don't explain themselves. (Also asked to generate fal avatars per the UX/service procedure.)
+**Claude:** logged D11 (avatar design decision — dignified stylized editorial portraits, not photoreal). Rebuilt the Before left rail — a meeting-context block (session · countdown · "4 of 6 in the series"), an **icon-led nav**, and **"The room"** showing each entity with its **name + status** (not just a code). Looked up the fal model: **`fal-ai/nano-banana-pro`** (Nano Banana 2, text-to-image). Build clean. Next: generate + wire participant avatars; carry the rail elevation to During/After.
+
 ### Turn 26 — 2026-06-20 · During live-recording + insights; After consistency
 **Claude:** rebuilt During in the elevated card-grid with a **live-recording** framing ("● Recording", "Majlis is listening") and a generated **Insights & suggested questions** panel that grows as the meeting runs (each flag → an insight; each moment → a question you could ask, clickable to brief you via Majlis). Converted After to the same card-grid (decisions/commitments side by side, action-items table, distribution + memory). All three stages consistent; build clean; committed.
 

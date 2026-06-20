@@ -1,16 +1,28 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { MessageSquareQuote } from "lucide-react";
+import {
+  CalendarClock,
+  CalendarRange,
+  Gavel,
+  ListChecks,
+  MessageCircleQuestion,
+  MessageSquareQuote,
+  Target,
+  TriangleAlert,
+  Users,
+} from "lucide-react";
 import { ATTENTION, BOTTOM_LINE, DECISION, MEETING_META, STEADY } from "@/lib/mock";
+import { ENTITIES } from "@/lib/corpus";
 import { MEETINGS, PARTICIPANTS } from "@/lib/meetings";
 import { loadState, type Commitment } from "@/lib/store";
 import { askMajlis } from "@/components/ask-bus";
-import { C, Card, CitationChip, ConfidenceBadge, RailLabel, SeverityPill, severityColor, severityGlyph } from "@/components/ui";
+import { C, Card, CitationChip, ConfidenceBadge, RailLabel, SeverityPill } from "@/components/ui";
 import { useCitation } from "@/components/citation-context";
 import AppShell from "@/components/app-shell";
 
 const serif = { fontFamily: "var(--font-newsreader), Georgia, serif" };
+const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-");
 
 const PREP = [
   "Reconcile MTA's budget figure (40 vs 52) before the reallocation vote.",
@@ -24,7 +36,15 @@ const LIKELY_QS = [
   { q: "Is EKD on track?", line: "It missed the June portal commitment; the July catch-up is unverified." },
 ];
 
-const NAV = ["The bottom line", "Your decision", "Needs attention", "Who's in the room", "Meeting series", "Prep checklist", "Likely questions"];
+const NAV = [
+  { label: "The bottom line", icon: Target },
+  { label: "Your decision", icon: Gavel },
+  { label: "Needs attention", icon: TriangleAlert },
+  { label: "Who's in the room", icon: Users },
+  { label: "Meeting series", icon: CalendarRange },
+  { label: "Prep checklist", icon: ListChecks },
+  { label: "Likely questions", icon: MessageCircleQuestion },
+];
 
 const statusColor: Record<string, string> = { "on-track": C.confirmed, "at-risk": C.likely, slipped: C.unverified, restricted: C.faint };
 const statusLabel: Record<string, string> = { "on-track": "On track", "at-risk": "At risk", slipped: "Slipped", restricted: "Restricted" };
@@ -50,31 +70,55 @@ export default function BeforeView() {
     return () => window.removeEventListener("majlis-store", sync);
   }, []);
 
+  const currentIndex = MEETINGS.findIndex((m) => m.current) + 1;
+
   const leftRail = (
     <div className="space-y-6">
+      <div className="rounded-xl p-3" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
+        <div className="flex items-start gap-2">
+          <CalendarClock size={15} strokeWidth={2} style={{ color: C.accent, marginTop: 1 }} className="shrink-0" />
+          <div className="min-w-0">
+            <div className="text-[13px] font-semibold leading-tight">{MEETING_META.session}</div>
+            <div className="text-[12px] mt-0.5" style={{ color: C.muted }}>
+              in {MEETING_META.minutesUntil} min · {currentIndex} of {MEETINGS.length} in the series
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div>
-        <RailLabel>Sections</RailLabel>
-        <nav className="space-y-1 text-[13px]">
-          {NAV.map((s) => (
-            <a key={s} href={`#${s.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`} className="block hover:opacity-70" style={{ color: C.muted }}>
-              {s}
-            </a>
-          ))}
+        <RailLabel>In this brief</RailLabel>
+        <nav className="-mx-2 space-y-0.5">
+          {NAV.map((n) => {
+            const Icon = n.icon;
+            return (
+              <a
+                key={n.label}
+                href={`#${slug(n.label)}`}
+                className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg text-[13px] hover:bg-[var(--c-surface-alt)]"
+                style={{ color: C.muted }}
+              >
+                <Icon size={15} strokeWidth={2} style={{ color: C.faint }} className="shrink-0" />
+                {n.label}
+              </a>
+            );
+          })}
         </nav>
       </div>
+
       <div>
-        <RailLabel>Roster</RailLabel>
-        <ul className="space-y-1.5 text-[13px]">
-          {ATTENTION.map((a) => (
-            <li key={a.id} className="flex items-center gap-2">
-              <span aria-hidden style={{ color: severityColor[a.severity] }}>{severityGlyph[a.severity]}</span>
-              <span className="font-semibold">{a.id}</span>
-            </li>
-          ))}
-          {STEADY.map((s) => (
-            <li key={s.id} className="flex items-center gap-2" style={{ color: C.muted }}>
-              <span aria-hidden>·</span>
-              <span className="font-semibold">{s.id}</span>
+        <RailLabel>The room</RailLabel>
+        <ul className="space-y-2.5">
+          {ENTITIES.map((e) => (
+            <li key={e.id} className="flex items-start gap-2">
+              <span className="h-1.5 w-1.5 rounded-full mt-1.5 shrink-0" style={{ background: statusColor[e.status] }} />
+              <div className="min-w-0">
+                <div className="flex items-baseline gap-1.5">
+                  <span className="font-semibold text-[13px]">{e.id}</span>
+                  <span className="text-[11px]" style={{ color: statusColor[e.status] }}>{statusLabel[e.status]}</span>
+                </div>
+                <div className="text-[11px] truncate" style={{ color: C.muted }}>{e.name}</div>
+              </div>
             </li>
           ))}
         </ul>
