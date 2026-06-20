@@ -118,3 +118,36 @@ export function Section({
     </section>
   );
 }
+
+/** A distinct card with its own surface, border, and labelled header — clear
+ *  separation between sections. `span={2}` makes it full-width in the center grid. */
+export function Card({
+  label,
+  aside,
+  span = 1,
+  children,
+}: {
+  label?: string;
+  aside?: ReactNode;
+  span?: 1 | 2;
+  children: ReactNode;
+}) {
+  const id = label ? label.toLowerCase().replace(/[^a-z0-9]+/g, "-") : undefined;
+  return (
+    <section
+      id={id}
+      className={`rounded-xl p-5 scroll-mt-4 ${span === 2 ? "lg:col-span-2" : ""}`}
+      style={{ background: C.surface, border: `1px solid ${C.line}` }}
+    >
+      {label && (
+        <div className="flex items-baseline justify-between gap-2 mb-3 pb-2.5 border-b" style={{ borderColor: C.line }}>
+          <h2 className="text-[12px] uppercase font-semibold" style={{ color: C.muted, letterSpacing: "0.1em" }}>
+            {label}
+          </h2>
+          {aside}
+        </div>
+      )}
+      {children}
+    </section>
+  );
+}

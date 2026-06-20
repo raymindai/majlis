@@ -49,6 +49,10 @@ Session: 2026-06-19 → 2026-06-20.
 **User:** "let's push it to git first."
 **Claude:** committed corpus + process archive + grounding backbone locally (secrets verified out — `.env.local` gitignored/untracked); created a **private** GitHub repo and pushed `main` → github.com/raymindai/majlis.
 
+### Turn 22 — 2026-06-20 · Layout critique → card-grid center
+**User:** still unhappy — sections need better legibility/separation; the center still uses a narrow one-column style instead of the width.
+**Claude:** added a `Card` component (own surface/border/labelled header) and rebuilt the **Before** center as a **2-column grid that fills the width** (full-width hero + decision; the 3 exceptions side-by-side; prep + likely paired); widened the shell center (max-w-5xl). Build clean. Showing Before first to confirm the direction before converting During/After. (Background dev servers keep getting reaped between turns → asked the user to run their own `npm run dev`, which hot-reloads my edits live.)
+
 ### Turn 21 — 2026-06-20 · Layout redesign (user's morning feedback)
 **User:** dark mode in the header; layout not optimized for laptop aspect ratio; clearer section dividers + labels; a persistent "ask anything" AI chat on every screen; more per-stage contextual features. (Keys 3/4/5 added → fal + Supabase unblocked.)
 **Claude:** rebuilt into a **laptop 3-zone AppShell** (header with light/dossier/dark switcher · left context rail · labelled sections with dividers · persistent right-side **AI chat** grounded in the pack, opens the shared source drawer). Full CSS-variable theming incl. a proper **Dark** skin. Per-stage features — Before: prep checklist + likely questions; During: agenda tracker + flag/capture tally; After: action-items table + distribution. All three stages rebuilt; production build clean. Next: wire fal imagery + Supabase persistence.

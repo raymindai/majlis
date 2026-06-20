@@ -46,7 +46,7 @@ export default function AppShell({
             {leftRail}
           </aside>
           <main className="overflow-y-auto px-6 py-6">
-            <div className="max-w-2xl mx-auto space-y-8 pb-12">{children}</div>
+            <div className="mx-auto w-full max-w-5xl space-y-6 pb-12">{children}</div>
           </main>
           <div className="hidden lg:flex flex-col border-l min-h-0" style={{ borderColor: C.line, background: C.surface }}>
             <ChatPanel stage={stage} />

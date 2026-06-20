@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { ATTENTION, BOTTOM_LINE, DECISION, MEETING_META, STEADY } from "@/lib/mock";
 import { loadState, type Commitment } from "@/lib/store";
-import { C, CitationChip, ConfidenceBadge, Section, severityColor, severityGlyph } from "@/components/ui";
+import { C, Card, CitationChip, ConfidenceBadge, severityColor, severityGlyph } from "@/components/ui";
 import { useCitation } from "@/components/citation-context";
 import AppShell from "@/components/app-shell";
 
@@ -18,7 +18,7 @@ const PREP = [
 const LIKELY_QS = [
   { q: "Why defer the reallocation?", line: "MTA's figure doesn't reconcile yet — we vote once it does." },
   { q: "Is the SSO slip contained?", line: "No — it blocks HSA and EKD go-lives; EDD owes a recovery date." },
-  { q: "Is EKD on track?", line: "It missed the June portal commitment; an informal July catch-up is unverified." },
+  { q: "Is EKD on track?", line: "It missed the June portal commitment; the July catch-up is unverified." },
 ];
 
 const NAV = ["The bottom line", "Your decision", "Needs attention", "Prep checklist", "Likely questions"];
@@ -55,7 +55,7 @@ export default function BeforeView() {
         <ul className="space-y-1.5 text-[13px]">
           {ATTENTION.map((a) => (
             <li key={a.id} className="flex items-center gap-2">
-              <span style={{ color: severityColor[a.severity] }} aria-hidden>{severityGlyph[a.severity]}</span>
+              <span aria-hidden style={{ color: severityColor[a.severity] }}>{severityGlyph[a.severity]}</span>
               <span className="font-semibold">{a.id}</span>
             </li>
           ))}
@@ -79,107 +79,102 @@ export default function BeforeView() {
 
   return (
     <AppShell stage="before" meta={meta} leftRail={leftRail}>
-      {prior.length > 0 && (
-        <section className="rounded-xl p-4" style={{ background: C.priorBg, border: `1px solid ${C.priorBorder}` }}>
-          <div className="text-[11px] uppercase mb-2" style={{ color: C.priorInk, letterSpacing: "0.1em" }}>
-            Carried over from last meeting — verify these were kept
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
+        {prior.length > 0 && (
+          <Card label="Carried over — verify these were kept" span={2}>
+            <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-1.5">
+              {prior.map((c) => (
+                <li key={c.id} className="text-[13px] flex items-baseline gap-2">
+                  <span className="font-semibold">{c.entity}</span>
+                  <span>{c.text}</span>
+                  <span className="ml-auto whitespace-nowrap" style={{ color: C.muted }}>was due {c.due}</span>
+                </li>
+              ))}
+            </ul>
+          </Card>
+        )}
+
+        <Card label="The bottom line" span={2}>
+          <h1 style={serif} className="text-[30px] leading-tight">{BOTTOM_LINE.lead}</h1>
+          <p className="mt-3 text-[16px] leading-relaxed" style={{ color: C.detail }}>{BOTTOM_LINE.detail}</p>
+          <div className="mt-4 flex flex-wrap items-center gap-2">
+            <ConfidenceBadge confidence={BOTTOM_LINE.confidence} />
+            {BOTTOM_LINE.citations.map((c, i) => (
+              <CitationChip key={i} sourceId={c.sourceId} onClick={() => open(c)} />
+            ))}
+            <span
+              className="inline-flex items-center gap-1.5 text-[11px] rounded px-2 py-0.5"
+              style={{ background: C.flagBg, color: C.unverified, border: `1px solid ${C.flagBorder}` }}
+            >
+              <span className="h-1.5 w-1.5 rounded-full" style={{ background: C.unverified }} />
+              {BOTTOM_LINE.conflict.label}
+              {BOTTOM_LINE.conflict.citations.map((c, i) => (
+                <button key={i} type="button" onClick={() => open(c)} className="underline decoration-dotted underline-offset-2 cursor-pointer">
+                  {c.sourceId}
+                </button>
+              ))}
+            </span>
           </div>
-          <ul className="space-y-1.5">
-            {prior.map((c) => (
-              <li key={c.id} className="text-[13px] flex items-baseline gap-2">
-                <span className="font-semibold">{c.entity}</span>
-                <span>{c.text}</span>
-                <span className="ml-auto whitespace-nowrap" style={{ color: C.muted }}>was due {c.due}</span>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
+        </Card>
 
-      <Section label="The bottom line">
-        <h1 style={serif} className="text-[26px] leading-snug">{BOTTOM_LINE.lead}</h1>
-        <p className="mt-3 text-[16px] leading-relaxed" style={{ color: C.detail }}>{BOTTOM_LINE.detail}</p>
-        <div className="mt-3 flex flex-wrap items-center gap-2">
-          <ConfidenceBadge confidence={BOTTOM_LINE.confidence} />
-          {BOTTOM_LINE.citations.map((c, i) => (
-            <CitationChip key={i} sourceId={c.sourceId} onClick={() => open(c)} />
-          ))}
-          <span
-            className="inline-flex items-center gap-1.5 text-[11px] rounded px-2 py-0.5"
-            style={{ background: C.flagBg, color: C.unverified, border: `1px solid ${C.flagBorder}` }}
-          >
-            <span className="h-1.5 w-1.5 rounded-full" style={{ background: C.unverified }} />
-            {BOTTOM_LINE.conflict.label}
-            {BOTTOM_LINE.conflict.citations.map((c, i) => (
-              <button key={i} type="button" onClick={() => open(c)} className="underline decoration-dotted underline-offset-2 cursor-pointer">
-                {c.sourceId}
-              </button>
-            ))}
-          </span>
-        </div>
-      </Section>
+        <Card label="Your decision" span={2}>
+          <div style={serif} className="text-[20px] leading-snug">{DECISION.text}</div>
+          <div className="mt-2 text-[13px]" style={{ color: C.muted }}>Hinges on → {DECISION.hingesOn.join(" · ")}</div>
+        </Card>
 
-      <Section label="Your decision">
-        <div style={serif} className="text-[19px]">{DECISION.text}</div>
-        <div className="mt-2 text-[13px]" style={{ color: C.muted }}>Hinges on → {DECISION.hingesOn.join(" · ")}</div>
-      </Section>
-
-      <Section label="Needs attention" aside={<span className="text-[12px]" style={{ color: C.muted }}>{ATTENTION.length} of 5</span>}>
-        <ul className="space-y-2.5">
-          {ATTENTION.map((a) => (
-            <li key={a.id} className="rounded-lg p-4 flex gap-3" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
-              <span className="text-[13px] mt-0.5 shrink-0" style={{ color: severityColor[a.severity] }} aria-hidden>
-                {severityGlyph[a.severity]}
-              </span>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-baseline gap-2">
+        <Card label="Needs attention" span={2} aside={<span className="text-[12px]" style={{ color: C.muted }}>{ATTENTION.length} of 5</span>}>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            {ATTENTION.map((a) => (
+              <div key={a.id} className="rounded-lg p-3" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
+                <div className="flex items-center gap-2">
+                  <span aria-hidden style={{ color: severityColor[a.severity] }}>{severityGlyph[a.severity]}</span>
                   <span className="font-semibold text-[14px]">{a.id}</span>
-                  <span className="text-[13px] truncate" style={{ color: C.muted }}>{a.name}</span>
                 </div>
-                <p className="text-[14px] leading-snug mt-1">{a.line}</p>
-                <div className="mt-2 flex flex-wrap items-center gap-2">
+                <div className="text-[12px] mt-0.5" style={{ color: C.muted }}>{a.name}</div>
+                <p className="text-[13px] leading-snug mt-2">{a.line}</p>
+                <div className="mt-2 flex flex-wrap items-center gap-1.5">
                   <ConfidenceBadge confidence={a.confidence} />
                   {a.citations.map((c, i) => (
                     <CitationChip key={i} sourceId={c.sourceId} onClick={() => open(c)} />
                   ))}
                 </div>
               </div>
-            </li>
-          ))}
-        </ul>
-        <div className="mt-3 text-[12px]" style={{ color: C.muted }}>▸ {STEADY.map((s) => `${s.id} — ${s.line}`).join("  ·  ")}</div>
-      </Section>
+            ))}
+          </div>
+          <div className="mt-3 text-[12px]" style={{ color: C.muted }}>▸ {STEADY.map((s) => `${s.id} — ${s.line}`).join("  ·  ")}</div>
+        </Card>
 
-      <Section label="Prep checklist">
-        <ul className="space-y-2">
-          {PREP.map((p, i) => (
-            <li key={i}>
-              <button type="button" onClick={() => setChecked((c) => ({ ...c, [i]: !c[i] }))} className="flex items-start gap-2.5 text-left cursor-pointer w-full">
-                <span
-                  className="mt-0.5 h-4 w-4 rounded shrink-0 flex items-center justify-center text-[11px]"
-                  style={{ border: `1.5px solid ${checked[i] ? C.confirmed : C.line}`, background: checked[i] ? C.confirmed : "transparent", color: C.onAccent }}
-                >
-                  {checked[i] ? "✓" : ""}
-                </span>
-                <span className="text-[14px]" style={{ color: checked[i] ? C.muted : C.ink, textDecoration: checked[i] ? "line-through" : "none" }}>
-                  {p}
-                </span>
-              </button>
-            </li>
-          ))}
-        </ul>
-      </Section>
+        <Card label="Prep checklist">
+          <ul className="space-y-2.5">
+            {PREP.map((p, i) => (
+              <li key={i}>
+                <button type="button" onClick={() => setChecked((c) => ({ ...c, [i]: !c[i] }))} className="flex items-start gap-2.5 text-left cursor-pointer w-full">
+                  <span
+                    className="mt-0.5 h-4 w-4 rounded shrink-0 flex items-center justify-center text-[11px]"
+                    style={{ border: `1.5px solid ${checked[i] ? C.confirmed : C.line}`, background: checked[i] ? C.confirmed : "transparent", color: C.onAccent }}
+                  >
+                    {checked[i] ? "✓" : ""}
+                  </span>
+                  <span className="text-[14px] leading-snug" style={{ color: checked[i] ? C.muted : C.ink, textDecoration: checked[i] ? "line-through" : "none" }}>
+                    {p}
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </Card>
 
-      <Section label="Likely questions">
-        <ul className="space-y-3">
-          {LIKELY_QS.map((x, i) => (
-            <li key={i}>
-              <div className="text-[14px] font-medium">{x.q}</div>
-              <div className="text-[13px] mt-0.5" style={{ color: C.muted }}>Your line → {x.line}</div>
-            </li>
-          ))}
-        </ul>
-      </Section>
+        <Card label="Likely questions">
+          <ul className="space-y-3">
+            {LIKELY_QS.map((x, i) => (
+              <li key={i}>
+                <div className="text-[14px] font-medium">{x.q}</div>
+                <div className="text-[13px] mt-0.5" style={{ color: C.muted }}>Your line → {x.line}</div>
+              </li>
+            ))}
+          </ul>
+        </Card>
+      </div>
     </AppShell>
   );
 }
