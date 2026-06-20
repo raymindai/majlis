@@ -100,7 +100,7 @@ export default function AfterView() {
             {commitments.map((c) => (
               <li key={c.id} className="rounded-lg p-4" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
                 <div className="flex items-baseline gap-2">
-                  <span className="font-semibold text-[14px]">{c.entity}</span>
+                  <span className="font-semibold text-[14px]"><Gloss>{c.entity}</Gloss></span>
                   <span className="text-[12px]" style={{ color: C.muted }}>due {c.due}</span>
                 </div>
                 <p className="text-[14px] mt-0.5"><Gloss>{c.text}</Gloss></p>
@@ -122,7 +122,7 @@ export default function AfterView() {
             <tbody>
               {commitments.map((c) => (
                 <tr key={c.id} style={{ borderTop: `1px solid ${C.line}` }}>
-                  <td className="py-2.5 font-semibold align-top whitespace-nowrap pr-3">{c.entity}</td>
+                  <td className="py-2.5 font-semibold align-top whitespace-nowrap pr-3"><Gloss>{c.entity}</Gloss></td>
                   <td className="py-2.5 align-top pr-3"><Gloss>{c.text}</Gloss></td>
                   <td className="py-2.5 align-top whitespace-nowrap" style={{ color: C.muted }}>{c.due}</td>
                 </tr>

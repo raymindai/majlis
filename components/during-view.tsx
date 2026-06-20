@@ -141,13 +141,13 @@ export default function DuringView() {
                       <Avatar id={sp.id} name={sp.name} size={28} />
                       <span className="leading-tight">
                         <span className="font-semibold text-[13px]">{sp.name}</span>
-                        {sp.role && <span className="block text-[11px]" style={{ color: C.muted }}>{sp.role}</span>}
+                        {sp.role && <span className="block text-[11px]" style={{ color: C.muted }}><Gloss>{sp.role}</Gloss></span>}
                       </span>
                     </button>
                   ) : (
                     <span className="leading-tight">
                       <span className="font-semibold text-[13px]">{sp.name}</span>
-                      {sp.role && <span className="block text-[11px]" style={{ color: C.muted }}>{sp.role}</span>}
+                      {sp.role && <span className="block text-[11px]" style={{ color: C.muted }}><Gloss>{sp.role}</Gloss></span>}
                     </span>
                   )}
                   <p className="text-[15px] mt-2 leading-relaxed">&ldquo;<Gloss>{item.text}</Gloss>&rdquo;</p>
@@ -245,7 +245,7 @@ export default function DuringView() {
               {captured.map((c) => (
                 <li key={c.id} className="rounded-lg p-3" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
                   <div className="flex items-baseline gap-2">
-                    <span className="font-semibold text-[13px]">{c.entity}</span>
+                    <span className="font-semibold text-[13px]"><Gloss>{c.entity}</Gloss></span>
                     <span className="text-[12px] ml-auto" style={{ color: C.muted }}>{c.due}</span>
                   </div>
                   <p className="text-[14px] mt-0.5">{c.text}</p>

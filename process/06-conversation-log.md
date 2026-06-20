@@ -49,6 +49,10 @@ Session: 2026-06-19 → 2026-06-20.
 **User:** "let's push it to git first."
 **Claude:** committed corpus + process archive + grounding backbone locally (secrets verified out — `.env.local` gitignored/untracked); created a **private** GitHub repo and pushed `main` → github.com/raymindai/majlis.
 
+### Turn 41 — 2026-06-20 · Real tooltips + full acronym coverage
+**User:** hovering only shows a question-mark cursor (native title is unreliable); and it still misses some acronyms.
+**Claude:** built a portal-based `Tip` (fixed-position, shows instantly, never clipped by overflow) and routed acronyms through it (replaced the native `<abbr title>`). Expanded coverage: `OrgBadge` now uses `Tip` (so every square code badge reveals its department name), and the remaining bare codes are wrapped, the room rail code, attention card id, During speaker "role, CODE", the After owner column and commitment entities, and the Before carried-over entity. Build clean. (Still queued from the same message: stackable windows + interactive pills.)
+
 ### Turn 40 — 2026-06-20 · Acronym glossary (hover for the full term)
 **User:** don't expect everyone to remember the acronyms; every acronym should hover to reveal the full words.
 **Claude:** added a `Gloss` component with a glossary (EDD/EKD/MTA/HSA/PSD, SSO, DGE, DG, PMO, AED, AOB, CIO) that auto-wraps known acronyms in any string with an `<abbr>` (native hover tooltip, subtle dotted underline). Applied across all rendered prose: the briefing hero, attention lines, decision, meeting relations; the live Q&A answers; the During transcript, notes, and suggestions; the meeting, participant, and source popovers; saved notes; and the After minutes. Entity square-badges already revealed the full name on hover. Build clean.

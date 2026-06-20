@@ -1,4 +1,7 @@
+"use client";
+
 import { Fragment, type ReactNode } from "react";
+import { Tip } from "@/components/tip";
 import { C } from "@/components/ui";
 
 /** Acronyms used across the product. Hovering any of them reveals the full term. */
@@ -28,7 +31,7 @@ const abbrStyle: React.CSSProperties = {
   cursor: "help",
 };
 
-/** Wraps known acronyms in `children` (a string) with an <abbr> that shows the full term on hover. */
+/** Wraps known acronyms in `children` (a string) with a hover tooltip showing the full term. */
 export function Gloss({ children }: { children: ReactNode }) {
   if (typeof children !== "string") return <>{children}</>;
   const out: ReactNode[] = [];
@@ -39,9 +42,9 @@ export function Gloss({ children }: { children: ReactNode }) {
     if (m.index > last) out.push(children.slice(last, m.index));
     const term = m[0];
     out.push(
-      <abbr key={m.index} title={GLOSSARY[term]} style={abbrStyle}>
+      <Tip key={m.index} as="abbr" content={GLOSSARY[term]} style={abbrStyle}>
         {term}
-      </abbr>,
+      </Tip>,
     );
     last = m.index + term.length;
   }

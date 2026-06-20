@@ -92,7 +92,7 @@ export default function BeforeView() {
             <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-1.5">
               {prior.map((c) => (
                 <li key={c.id} className="text-[13px] flex items-baseline gap-2">
-                  <span className="font-semibold">{c.entity}</span>
+                  <span className="font-semibold"><Gloss>{c.entity}</Gloss></span>
                   <span>{c.text}</span>
                   <span className="ml-auto whitespace-nowrap" style={{ color: C.muted }}>was due {c.due}</span>
                 </li>
@@ -137,7 +137,7 @@ export default function BeforeView() {
                   <OrgBadge code={a.id} size={34} />
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-semibold text-[14px]">{a.id}</span>
+                      <span className="font-semibold text-[14px]"><Gloss>{a.id}</Gloss></span>
                       <SeverityPill severity={a.severity} />
                     </div>
                     <div className="text-[11px] leading-tight mt-0.5" style={{ color: C.muted }}>{deptFor(a.id)?.name ?? a.name}</div>

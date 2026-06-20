@@ -8,6 +8,8 @@ import { MEETINGS, PARTICIPANTS } from "@/lib/meetings";
 import { MEETING_META } from "@/lib/mock";
 import { C, RailLabel } from "@/components/ui";
 import { useParticipant } from "@/components/participant-context";
+import { Tip } from "@/components/tip";
+import { Gloss } from "@/components/gloss";
 
 export const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-");
 
@@ -63,13 +65,14 @@ export function OrgBadge({ code, size = 28 }: { code: string; size?: number }) {
   const dept = deptFor(code);
   const color = dept ? statusColor[dept.status] : C.muted;
   return (
-    <span
+    <Tip
+      as="span"
+      content={dept?.name ?? code}
       className="inline-flex items-center justify-center rounded-md font-semibold shrink-0"
-      style={{ width: size, height: size, fontSize: Math.max(9, Math.round(size * 0.3)), background: `color-mix(in srgb, ${color} 14%, transparent)`, color, letterSpacing: "-0.02em" }}
-      title={dept?.name ?? code}
+      style={{ width: size, height: size, fontSize: Math.max(9, Math.round(size * 0.3)), background: `color-mix(in srgb, ${color} 14%, transparent)`, color, letterSpacing: "-0.02em", cursor: "help" }}
     >
       {code}
-    </span>
+    </Tip>
   );
 }
 
@@ -159,7 +162,7 @@ export function TheRoom() {
                 <div className="min-w-0">
                   <div className="text-[13px] font-medium truncate">{p.name}</div>
                   <div className="flex items-center gap-1.5 text-[11px] min-w-0">
-                    <span style={{ color: C.faint }}>{p.entity}</span>
+                    <span style={{ color: C.faint }}><Gloss>{p.entity}</Gloss></span>
                     {dept && <StatusTag status={dept.status} />}
                   </div>
                 </div>
