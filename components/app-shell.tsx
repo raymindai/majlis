@@ -6,7 +6,6 @@ import MeetingBar from "@/components/meeting-bar";
 import DetailControl from "@/components/detail-control";
 import UserMenu from "@/components/user-menu";
 import JoinButton from "@/components/join-button";
-import ThemeSwitcher from "@/components/theme-switcher";
 import LanguageSwitcher from "@/components/language-switcher";
 import ChatPanel from "@/components/chat-panel";
 
@@ -35,6 +34,7 @@ export default function AppShell({
             <span style={serif} className="text-xl shrink-0">Majlis</span>
             <span className="h-6 w-px shrink-0" style={{ background: C.line }} />
             <MeetingBar stage={stage} />
+            <JoinButton stage={stage} />
           </div>
 
           <div className="shrink-0 hidden md:block">
@@ -42,8 +42,6 @@ export default function AppShell({
           </div>
 
           <div className="flex items-center gap-3 shrink-0 flex-1 justify-end">
-            <JoinButton stage={stage} />
-            <ThemeSwitcher />
             <LanguageSwitcher />
             <UserMenu />
           </div>

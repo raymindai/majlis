@@ -39,6 +39,10 @@ const EN: Dict = {
   light: "Light",
   dark: "Dark",
   language: "Language",
+  appearance: "Appearance",
+  profileItem: "Profile",
+  preferences: "Preferences",
+  signOut: "Sign out",
   // reviewer
   forReviewers: "For reviewers",
   reviewersGuide: "Reviewer's guide",
@@ -163,6 +167,8 @@ const EN: Dict = {
   tapPerson: "tap a person for their full profile",
   joinMeeting: "Join meeting",
   joinCall: "Join call",
+  leave: "Leave",
+  replayRecording: "Replay recording",
 };
 
 const AR: Dict = {
@@ -187,6 +193,10 @@ const AR: Dict = {
   light: "فاتح",
   dark: "داكن",
   language: "اللغة",
+  appearance: "المظهر",
+  profileItem: "الملف الشخصي",
+  preferences: "التفضيلات",
+  signOut: "تسجيل الخروج",
   forReviewers: "للمراجعين",
   reviewersGuide: "دليل المراجع",
   askMajlis: "اسأل مجلس",
@@ -300,6 +310,8 @@ const AR: Dict = {
   tapPerson: "اضغط على شخص لعرض ملفه الكامل",
   joinMeeting: "انضمّ إلى الاجتماع",
   joinCall: "انضمّ إلى المكالمة",
+  leave: "مغادرة",
+  replayRecording: "إعادة تشغيل التسجيل",
 };
 
 const DICT: Record<Lang, Dict> = { en: EN, ar: AR };

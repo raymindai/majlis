@@ -4,12 +4,15 @@ import { useState } from "react";
 import Image from "next/image";
 import { ChevronDown, LogOut, Settings, UserRound } from "lucide-react";
 import { C } from "@/components/ui";
+import { useLang } from "@/components/lang-context";
+import ThemeSwitcher from "@/components/theme-switcher";
 
 const USER = { name: "Hamad Al Nuaimi", role: "Programme Director-General" };
 
 /** The official's profile, top-right. A product-style identity chip with a menu. */
 export default function UserMenu() {
   const [open, setOpen] = useState(false);
+  const { t: tr } = useLang();
   return (
     <div className="relative">
       <button
@@ -39,10 +42,15 @@ export default function UserMenu() {
               </div>
             </div>
             <div className="border-t my-1" style={{ borderColor: C.line }} />
+            <div className="px-2.5 py-1.5 flex items-center justify-between gap-2">
+              <span className="text-[13px]" style={{ color: C.detail }}>{tr("appearance")}</span>
+              <ThemeSwitcher />
+            </div>
+            <div className="border-t my-1" style={{ borderColor: C.line }} />
             {[
-              { icon: UserRound, label: "Profile" },
-              { icon: Settings, label: "Preferences" },
-              { icon: LogOut, label: "Sign out" },
+              { icon: UserRound, label: tr("profileItem") },
+              { icon: Settings, label: tr("preferences") },
+              { icon: LogOut, label: tr("signOut") },
             ].map((it) => {
               const Icon = it.icon;
               return (
