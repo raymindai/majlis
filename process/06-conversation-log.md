@@ -49,6 +49,10 @@ Session: 2026-06-19 → 2026-06-20.
 **User:** "let's push it to git first."
 **Claude:** committed corpus + process archive + grounding backbone locally (secrets verified out — `.env.local` gitignored/untracked); created a **private** GitHub repo and pushed `main` → github.com/raymindai/majlis.
 
+### Turn 43 — 2026-06-20 · Before re-assessment + live AI brief
+**User:** re-assess Before and find the gaps before During/After. (Chose all of 1, 2, 3.)
+**Claude:** assessed Before (`process/15`): the headline gap was that the briefing was static mock data; only the chat was live. Built **`/api/brief`**, Claude synthesises the whole brief from the pack as structured output (bottom line, ranked attention, decision with a **recommendation + weighed options**, **today's agenda** with the chair's angle, likely questions + prep each **with citations**), and verified the live output end to end. Rewrote Before to be brief-driven: it shows the fallback instantly, then swaps to the live synthesis (cached in localStorage), with a Regenerate control and a "Synthesised by Majlis" indicator. Delivers Tier 1 (live brief) + most of Tier 2 (decision support, agenda, provenance). Build clean. Next: stream the chat (Tier 1b) and Tier 3 polish.
+
 ### Turn 42 — 2026-06-20 · Stackable windows + interactive pills
 **User:** clicking a profile (or note) replaces the previous one; it should add a popup that stays until closed. And all chips and pills should have interactions and augmented info.
 **Claude:** (windows) turned AppShell into a window manager holding a stack of floating windows; profiles, sources, and meetings now each open as their own window that persists until closed and stack (with a slight cascade), instead of replacing the last. Meetings routed through a new `OpenMeetingContext` (named to avoid the rail's `MeetingContext` block). (pills) every pill explains itself on hover via `Tip`: ConfidenceBadge (what each level means), SeverityPill (blocker / at-risk), StatusTag (on-track / slipped / restricted), and CitationChip (full source title + date, "click to read"). Build clean.

@@ -2,20 +2,25 @@
 
 import { useEffect, useState } from "react";
 import {
+  CalendarClock,
   CalendarRange,
   ChevronRight,
   Gavel,
   History,
   ListChecks,
+  Loader2,
   MessageCircleQuestion,
   MessageSquareQuote,
+  RefreshCw,
+  Sparkles,
   Target,
   TriangleAlert,
   Users,
 } from "lucide-react";
-import { ATTENTION, BOTTOM_LINE, DECISION, MEETING_META, STEADY } from "@/lib/mock";
+import { MEETING_META } from "@/lib/mock";
 import { MEETINGS, PARTICIPANTS } from "@/lib/meetings";
 import { loadState, type Commitment } from "@/lib/store";
+import { type Brief, BRIEF_CACHE_KEY, MOCK_BRIEF } from "@/lib/brief";
 import { askMajlis } from "@/components/ask-bus";
 import { C, Card, CitationChip, ConfidenceBadge, RailLabel, SeverityPill } from "@/components/ui";
 import { Avatar, deptFor, MeetingContext, NavList, OrgBadge, StatusTag, TheRoom } from "@/components/rail";
@@ -27,22 +32,11 @@ import AppShell from "@/components/app-shell";
 
 const serif = { fontFamily: "var(--font-newsreader), Georgia, serif" };
 
-const PREP = [
-  "Reconcile MTA's budget figure (40 vs 52) before the reallocation vote.",
-  "Get a firm SSO recovery date from EDD; it gates HSA and EKD.",
-  "Note EKD missed its June commitment; the July 'catch-up' is unverified.",
-];
-
-const LIKELY_QS = [
-  { q: "Why defer the reallocation?", line: "MTA's figure doesn't reconcile yet; we vote once it does." },
-  { q: "Is the SSO slip contained?", line: "No. It blocks HSA and EKD go-lives, and EDD owes a recovery date." },
-  { q: "Is EKD on track?", line: "It missed the June portal commitment; the July catch-up is unverified." },
-];
-
 const NAV = [
   { label: "The bottom line", icon: Target },
   { label: "Your decision", icon: Gavel },
   { label: "Needs attention", icon: TriangleAlert },
+  { label: "Today's agenda", icon: CalendarClock },
   { label: "Who's in the room", icon: Users },
   { label: "Meeting series", icon: CalendarRange },
   { label: "Prep checklist", icon: ListChecks },
@@ -52,9 +46,12 @@ const NAV = [
 export default function BeforeView() {
   const { open } = useCitation();
   const { open: openProfile } = useParticipant();
+  const { open: openMeeting } = useOpenMeeting();
   const [prior, setPrior] = useState<Commitment[]>([]);
   const [checked, setChecked] = useState<Record<number, boolean>>({});
-  const { open: openMeeting } = useOpenMeeting();
+  const [brief, setBrief] = useState<Brief>(MOCK_BRIEF);
+  const [syncing, setSyncing] = useState(false);
+  const [live, setLive] = useState(false);
 
   useEffect(() => {
     const sync = () => {
@@ -64,6 +61,39 @@ export default function BeforeView() {
     sync();
     window.addEventListener("majlis-store", sync);
     return () => window.removeEventListener("majlis-store", sync);
+  }, []);
+
+  async function regenerate() {
+    setSyncing(true);
+    try {
+      const res = await fetch("/api/brief", { method: "POST" });
+      const data = await res.json();
+      if (data && !data.error) {
+        setBrief(data);
+        setLive(true);
+        localStorage.setItem(BRIEF_CACHE_KEY, JSON.stringify(data));
+      }
+    } catch {
+      /* keep the current brief */
+    } finally {
+      setSyncing(false);
+    }
+  }
+
+  // On first load, use the cached live brief if present, else synthesise it.
+  useEffect(() => {
+    const cached = typeof window !== "undefined" ? localStorage.getItem(BRIEF_CACHE_KEY) : null;
+    if (cached) {
+      try {
+        setBrief(JSON.parse(cached));
+        setLive(true);
+        return;
+      } catch {
+        /* fall through to fetch */
+      }
+    }
+    regenerate();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const leftRail = (
@@ -84,6 +114,8 @@ export default function BeforeView() {
     </>
   );
 
+  const bl = brief.bottomLine;
+
   return (
     <AppShell stage="before" meta={meta} leftRail={leftRail}>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
@@ -101,46 +133,88 @@ export default function BeforeView() {
           </Card>
         )}
 
-        <Card label="The bottom line" span={2} icon={Target}>
-          <h1 style={serif} className="text-[30px] leading-tight"><Gloss>{BOTTOM_LINE.lead}</Gloss></h1>
-          <p className="mt-3 text-[16px] leading-relaxed" style={{ color: C.detail }}><Gloss>{BOTTOM_LINE.detail}</Gloss></p>
+        <Card
+          label="The bottom line"
+          span={2}
+          icon={Target}
+          aside={
+            <button
+              type="button"
+              onClick={regenerate}
+              disabled={syncing}
+              className="inline-flex items-center gap-1.5 text-[12px] cursor-pointer hover:opacity-70 disabled:opacity-50"
+              style={{ color: C.muted }}
+            >
+              {syncing ? <Loader2 size={13} className="animate-spin" /> : <RefreshCw size={13} strokeWidth={2} />}
+              {syncing ? "Synthesising" : "Regenerate"}
+            </button>
+          }
+        >
+          <h1 style={serif} className="text-[30px] leading-tight"><Gloss>{bl.lead}</Gloss></h1>
+          <p className="mt-3 text-[16px] leading-relaxed" style={{ color: C.detail }}><Gloss>{bl.detail}</Gloss></p>
           <div className="mt-4 flex flex-wrap items-center gap-2">
-            <ConfidenceBadge confidence={BOTTOM_LINE.confidence} />
-            {BOTTOM_LINE.citations.map((c, i) => (
+            <ConfidenceBadge confidence={bl.confidence} />
+            {bl.citations.map((c, i) => (
               <CitationChip key={i} sourceId={c.sourceId} onClick={(pos) => open(c, pos)} />
             ))}
-            <span
-              className="inline-flex items-center gap-1.5 text-[11px] rounded-full px-2 py-0.5"
-              style={{ background: C.flagBg, color: C.unverified, border: `1px solid ${C.flagBorder}` }}
-            >
-              <span className="h-1.5 w-1.5 rounded-full" style={{ background: C.unverified }} />
-              {BOTTOM_LINE.conflict.label}
-              {BOTTOM_LINE.conflict.citations.map((c, i) => (
-                <button key={i} type="button" onClick={(e) => open(c, { x: e.clientX, y: e.clientY })} className="underline decoration-dotted underline-offset-2 cursor-pointer">
-                  {c.sourceId}
-                </button>
-              ))}
-            </span>
+            {bl.conflict && (
+              <>
+                <span
+                  className="inline-flex items-center gap-1.5 text-[11px] rounded-full px-2 py-0.5"
+                  style={{ background: C.flagBg, color: C.unverified, border: `1px solid ${C.flagBorder}` }}
+                >
+                  <span className="h-1.5 w-1.5 rounded-full" style={{ background: C.unverified }} />
+                  {bl.conflict.label}
+                </span>
+                {bl.conflict.citations.map((c, i) => (
+                  <CitationChip key={`cf-${i}`} sourceId={c.sourceId} onClick={(pos) => open(c, pos)} />
+                ))}
+              </>
+            )}
+          </div>
+          <div className="mt-3 inline-flex items-center gap-1.5 text-[11px]" style={{ color: C.faint }}>
+            <Sparkles size={12} strokeWidth={2} />
+            {live ? "Synthesised by Majlis from the committee pack" : "Sample brief, regenerating from the pack"}
           </div>
         </Card>
 
         <Card label="Your decision" span={2} icon={Gavel}>
-          <div style={serif} className="text-[20px] leading-snug"><Gloss>{DECISION.text}</Gloss></div>
-          <div className="mt-2 text-[13px]" style={{ color: C.muted }}>Hinges on → <Gloss>{DECISION.hingesOn.join(", ")}</Gloss></div>
+          <div style={serif} className="text-[20px] leading-snug"><Gloss>{brief.decision.text}</Gloss></div>
+          <div className="mt-3 rounded-xl p-3.5" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
+            <div className="text-[11px] font-semibold mb-1" style={{ color: C.accent }}>Recommendation</div>
+            <p className="text-[14px] leading-snug"><Gloss>{brief.decision.recommendation}</Gloss></p>
+          </div>
+          <div className="mt-3 text-[13px]" style={{ color: C.muted }}>Hinges on → <Gloss>{brief.decision.hingesOn.join(", ")}</Gloss></div>
+          {brief.decision.options.length > 0 && (
+            <div className="mt-4">
+              <div className="text-[11px] font-semibold mb-2" style={{ color: C.faint }}>Your options</div>
+              <ul className="space-y-2">
+                {brief.decision.options.map((o, i) => (
+                  <li key={i} className="flex items-start gap-2.5 text-[13px]">
+                    <span className="mt-1.5 h-1.5 w-1.5 rounded-full shrink-0" style={{ background: C.faint }} />
+                    <span>
+                      <span className="font-medium"><Gloss>{o.label}</Gloss>.</span>{" "}
+                      <span style={{ color: C.detail }}><Gloss>{o.consequence}</Gloss></span>
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </Card>
 
-        <Card label="Needs attention" span={2} icon={TriangleAlert} aside={<span className="text-[12px]" style={{ color: C.muted }}>3 of 5 need action</span>}>
+        <Card label="Needs attention" span={2} icon={TriangleAlert} aside={<span className="text-[12px]" style={{ color: C.muted }}>{brief.attention.length} of {PARTICIPANTS.length} need action</span>}>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            {ATTENTION.map((a) => (
-              <div key={a.id} className="rounded-xl p-3.5" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
+            {brief.attention.map((a) => (
+              <div key={a.entity} className="rounded-xl p-3.5" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
                 <div className="flex items-start gap-2.5">
-                  <OrgBadge code={a.id} size={34} />
+                  <OrgBadge code={a.entity} size={34} />
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-semibold text-[14px]"><Gloss>{a.id}</Gloss></span>
+                      <span className="font-semibold text-[14px]"><Gloss>{a.entity}</Gloss></span>
                       <SeverityPill severity={a.severity} />
                     </div>
-                    <div className="text-[11px] leading-tight mt-0.5" style={{ color: C.muted }}>{deptFor(a.id)?.name ?? a.name}</div>
+                    <div className="text-[11px] leading-tight mt-0.5" style={{ color: C.muted }}>{deptFor(a.entity)?.name ?? a.entity}</div>
                   </div>
                 </div>
                 <p className="text-[13px] leading-snug mt-2.5"><Gloss>{a.line}</Gloss></p>
@@ -153,7 +227,23 @@ export default function BeforeView() {
               </div>
             ))}
           </div>
-          <div className="mt-3 text-[12px]" style={{ color: C.muted }}>Also: {STEADY.map((s) => `${s.id} ${s.line}`).join(";  ")}</div>
+          {brief.steady.length > 0 && (
+            <div className="mt-3 text-[12px]" style={{ color: C.muted }}>Also: <Gloss>{brief.steady.map((s) => `${s.entity} ${s.line}`).join(";  ")}</Gloss></div>
+          )}
+        </Card>
+
+        <Card label="Today's agenda" span={2} icon={CalendarClock}>
+          <ol className="space-y-3">
+            {brief.agenda.map((a, i) => (
+              <li key={i} className="flex items-start gap-3">
+                <span className="text-[12px] font-semibold mt-0.5 shrink-0 w-5 text-right" style={{ color: C.faint }}>{i + 1}</span>
+                <div className="min-w-0">
+                  <div className="text-[14px] font-medium"><Gloss>{a.item}</Gloss></div>
+                  <div className="text-[13px] mt-0.5" style={{ color: C.muted }}><Gloss>{a.note}</Gloss></div>
+                </div>
+              </li>
+            ))}
+          </ol>
         </Card>
 
         <Card label="Who's in the room" span={2} icon={Users} aside={<span className="text-[12px]" style={{ color: C.muted }}>tap a person for their full profile</span>}>
@@ -162,7 +252,6 @@ export default function BeforeView() {
               const dept = deptFor(p.entity);
               return (
                 <div key={p.id} className="rounded-xl flex flex-col overflow-hidden" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
-                  {/* Identity, the person. Click → full profile. */}
                   <button type="button" onClick={(e) => openProfile(p.id, { x: e.clientX, y: e.clientY })} className="group flex items-center gap-3 p-3.5 text-left cursor-pointer hover:bg-[var(--c-surface)]">
                     <Avatar id={p.id} name={p.name} size={44} />
                     <div className="flex-1 min-w-0">
@@ -171,7 +260,6 @@ export default function BeforeView() {
                     </div>
                     <ChevronRight size={16} strokeWidth={2} className="shrink-0 transition-transform group-hover:translate-x-0.5" style={{ color: C.faint }} />
                   </button>
-                  {/* Represents, the department. Status lives here. */}
                   <div className="px-3.5 pb-3">
                     <div className="text-[11px] mb-1.5" style={{ color: C.faint }}>Represents</div>
                     <div className="flex items-center gap-2.5">
@@ -183,7 +271,6 @@ export default function BeforeView() {
                       {dept && <StatusTag status={dept.status} className="self-start shrink-0" />}
                     </div>
                   </div>
-                  {/* Action, separated CTA. */}
                   {p.ask && (
                     <button
                       type="button"
@@ -237,19 +324,26 @@ export default function BeforeView() {
 
         <Card label="Prep checklist" icon={ListChecks}>
           <ul className="space-y-2.5">
-            {PREP.map((p, i) => (
-              <li key={i}>
-                <button type="button" onClick={() => setChecked((c) => ({ ...c, [i]: !c[i] }))} className="flex items-start gap-2.5 text-left cursor-pointer w-full">
+            {brief.prep.map((p, i) => (
+              <li key={i} className="flex items-start gap-2.5">
+                <button type="button" onClick={() => setChecked((c) => ({ ...c, [i]: !c[i] }))} className="mt-0.5 shrink-0 cursor-pointer" aria-label="toggle">
                   <span
-                    className="mt-0.5 h-4 w-4 rounded shrink-0 flex items-center justify-center text-[11px]"
+                    className="h-4 w-4 rounded flex items-center justify-center text-[11px]"
                     style={{ border: `1.5px solid ${checked[i] ? C.confirmed : C.line}`, background: checked[i] ? C.confirmed : "transparent", color: C.onAccent }}
                   >
                     {checked[i] ? "✓" : ""}
                   </span>
-                  <span className="text-[14px] leading-snug" style={{ color: checked[i] ? C.muted : C.ink, textDecoration: checked[i] ? "line-through" : "none" }}>
-                    {p}
-                  </span>
                 </button>
+                <div className="flex-1">
+                  <span className="text-[14px] leading-snug" style={{ color: checked[i] ? C.muted : C.ink, textDecoration: checked[i] ? "line-through" : "none" }}>
+                    <Gloss>{p.text}</Gloss>
+                  </span>
+                  {p.citation && (
+                    <span className="ml-1.5 inline-block align-middle">
+                      <CitationChip sourceId={p.citation.sourceId} onClick={(pos) => open(p.citation!, pos)} />
+                    </span>
+                  )}
+                </div>
               </li>
             ))}
           </ul>
@@ -257,10 +351,15 @@ export default function BeforeView() {
 
         <Card label="Likely questions" icon={MessageCircleQuestion}>
           <ul className="space-y-3">
-            {LIKELY_QS.map((x, i) => (
+            {brief.likelyQuestions.map((x, i) => (
               <li key={i}>
-                <div className="text-[14px] font-medium">{x.q}</div>
-                <div className="text-[13px] mt-0.5" style={{ color: C.muted }}>Your line → {x.line}</div>
+                <div className="text-[14px] font-medium"><Gloss>{x.q}</Gloss></div>
+                <div className="text-[13px] mt-0.5" style={{ color: C.muted }}>Your line → <Gloss>{x.line}</Gloss></div>
+                {x.citation && (
+                  <div className="mt-1">
+                    <CitationChip sourceId={x.citation.sourceId} onClick={(pos) => open(x.citation!, pos)} />
+                  </div>
+                )}
               </li>
             ))}
           </ul>
