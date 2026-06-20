@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { Check, ChevronDown, MapPin } from "lucide-react";
 import { MEETING_META } from "@/lib/mock";
+import { meetingFieldI18n } from "@/lib/corpus";
 import { C } from "@/components/ui";
 import { useLang } from "@/components/lang-context";
 
@@ -19,7 +20,7 @@ const STAGES = [
  */
 export default function MeetingBar({ stage }: { stage: "before" | "during" | "after" }) {
   const [open, setOpen] = useState(false);
-  const { t: tr } = useLang();
+  const { t: tr, lang } = useLang();
   const current = STAGES.find((s) => s.key === stage)!;
   const live = stage === "during";
 
@@ -32,10 +33,10 @@ export default function MeetingBar({ stage }: { stage: "before" | "during" | "af
   return (
     <div className="flex items-center gap-2.5 min-w-0">
       <div className="min-w-0 leading-tight hidden md:block">
-        <div className="text-[12.5px] font-semibold truncate">{MEETING_META.session}</div>
+        <div className="text-[12.5px] font-semibold truncate">{meetingFieldI18n("session", lang)}</div>
         <div className="flex items-center gap-1 text-[11px]" style={{ color: C.muted }}>
           <MapPin size={11} strokeWidth={2} className="shrink-0" />
-          <span className="truncate">{MEETING_META.room}</span>
+          <span className="truncate">{meetingFieldI18n("room", lang)}</span>
         </div>
       </div>
 

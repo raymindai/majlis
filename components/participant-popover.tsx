@@ -4,6 +4,8 @@ import { CircleAlert, CircleCheck, CircleDashed, Mail, MapPin, MessageSquareQuot
 import { PARTICIPANTS } from "@/lib/meetings";
 import { askMajlis } from "@/components/ask-bus";
 import { Avatar, deptFor, OrgBadge, StatusTag } from "@/components/rail";
+import { deptNameI18n } from "@/lib/corpus";
+import { useLang } from "@/components/lang-context";
 import { C } from "@/components/ui";
 import { FloatingWindow } from "@/components/floating-window";
 import { Gloss } from "@/components/gloss";
@@ -21,6 +23,7 @@ function Lbl({ children }: { children: string }) {
 
 /** Participant profile in a draggable, resizable floating window. */
 export default function ParticipantPopover({ id, pos, onClose, raise }: { id: string | null; pos: ParticipantPos | null; onClose: () => void; raise?: number }) {
+  const { lang } = useLang();
   const p = id ? PARTICIPANTS.find((x) => x.id === id) : null;
   if (!p || !pos) return null;
   const dept = deptFor(p.entity);
@@ -44,7 +47,7 @@ export default function ParticipantPopover({ id, pos, onClose, raise }: { id: st
         <div className="flex items-start gap-2.5">
           <OrgBadge code={p.entity} size={30} />
           <div className="min-w-0 flex-1">
-            <div className="font-semibold text-[13px]">{dept?.name ?? p.entity}</div>
+            <div className="font-semibold text-[13px]">{deptNameI18n(p.entity, lang) ?? p.entity}</div>
             {dept && <StatusTag status={dept.status} className="mt-0.5" />}
           </div>
         </div>

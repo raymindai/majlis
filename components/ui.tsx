@@ -77,7 +77,7 @@ export function SeverityPill({ severity }: { severity: string }) {
 }
 
 export function CitationChip({ sourceId, onClick }: { sourceId: string; onClick?: (pos: { x: number; y: number }) => void }) {
-  const { t: tr } = useLang();
+  const { t: tr, lang } = useLang();
   return (
     <button
       type="button"
@@ -87,7 +87,7 @@ export function CitationChip({ sourceId, onClick }: { sourceId: string; onClick?
       style={{ color: C.accent, background: C.chipBg, border: `1px solid ${C.line}` }}
     >
       <FileText size={11} strokeWidth={2.25} />
-      <span className="underline decoration-dotted underline-offset-2">{sourceLabel(sourceId)}</span>
+      <span className="underline decoration-dotted underline-offset-2">{sourceLabel(sourceId, lang)}</span>
     </button>
   );
 }

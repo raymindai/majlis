@@ -169,7 +169,45 @@ const SOURCE_LABELS: Record<string, string> = {
   RISK: "Risk register",
   "PMO-NOTE": "PMO note",
 };
-export const sourceLabel = (id: string): string => SOURCE_LABELS[id] ?? id;
+const SOURCE_LABEL_AR: Record<string, string> = {
+  CHARTER: "الميثاق",
+  "Q1-MIN": "محضر الربع الأول",
+  "Q2-HSA": "تقرير HSA للربع الثاني",
+  "Q2-EKD": "تقرير EKD للربع الثاني",
+  "Q2-MTA": "تقرير MTA للربع الثاني",
+  "Q2-PSD": "تقرير PSD للربع الثاني",
+  "Q2-EDD": "تقرير EDD للربع الثاني",
+  RISK: "سجل المخاطر",
+  "PMO-NOTE": "مذكرة مكتب البرنامج",
+};
+export const sourceLabel = (id: string, lang?: string): string =>
+  (lang === "ar" ? SOURCE_LABEL_AR[id] : undefined) ?? SOURCE_LABELS[id] ?? id;
+
+/** Arabic display names for the entities; the short codes (EDD etc.) stay Latin. */
+const ENTITY_NAME_AR: Record<string, string> = {
+  HSA: "هيئة الخدمات الصحية",
+  EKD: "دائرة التعليم والمعرفة",
+  MTA: "هيئة البلديات والنقل",
+  PSD: "مديرية الأمن العام",
+  EDD: "دائرة التنمية الاقتصادية",
+};
+export function deptNameI18n(id: string, lang?: string): string | undefined {
+  const e = ENTITIES.find((x) => x.id === id);
+  if (!e) return undefined;
+  return lang === "ar" ? ENTITY_NAME_AR[id] ?? e.name : e.name;
+}
+
+/** Arabic for the meeting framing shown in the header and rail. */
+const MEETING_AR: Record<string, string> = {
+  session: "اللجنة التوجيهية، الربع الثاني 2026",
+  room: "قاعة المجلس، قصر الحصن",
+  programme: "برنامج منارة",
+  subtitle: "خدمات حكومة أبوظبي الرقمية الموحدة",
+};
+export function meetingFieldI18n(field: "session" | "room" | "programme" | "subtitle", lang?: string): string {
+  const en = MEETING[field] as string;
+  return lang === "ar" ? MEETING_AR[field] ?? en : en;
+}
 
 /** Document metadata, so a citation resolves to an actual, identifiable document. */
 export const SOURCE_META: Record<string, { docType: string; issuer: string; ref: string }> = {

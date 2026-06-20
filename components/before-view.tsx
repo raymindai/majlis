@@ -22,7 +22,7 @@ import {
 import { MEETINGS, PARTICIPANTS } from "@/lib/meetings";
 import { loadState, type Commitment } from "@/lib/store";
 import { type Brief, BRIEF_CACHE_KEY, MOCK_BRIEF } from "@/lib/brief";
-import { SOURCES, SOURCE_META, AUTHORITY_LABEL } from "@/lib/corpus";
+import { SOURCES, SOURCE_META, AUTHORITY_LABEL, deptNameI18n } from "@/lib/corpus";
 import { askMajlis } from "@/components/ask-bus";
 import { C, Card, CitationChip, ConfidenceBadge, RailLabel, SeverityPill } from "@/components/ui";
 import { Avatar, deptFor, MeetingContext, NavList, OrgBadge, StatusTag, TheRoom } from "@/components/rail";
@@ -239,7 +239,7 @@ export default function BeforeView() {
                           <div className="flex items-start gap-2.5">
                             <OrgBadge code={a.entity} size={34} />
                             <div className="min-w-0 flex-1">
-                              <div className="font-semibold text-[14px] leading-tight">{deptFor(a.entity)?.name ?? a.entity}</div>
+                              <div className="font-semibold text-[14px] leading-tight">{deptNameI18n(a.entity, lang) ?? a.entity}</div>
                             </div>
                           </div>
                           <p className="text-[13px] leading-snug mt-3"><Gloss>{a.line}</Gloss></p>
@@ -288,7 +288,7 @@ export default function BeforeView() {
                         <OrgBadge code={s.entity} size={28} />
                         <div className="min-w-0">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <span className="font-semibold text-[13px]">{dept?.name ?? s.entity}</span>
+                            <span className="font-semibold text-[13px]">{deptNameI18n(s.entity, lang) ?? s.entity}</span>
                             {dept && <StatusTag status={dept.status} />}
                           </div>
                           <p className="text-[12px] mt-0.5" style={{ color: C.muted }}><Gloss>{s.line}</Gloss></p>
@@ -335,7 +335,7 @@ export default function BeforeView() {
                     <div className="flex items-center gap-2.5">
                       <OrgBadge code={p.entity} size={26} />
                       <div className="flex-1 min-w-0">
-                        <div className="text-[13px] font-medium truncate">{dept?.name ?? p.entity}</div>
+                        <div className="text-[13px] font-medium truncate">{deptNameI18n(p.entity, lang) ?? p.entity}</div>
                         <div className="text-[12px] truncate" style={{ color: C.detail }}>Owns {p.owns}</div>
                       </div>
                       {dept && <StatusTag status={dept.status} className="self-start shrink-0" />}

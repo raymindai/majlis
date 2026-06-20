@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useState } from "react";
 import { type LucideIcon } from "lucide-react";
-import { ENTITIES } from "@/lib/corpus";
+import { ENTITIES, deptNameI18n, meetingFieldI18n } from "@/lib/corpus";
 import { MEETINGS, PARTICIPANTS } from "@/lib/meetings";
 import { MEETING_META } from "@/lib/mock";
 import { C, RailLabel, TierTag } from "@/components/ui";
@@ -81,11 +81,12 @@ export function canonicalCode(raw: string): string {
 export function OrgBadge({ code, size = 28 }: { code: string; size?: number }) {
   const c = canonicalCode(code);
   const dept = deptFor(c);
+  const { lang } = useLang();
   const color = dept ? statusColor[dept.status] : C.muted;
   return (
     <Tip
       as="span"
-      content={dept?.name ?? code}
+      content={deptNameI18n(c, lang) ?? code}
       className="inline-flex items-center justify-center rounded-md font-semibold shrink-0"
       style={{ width: size, height: size, fontSize: Math.max(9, Math.round(size * 0.3)), background: `color-mix(in srgb, ${color} 14%, transparent)`, color, letterSpacing: "-0.02em", cursor: "help" }}
     >
@@ -97,11 +98,12 @@ export function OrgBadge({ code, size = 28 }: { code: string; size?: number }) {
 /** Department row, square badge + full name + status. Use wherever a department is the subject. */
 export function OrgRow({ code, size = 28 }: { code: string; size?: number }) {
   const dept = deptFor(code);
+  const { lang } = useLang();
   return (
     <div className="flex items-center gap-2.5 min-w-0">
       <OrgBadge code={code} size={size} />
       <div className="min-w-0">
-        <div className="font-semibold text-[13px] truncate">{dept?.name ?? code}</div>
+        <div className="font-semibold text-[13px] truncate">{deptNameI18n(code, lang) ?? code}</div>
         {dept && <StatusTag status={dept.status} />}
       </div>
     </div>
@@ -125,14 +127,14 @@ export function PersonRow({ id, size = 28, sub }: { id: string; size?: number; s
 
 export function MeetingContext() {
   const idx = MEETINGS.findIndex((m) => m.current) + 1;
-  const { t: tr } = useLang();
+  const { t: tr, lang } = useLang();
   // The header carries the session, room, and time. Here the rail frames the wider
   // programme the session sits inside, so the two complement rather than repeat.
   return (
     <div className="rounded-xl p-3" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
       <div className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: C.accent }}>{tr("programme")}</div>
-      <div className="text-[13px] font-semibold leading-tight mt-1">{MEETING_META.programme}</div>
-      <div className="text-[11px] mt-0.5 leading-snug" style={{ color: C.muted }}>{MEETING_META.subtitle}</div>
+      <div className="text-[13px] font-semibold leading-tight mt-1">{meetingFieldI18n("programme", lang)}</div>
+      <div className="text-[11px] mt-0.5 leading-snug" style={{ color: C.muted }}>{meetingFieldI18n("subtitle", lang)}</div>
       <div className="mt-2 pt-2 border-t text-[11px] space-y-0.5" style={{ borderColor: C.line, color: C.faint }}>
         <div>{tr("sessionOf", { n: idx, m: MEETINGS.length })}</div>
         <div>{tr("entitiesScale", { n: ENTITIES.length, b: Math.round(MEETING_META.totalBudgetAED / 1e6) })}</div>
