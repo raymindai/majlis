@@ -101,14 +101,18 @@ export default function DuringView() {
   const [sugShown, setSugShown] = useState<Set<string>>(() => new Set());
   const [brief, setBrief] = useState<Brief>(MOCK_BRIEF);
   const requested = useRef<Set<string>>(new Set());
-  const baseline = useRef<Set<string>>(new Set());
+  const sessionIds = useRef<Set<string>>(new Set());
+
+  // "Captured this meeting" is only what gets logged during this session, tracked by
+  // id. Prior cycles' commitments in the store never show, and a fresh capture always
+  // appears even when the same id already existed in the store.
+  const capture = (c: Commitment) => {
+    sessionIds.current.add(c.id);
+    addCommitment(c);
+  };
 
   useEffect(() => {
-    // "Captured this meeting" is only what gets logged during this session; snapshot
-    // the commitments already in the store (prior cycles) and exclude them, so nothing
-    // shows as captured before the meeting has even begun.
-    baseline.current = new Set(loadState().commitments.map((c) => c.id));
-    const sync = () => setCaptured(loadState().commitments.filter((c) => !baseline.current.has(c.id)));
+    const sync = () => setCaptured(loadState().commitments.filter((c) => sessionIds.current.has(c.id)));
     sync();
     window.addEventListener("majlis-store", sync);
     return () => window.removeEventListener("majlis-store", sync);
@@ -351,7 +355,7 @@ export default function DuringView() {
                             type="button"
                             disabled={capturedIds.has(`c-${item.id}`)}
                             onClick={() =>
-                              addCommitment({ id: `c-${item.id}`, entity: obs.commitment!.entity, text: obs.commitment!.text, due: obs.commitment!.due, confidence: "confirmed", capturedAt: "during", citation: obs.citation ?? undefined })
+                              capture({ id: `c-${item.id}`, entity: obs.commitment!.entity, text: obs.commitment!.text, due: obs.commitment!.due, confidence: "confirmed", capturedAt: "during", citation: obs.citation ?? undefined })
                             }
                             className="text-[12px] rounded-lg px-2.5 py-1 cursor-pointer disabled:opacity-50"
                             style={{ background: C.chipBg, color: C.ink }}
@@ -401,12 +405,9 @@ export default function DuringView() {
           <p className="text-[16px] font-medium leading-snug"><Gloss>{brief.decision.text}</Gloss></p>
 
           {/* Live view stays glanceable: the recommendation and the choices, not the full essay (that is in Before). */}
-          <div className="mt-3 flex items-start gap-2 text-[14px] leading-snug">
-            <Sparkles size={15} strokeWidth={2} style={{ color: C.accent, marginTop: 2 }} className="shrink-0" />
-            <span>
-              <span className="font-semibold" style={{ color: C.accent }}>{tr("majlisRecommends")}: </span>
-              <span style={{ color: C.ink }}><Gloss>{brief.decision.recommendation}</Gloss></span>
-            </span>
+          <div className="mt-3 text-[14px] leading-snug">
+            <span className="font-semibold" style={{ color: C.accent }}>{tr("majlisRecommends")}: </span>
+            <span style={{ color: C.ink }}><Gloss>{brief.decision.recommendation}</Gloss></span>
           </div>
 
           {brief.decision.options.length > 0 && (
@@ -444,7 +445,7 @@ export default function DuringView() {
                 <span className="text-[13px]" style={{ color: C.ink }}>{tr("chairRuled")}: <span style={{ color: C.detail }}>&ldquo;<Gloss>{chairText}</Gloss>&rdquo;</span></span>
                 <button
                   type="button"
-                  onClick={() => addCommitment({ id: decisionId, entity: "Committee", text: chairText, due: "Next session", confidence: "confirmed", capturedAt: "during", citation: brief.bottomLine.citations[0] })}
+                  onClick={() => capture({ id: decisionId, entity: "Committee", text: chairText, due: "Next session", confidence: "confirmed", capturedAt: "during", citation: brief.bottomLine.citations[0] })}
                   className="text-[12px] rounded-lg px-2.5 py-1 cursor-pointer"
                   style={{ background: C.accent, color: C.onAccent }}
                 >

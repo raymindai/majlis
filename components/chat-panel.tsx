@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Sparkles, StickyNote } from "lucide-react";
+import { StickyNote } from "lucide-react";
 import { ASK_EVENT } from "@/components/ask-bus";
 import { C, CitationChip, ConfidenceBadge } from "@/components/ui";
 import { useCitation } from "@/components/citation-context";
@@ -121,10 +121,7 @@ export default function ChatPanel({ stage }: { stage: "before" | "during" | "aft
           </g>
         </svg>
         <div className="relative px-4 pt-3 pb-3">
-          <span className="inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wide rounded-full px-2 py-0.5" style={{ background: C.surface, color: C.accent, border: `1px solid ${C.line}` }}>
-            <Sparkles size={11} strokeWidth={2.5} /> {tr("majlisAI")}
-          </span>
-          <div style={serif} className="text-[19px] leading-tight mt-1.5" >{tr("askMajlis")}</div>
+          <div style={serif} className="text-[19px] leading-tight">{tr("askMajlis")}</div>
           <div className="text-[12px] mt-0.5" style={{ color: C.muted }}>{tr("chatSubtitle")}</div>
         </div>
       </div>

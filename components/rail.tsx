@@ -7,7 +7,7 @@ import { openAboutProgramme } from "@/components/programme-bus";
 import { ENTITIES, deptNameI18n, meetingFieldI18n } from "@/lib/corpus";
 import { MEETINGS, PARTICIPANTS } from "@/lib/meetings";
 import { MEETING_META } from "@/lib/mock";
-import { C, TierTag } from "@/components/ui";
+import { C } from "@/components/ui";
 import { useParticipant } from "@/components/participant-context";
 import { useDetail } from "@/components/detail-context";
 import { useLang } from "@/components/lang-context";
@@ -245,7 +245,7 @@ export function NavList({ items }: { items: { label?: string; key?: string; icon
       {shown.map((n) => {
         const Icon = n.icon;
         const tier = n.min ?? 1;
-        const tone = tier >= 3 ? C.faint : tier === 2 ? C.muted : C.detail;
+        const tone = tier === 1 ? C.ink : C.detail;
         const label = n.key ? tr(n.key) : (n.label ?? "");
         const anchor = slug(n.key ?? n.label ?? "");
         const isActive = active.has(anchor);
@@ -264,9 +264,8 @@ export function NavList({ items }: { items: { label?: string; key?: string; icon
               background: isActive ? `color-mix(in srgb, ${C.accent} 13%, transparent)` : undefined,
             }}
           >
-            <Icon size={15} strokeWidth={2} style={{ color: isActive || tier === 1 ? C.accent : C.faint }} className="shrink-0" />
+            <Icon size={15} strokeWidth={2} style={{ color: isActive || tier === 1 ? C.accent : C.muted }} className="shrink-0" />
             <span className="flex-1 truncate">{label}</span>
-            <TierTag min={n.min} />
           </a>
         );
       })}
