@@ -129,9 +129,9 @@ export function TierTag({ min }: { min?: number }) {
     <span
       className="text-[9px] font-semibold uppercase tracking-wide rounded px-1 py-[1px] shrink-0"
       style={{ color: C.faint, background: C.surfaceAlt, border: `1px solid ${C.line}` }}
-      title={min >= 3 ? tr("tierFullTip") : tr("tierBriefTip")}
+      title={min >= 3 ? tr("tierFullTip") : tr("tierStandardTip")}
     >
-      {min >= 3 ? tr("full") : tr("brief")}
+      {min >= 3 ? tr("full") : tr("standard")}
     </span>
   );
 }

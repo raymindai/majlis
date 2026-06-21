@@ -9,7 +9,7 @@ import { C } from "@/components/ui";
 // (headlines) to a full block (full detail), so the control reads as zooming.
 const LEVELS: { v: DetailLevel; key: string; icon: LucideIcon }[] = [
   { v: 1, key: "headlines", icon: Minus },
-  { v: 2, key: "brief", icon: Equal },
+  { v: 2, key: "standard", icon: Equal },
   { v: 3, key: "full", icon: AlignJustify },
 ];
 

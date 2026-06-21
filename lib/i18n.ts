@@ -33,7 +33,7 @@ const EN: Dict = {
   openCalendar: "Open the calendar",
   // detail control
   headlines: "Headlines",
-  brief: "Brief",
+  standard: "Standard",
   full: "Full",
   zoom: "Zoom",
   // theme + language
@@ -116,7 +116,7 @@ const EN: Dict = {
   sevDef_blocker: "Blocks other entities' delivery; needs resolving now.",
   sevDef_atRisk: "May slip; watch it closely.",
   tierFullTip: "Shown at the Full zoom",
-  tierBriefTip: "Shown from the Brief zoom",
+  tierStandardTip: "Shown from the Standard zoom",
   openSource: "Open the source document",
   // during
   speakingOrder: "Speakers",
@@ -205,7 +205,7 @@ const AR: Dict = {
   today: "اليوم",
   openCalendar: "فتح التقويم",
   headlines: "العناوين",
-  brief: "موجز",
+  standard: "قياسي",
   full: "كامل",
   zoom: "تكبير",
   light: "فاتح",
@@ -279,7 +279,7 @@ const AR: Dict = {
   sevDef_blocker: "يعيق تسليم جهات أخرى ويحتاج حلاً الآن.",
   sevDef_atRisk: "قد يتأخر، راقبه عن قرب.",
   tierFullTip: "يظهر في التكبير الكامل",
-  tierBriefTip: "يظهر من تكبير الموجز",
+  tierStandardTip: "يظهر من التكبير القياسي",
   openSource: "افتح المستند المصدر",
   speakingOrder: "المتحدثون",
   nextSpeaker: "المتحدث التالي",
