@@ -25,7 +25,6 @@ import {
 } from "lucide-react";
 import { C } from "@/components/theme";
 import Reveal from "@/components/reveal";
-import NationalAccent from "@/components/national-accent";
 import { listProcessDocs } from "@/lib/process-docs";
 
 const serif = { fontFamily: "var(--font-newsreader), var(--font-arabic), Georgia, serif" };
@@ -177,7 +176,6 @@ export default function ProcessPage() {
   const docCount = listProcessDocs().length;
   return (
     <div className="min-h-dvh" style={{ background: C.bg, color: C.ink, fontFamily: "var(--font-inter), var(--font-arabic), system-ui, sans-serif" }}>
-      <NationalAccent />
       <div className="mx-auto max-w-3xl px-6 py-12 md:py-16">
         {/* Hero, a branded gradient rather than a stock photo */}
         <header className="relative overflow-hidden rounded-3xl p-8 md:p-12 majlis-fade-up" style={{ border: `1px solid ${C.line}`, background: `linear-gradient(135deg, ${C.chipBg}, ${C.surface} 72%)`, boxShadow: C.shadow }}>
