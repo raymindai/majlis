@@ -266,12 +266,11 @@ export function NavList({ items }: { items: { label?: string; key?: string; icon
           <a
             key={n.key ?? n.label}
             href={`#${anchor}`}
-            className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg text-[13px] hover:bg-[var(--c-surface-alt)]"
+            className={`flex items-center gap-2.5 px-2 py-1.5 rounded-lg text-[13px] ${isActive ? "" : "hover:bg-[var(--c-surface-alt)]"}`}
             style={{
               color: isActive ? C.ink : tone,
               fontWeight: isActive ? 600 : tier === 1 ? 500 : 400,
-              background: isActive ? C.surfaceAlt : "transparent",
-              boxShadow: isActive ? `inset 2px 0 0 ${C.accent}` : "none",
+              background: isActive ? `color-mix(in srgb, ${C.accent} 13%, transparent)` : undefined,
             }}
           >
             <Icon size={15} strokeWidth={2} style={{ color: isActive || tier === 1 ? C.accent : C.faint }} className="shrink-0" />

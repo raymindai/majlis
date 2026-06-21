@@ -191,7 +191,7 @@ export function Card({
   return (
     <section
       id={id}
-      className={`rounded-2xl p-6 scroll-mt-4 ${span === 2 ? "lg:col-span-2" : ""}`}
+      className={`rounded-2xl p-6 scroll-mt-4 ${minLevel ? "majlis-fade-up" : ""} ${span === 2 ? "lg:col-span-2" : ""}`}
       style={{ background: C.surface, border: `1px solid ${C.line}`, boxShadow: C.shadow }}
     >
       {displayLabel && <Header label={displayLabel} aside={aside} icon={icon} min={minLevel} />}

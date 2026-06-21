@@ -75,7 +75,15 @@ export function getProcessDoc(slug: string): ProcessDoc | null {
   return listProcessDocs().find((d) => d.slug === slug) ?? null;
 }
 
-/** The body with its leading H1 removed, since the page renders the title itself. */
+/**
+ * The body with its leading H1 removed (the page renders the title itself), and
+ * with em-dashes, en-dashes, and middots replaced so the rendered archive reads
+ * clean. The source .md files are kept verbatim as the raw record.
+ */
 export function bodyWithoutTitle(markdown: string): string {
-  return markdown.replace(/^#\s+.*(?:\r?\n)+/, "");
+  return markdown
+    .replace(/^#\s+.*(?:\r?\n)+/, "")
+    .replace(/ *— */g, ", ")
+    .replace(/ *· */g, ", ")
+    .replace(/–/g, "-");
 }

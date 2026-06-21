@@ -148,7 +148,7 @@ export default function BeforeView() {
 
         <Card labelKey="bottomLine" span={2} icon={Target}>
           <h1 style={{ ...serif, letterSpacing: "-0.018em" }} className="text-[30px] leading-tight"><Gloss>{bl.lead}</Gloss></h1>
-          {level >= 2 && <p className="mt-3 text-[16px] leading-relaxed" style={{ color: C.detail }}><Gloss>{bl.detail}</Gloss></p>}
+          {level >= 2 && <p className="mt-3 text-[16px] leading-relaxed majlis-fade-up" style={{ color: C.detail }}><Gloss>{bl.detail}</Gloss></p>}
           <div className="mt-4 flex flex-wrap items-center gap-2">
             <span className="text-[11px] font-medium" style={{ color: C.faint }}>{tr("confidence")}</span>
             <ConfidenceBadge confidence={bl.confidence} />
@@ -186,7 +186,7 @@ export default function BeforeView() {
             )}
           </div>
           {level >= 2 && (
-            <>
+            <div className="majlis-fade-up">
               <div className="mt-4">
                 <div className="text-[11px] font-semibold mb-1.5" style={{ color: C.faint }}>{tr("hingesOn")}</div>
                 <ul className="space-y-1">
@@ -214,7 +214,7 @@ export default function BeforeView() {
                   </ul>
                 </div>
               )}
-            </>
+            </div>
           )}
         </Card>
 

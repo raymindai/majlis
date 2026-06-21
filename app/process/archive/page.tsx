@@ -44,7 +44,7 @@ export default function ProcessArchivePage() {
                 style={{ background: C.surface, border: `1px solid ${C.line}`, boxShadow: C.shadow }}
               >
                 <span className="text-[13px] font-semibold tabular-nums shrink-0 mt-0.5 rounded-md px-2 py-0.5" style={{ background: `color-mix(in srgb, ${C.accent} 12%, transparent)`, color: C.accent }}>
-                  {d.order || "—"}
+                  {d.order || "00"}
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="block font-semibold text-[16px] leading-snug">{d.title}</span>
