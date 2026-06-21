@@ -190,54 +190,40 @@ export function NavList({ items }: { items: { label?: string; key?: string; icon
   const shown = items.filter((n) => !n.min || level >= n.min);
   const anchorKey = shown.map((n) => slug(n.key ?? n.label ?? "")).join(",");
 
-  // Scroll-spy: as the content scrolls, highlight the rail item whose section is
-  // nearest the top of the view, so the nav stays tied to where the reader is.
+  // Scroll-spy: highlight the rail item for the section you have most recently
+  // scrolled to. Sections scrolled above the top of the view are ignored, so the
+  // highlight stays on the clicked section instead of jumping to a neighbour.
   useEffect(() => {
     const ids = anchorKey.split(",").filter(Boolean);
     const els = ids.map((id) => document.getElementById(id)).filter((el): el is HTMLElement => !!el);
     if (!els.length) return;
     const root = els[0].closest("main");
-    // A callback only carries the sections whose visibility changed, so keep a
-    // running set of everything in view and pick the topmost from the full set.
-    // Otherwise a section that was already visible when a neighbour left is skipped.
-    const visible = new Set<string>();
+    if (!root) return;
 
     const commit = (nextIds: string[]) =>
       setActive((prev) => (prev.size === nextIds.length && nextIds.every((id) => prev.has(id)) ? prev : new Set(nextIds)));
 
     const compute = () => {
-      // Bottom guard: when the content is scrolled to its end, the last section
-      // wins. On a tall screen it may never have enough content below it to reach
-      // the band on its own, so it would otherwise never become active.
-      if (root && root.scrollHeight - root.clientHeight > 4 && root.scrollTop + root.clientHeight >= root.scrollHeight - 4) {
-        commit([els[els.length - 1].id]);
+      const tops = els.map((el) => ({ id: el.id, top: el.getBoundingClientRect().top }));
+      // Bottom guard: scrolled to the end -> the last row, which on a tall screen
+      // may never reach the trigger on its own.
+      if (root.scrollHeight - root.clientHeight > 4 && root.scrollTop + root.clientHeight >= root.scrollHeight - 4) {
+        const lastTop = tops[tops.length - 1].top;
+        commit(tops.filter((t) => Math.abs(t.top - lastTop) < 8).map((t) => t.id));
         return;
       }
-      // Highlight every section in the topmost visible row. Side-by-side cards
-      // share a top, so a single pick would always lose the right-hand one.
-      const vis = els
-        .filter((el) => visible.has(el.id))
-        .map((el) => ({ id: el.id, top: el.getBoundingClientRect().top }))
-        .sort((a, b) => a.top - b.top);
-      if (!vis.length) return;
-      const minTop = vis[0].top;
-      commit(vis.filter((v) => v.top <= minTop + 8).map((v) => v.id));
+      // Active = the lowest section whose top has passed a trigger line just below
+      // the top of the view (ignoring sections already scrolled above it). Side-by-
+      // side cards share a top, so the whole row is highlighted.
+      const trigger = root.getBoundingClientRect().top + 24;
+      const passed = tops.filter((t) => t.top <= trigger);
+      const pool = passed.length ? passed : tops;
+      const mark = passed.length ? Math.max(...passed.map((t) => t.top)) : Math.min(...tops.map((t) => t.top));
+      commit(pool.filter((t) => Math.abs(t.top - mark) < 8).map((t) => t.id));
     };
 
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const e of entries) {
-          if (e.isIntersecting) visible.add(e.target.id);
-          else visible.delete(e.target.id);
-        }
-        compute();
-      },
-      { root, rootMargin: "0px 0px -72% 0px", threshold: 0 },
-    );
-    els.forEach((el) => io.observe(el));
-
     let ticking = false;
-    const onScroll = () => {
+    const onMove = () => {
       if (ticking) return;
       ticking = true;
       requestAnimationFrame(() => {
@@ -245,11 +231,14 @@ export function NavList({ items }: { items: { label?: string; key?: string; icon
         ticking = false;
       });
     };
-    root?.addEventListener("scroll", onScroll, { passive: true });
+    root.addEventListener("scroll", onMove, { passive: true });
+    window.addEventListener("resize", onMove, { passive: true });
+    const raf = requestAnimationFrame(compute);
 
     return () => {
-      io.disconnect();
-      root?.removeEventListener("scroll", onScroll);
+      root.removeEventListener("scroll", onMove);
+      window.removeEventListener("resize", onMove);
+      cancelAnimationFrame(raf);
     };
   }, [anchorKey]);
 

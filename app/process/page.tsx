@@ -5,15 +5,20 @@ import {
   Compass,
   Database,
   GitBranch,
+  Languages,
   Layers,
   Library,
   ListChecks,
   MessageCircleQuestion,
   PenTool,
+  Repeat,
   Rocket,
+  ScanSearch,
   ShieldCheck,
   Sparkles,
+  Target,
   Users,
+  ZoomIn,
 } from "lucide-react";
 import { C } from "@/components/theme";
 import Reveal from "@/components/reveal";
@@ -129,6 +134,16 @@ const CRAFT: { icon: typeof Sparkles; title: string; body: string }[] = [
   { icon: Sparkles, title: "AI-built assets", body: "Participant portraits generated with fal (Nano Banana Pro). The committee pack, the people, and this case study were authored AI-first." },
 ];
 
+/** The signature capabilities, highlighted up front. */
+const FEATURES: { icon: typeof Sparkles; title: string; body: string }[] = [
+  { icon: MessageCircleQuestion, title: "Grounded Q&A", body: "Ask anything in plain language. Answers stream in with a confidence rating and a citation on every claim, and say plainly when the pack does not hold the answer." },
+  { icon: Target, title: "Exception-led brief", body: "The bottom line and the decision come first, then the exceptions that need attention, ranked by severity, never a flat wall of five status reports." },
+  { icon: ScanSearch, title: "Live record-check", body: "During the meeting each statement is checked against the record as it is said, and a contradiction is flagged the moment it happens, with its source." },
+  { icon: Repeat, title: "Memory that closes the loop", body: "Commitments captured after the meeting are written to memory and return as the next cycle's prior positions, so nothing is silently dropped." },
+  { icon: ZoomIn, title: "Level-of-detail zoom", body: "Reshape the whole brief from headlines to full detail in one click, for a reader with eighteen minutes or with the afternoon." },
+  { icon: Languages, title: "Bilingual, right-to-left", body: "Full Arabic with a right-to-left layout and answers written in Arabic, not just translated labels over an English product." },
+];
+
 const LIFECYCLE: { icon: typeof Layers; stage: string; line: string; href: string }[] = [
   { icon: Layers, stage: "Before", line: "The brief: bottom line, the decision, ranked exceptions, who is in the room, and grounded Q&A on demand.", href: "/" },
   { icon: Users, stage: "During", line: "A live transcript that flags inconsistencies against the record and suggests the next question to ask.", href: "/during" },
@@ -201,6 +216,29 @@ export default function ProcessPage() {
             contradicts an official report. The official has eighteen minutes. The product has to surface what matters,
             show its work, and be honest about what it does not know.
           </p>
+        </section></Reveal>
+
+        {/* Key features */}
+        <Reveal className="mt-20"><section>
+          <Eyebrow>Key features</Eyebrow>
+          <SectionTitle>What it actually does</SectionTitle>
+          <p className="text-[15px] leading-relaxed mt-3" style={{ color: C.muted }}>
+            Six capabilities that carry the experience. Each one is live in the prototype, not a mockup.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-7">
+            {FEATURES.map((f) => {
+              const Icon = f.icon;
+              return (
+                <div key={f.title} className="rounded-2xl p-5 majlis-lift" style={{ background: C.surface, border: `1px solid ${C.line}`, boxShadow: C.shadow }}>
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: `color-mix(in srgb, ${C.accent} 12%, transparent)` }}>
+                    <Icon size={19} strokeWidth={2} style={{ color: C.accent }} />
+                  </div>
+                  <div className="font-semibold text-[15px] mt-3.5">{f.title}</div>
+                  <p className="text-[13.5px] leading-relaxed mt-1.5" style={{ color: C.detail }}>{f.body}</p>
+                </div>
+              );
+            })}
+          </div>
         </section></Reveal>
 
         {/* The process */}
