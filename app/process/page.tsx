@@ -403,8 +403,14 @@ export default function ProcessPage() {
           </Link>
         </section></Reveal>
 
-        <div className="mt-20 pt-8 border-t flex flex-wrap items-center justify-between gap-4" style={{ borderColor: C.line }}>
-          <span className="text-[13px]" style={{ color: C.muted }}>Majlis, a five-day prototype. Synthetic data throughout.</span>
+        <div className="mt-20 pt-8 border-t flex flex-wrap items-end justify-between gap-6" style={{ borderColor: C.line }}>
+          <div>
+            <div className="text-[15px] font-semibold" style={{ color: C.ink }}>Hyunsang Cho</div>
+            <div className="text-[13px] mt-0.5" style={{ color: C.muted }}>
+              <a href="mailto:hi@raymind.ai" style={{ color: C.accent }}>hi@raymind.ai</a> for any questions about this work.
+            </div>
+            <div className="text-[12px] mt-2" style={{ color: C.faint }}>Majlis, a five-day prototype. Synthetic data throughout.</div>
+          </div>
           <Link href="/" className="inline-flex items-center gap-1.5 text-[14px]" style={{ color: C.accent }}>
             Open the prototype <ArrowRight size={15} strokeWidth={2} />
           </Link>
