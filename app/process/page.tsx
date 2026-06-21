@@ -71,7 +71,7 @@ const PROCESS: { icon: typeof Compass; title: string; body: string }[] = [
   {
     icon: Sparkles,
     title: "Deepen and pressure-test",
-    body: "Iterated each stage around what the chair actually needs in the moment, then layered in bilingual Arabic with RTL, a level-of-detail zoom, and the institutional-memory loop that carries commitments between cycles.",
+    body: "Iterated each stage around what the chair actually needs in the moment: a live in-session transcript that listens then checks each statement, a windowed workspace to interrogate in place, bilingual Arabic with RTL, a level-of-detail zoom, and the institutional-memory loop that carries commitments between cycles.",
   },
 ];
 
@@ -134,7 +134,7 @@ const CRAFT: { icon: typeof Sparkles; title: string; body: string }[] = [
   { icon: MessageCircleQuestion, title: "Grounded answers", body: "Every claim cites one passage and carries a confidence rating. Conflicting sources are shown as separate, unverified claims, never silently merged." },
   { icon: ShieldCheck, title: "Honest uncertainty", body: "If the pack does not contain the answer, it says so plainly rather than guessing. The system prompt is a behavioral contract, not a personality." },
   { icon: Database, title: "Auditable", body: "Every grounded answer is logged to Supabase with its sources, confidence mix, and latency. The institutional-memory loop persists to the same database." },
-  { icon: Sparkles, title: "AI-built assets", body: "Participant portraits generated with fal (Nano Banana Pro). The committee pack, the people, and this case study were authored AI-first." },
+  { icon: Sparkles, title: "AI-built assets", body: "Participant portraits, the Ask Majlis brand, and the Manarah programme identity, all generated with fal (Nano Banana Pro). The committee pack, the people, and this case study itself were authored AI-first." },
 ];
 
 /** The signature capabilities, highlighted up front. */
@@ -160,7 +160,7 @@ const AGAINST: { crit: string; body: string }[] = [
 
 const LIFECYCLE: { icon: typeof Layers; stage: string; line: string; href: string }[] = [
   { icon: Layers, stage: "Before", line: "The brief: bottom line, the decision, ranked exceptions, who is in the room, and grounded Q&A on demand.", href: "/" },
-  { icon: Users, stage: "During", line: "A live transcript that flags inconsistencies against the record and suggests the next question to ask.", href: "/during" },
+  { icon: Users, stage: "During", line: "Convene the room, then a live transcript checks each statement against the record as it is spoken, flags contradictions, suggests questions, and captures commitments.", href: "/during" },
   { icon: GitBranch, stage: "After", line: "Minutes that draft themselves from what was captured, then write commitments to memory, closing the loop.", href: "/after" },
 ];
 
