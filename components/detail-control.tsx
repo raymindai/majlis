@@ -29,9 +29,9 @@ export default function DetailControl() {
             onClick={() => setLevel(l.v)}
             title={`${tr("zoom")}: ${tr(l.key)}`}
             className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-md cursor-pointer transition-colors"
-            style={on ? { background: C.surface, color: C.ink, fontWeight: 600, boxShadow: C.shadow } : { color: C.muted }}
+            style={on ? { background: C.accent, color: C.onAccent, fontWeight: 600 } : { color: C.muted }}
           >
-            <Icon size={12} strokeWidth={2.25} style={{ color: on ? C.accent : C.faint }} />
+            <Icon size={12} strokeWidth={2.25} style={{ color: on ? C.onAccent : C.faint }} />
             {tr(l.key)}
           </button>
         );

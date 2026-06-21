@@ -19,7 +19,7 @@ export default function LanguageSwitcher() {
             aria-label={l.label}
             title={l.label}
             className="inline-flex items-center justify-center rounded-md px-2.5 text-[11px] font-semibold cursor-pointer transition-colors min-w-[28px]"
-            style={on ? { background: C.surface, color: C.ink, boxShadow: C.shadow } : { color: C.muted }}
+            style={on ? { background: C.accent, color: C.onAccent } : { color: C.muted }}
           >
             {l.native}
           </button>
