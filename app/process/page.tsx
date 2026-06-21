@@ -35,13 +35,6 @@ export const metadata = {
   description: "How an AI briefing companion was scoped, decided, and built.",
 };
 
-const STATS: { k: string; v: string }[] = [
-  { k: "5 days", v: "concept to a live prototype" },
-  { k: "3 stages", v: "Before, During, After, all live AI" },
-  { k: "9 documents", v: "the grounded source corpus" },
-  { k: "100% synthetic", v: "no real government data" },
-];
-
 /** How the work was actually done, in order. */
 const PROCESS: { icon: typeof Compass; title: string; body: string }[] = [
   {
@@ -214,20 +207,10 @@ export default function ProcessPage() {
           </div>
         </header>
 
-        {/* Stat strip */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">
-          {STATS.map((s, i) => (
-            <div key={s.k} className="rounded-xl p-4 majlis-fade-up" style={{ background: C.surface, border: `1px solid ${C.line}`, animationDelay: `${i * 70}ms` }}>
-              <div className="text-[18px] font-semibold leading-tight" style={{ color: C.ink }}>{s.k}</div>
-              <div className="text-[12px] mt-1 leading-snug" style={{ color: C.muted }}>{s.v}</div>
-            </div>
-          ))}
-        </div>
-
         {/* The build, in one screen */}
-        <Reveal className="mt-10">
+        <Reveal className="mt-12">
           <figure
-            className="rounded-2xl overflow-hidden"
+            className="overflow-hidden"
             style={{
               border: `1px solid ${C.line}`,
               boxShadow: C.shadow,
