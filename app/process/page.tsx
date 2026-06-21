@@ -233,29 +233,11 @@ export default function ProcessPage() {
             contradicts an official report. The official has eighteen minutes. The product has to surface what matters,
             show its work, and be honest about what it does not know.
           </p>
-        </section></Reveal>
-
-        {/* Key features */}
-        <Reveal className="mt-20"><section>
-          <Eyebrow>Key features</Eyebrow>
-          <SectionTitle>What it actually does</SectionTitle>
-          <p className="text-[15px] leading-relaxed mt-3" style={{ color: C.muted }}>
-            What the AI does, and how you work alongside it. Each one is live in the prototype, not a mockup.
+          <p className="text-[16px] leading-relaxed mt-4 font-medium" style={{ color: C.ink }}>
+            So the real design problem is not the screens, it is trust: the official has to act on what the AI says, in
+            minutes, with no time to re-check it. Everything that follows, every decision and every feature, is in service
+            of earning it. The AI is the product, and that trust is the whole job.
           </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-7">
-            {FEATURES.map((f) => {
-              const Icon = f.icon;
-              return (
-                <div key={f.title} className="rounded-2xl p-5 majlis-lift" style={{ background: C.surface, border: `1px solid ${C.line}`, boxShadow: C.shadow }}>
-                  <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: `color-mix(in srgb, ${C.accent} 12%, transparent)` }}>
-                    <Icon size={19} strokeWidth={2} style={{ color: C.accent }} />
-                  </div>
-                  <div className="font-semibold text-[15px] mt-3.5">{f.title}</div>
-                  <p className="text-[13.5px] leading-relaxed mt-1.5" style={{ color: C.detail }}>{f.body}</p>
-                </div>
-              );
-            })}
-          </div>
         </section></Reveal>
 
         {/* The process */}
@@ -324,7 +306,11 @@ export default function ProcessPage() {
         <Reveal className="mt-20"><section>
           <Eyebrow>The experience</Eyebrow>
           <SectionTitle>One loop, three stages</SectionTitle>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-6">
+          <p className="text-[15px] leading-relaxed mt-3" style={{ color: C.muted }}>
+            Majlis is one product across the whole meeting lifecycle, not three tools. The same brief and the same memory
+            carry from preparation, into the room, to the record.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-7">
             {LIFECYCLE.map((s) => {
               const Icon = s.icon;
               return (
@@ -334,6 +320,29 @@ export default function ProcessPage() {
                   <p className="text-[13px] leading-snug mt-1.5" style={{ color: C.detail }}>{s.line}</p>
                   <div className="inline-flex items-center gap-1 text-[12px] mt-3" style={{ color: C.accent }}>Open <ArrowRight size={13} strokeWidth={2} /></div>
                 </Link>
+              );
+            })}
+          </div>
+        </section></Reveal>
+
+        {/* Key features */}
+        <Reveal className="mt-20"><section>
+          <Eyebrow>Key features</Eyebrow>
+          <SectionTitle>What it actually does</SectionTitle>
+          <p className="text-[15px] leading-relaxed mt-3" style={{ color: C.muted }}>
+            Across the three stages, here is what the AI does, and how you work alongside it. Each one is live in the prototype, not a mockup.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-7">
+            {FEATURES.map((f) => {
+              const Icon = f.icon;
+              return (
+                <div key={f.title} className="rounded-2xl p-5 majlis-lift" style={{ background: C.surface, border: `1px solid ${C.line}`, boxShadow: C.shadow }}>
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: `color-mix(in srgb, ${C.accent} 12%, transparent)` }}>
+                    <Icon size={19} strokeWidth={2} style={{ color: C.accent }} />
+                  </div>
+                  <div className="font-semibold text-[15px] mt-3.5">{f.title}</div>
+                  <p className="text-[13.5px] leading-relaxed mt-1.5" style={{ color: C.detail }}>{f.body}</p>
+                </div>
               );
             })}
           </div>
