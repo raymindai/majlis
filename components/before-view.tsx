@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   CalendarClock,
   CalendarRange,
@@ -10,12 +10,9 @@ import {
   Gavel,
   History,
   ListChecks,
-  Loader2,
   MessageCircleQuestion,
   MessageSquareQuote,
   OctagonAlert,
-  RefreshCw,
-  Sparkles,
   Target,
   TriangleAlert,
   Users,
@@ -27,6 +24,7 @@ import { SOURCES, SOURCE_META, AUTHORITY_LABEL, deptNameI18n } from "@/lib/corpu
 import { askMajlis } from "@/components/ask-bus";
 import { C, Card, CitationChip, ConfidenceBadge, severityColor } from "@/components/ui";
 import { Avatar, deptFor, MeetingContext, NavList, OrgBadge, RailSection, StatusTag, TheRoom } from "@/components/rail";
+import { REGENERATE_BRIEF_EVENT, emitBriefSyncing } from "@/components/regenerate-bus";
 import { useCitation } from "@/components/citation-context";
 import { useParticipant } from "@/components/participant-context";
 import { useOpenMeeting } from "@/components/meeting-context";
@@ -60,7 +58,6 @@ export default function BeforeView() {
   const [checked, setChecked] = useState<Record<number, boolean>>({});
   const [brief, setBrief] = useState<Brief>(MOCK_BRIEF);
   const [syncing, setSyncing] = useState(false);
-  const [live, setLive] = useState(false);
 
   useEffect(() => {
     const sync = () => {
@@ -79,7 +76,6 @@ export default function BeforeView() {
       const data = await res.json();
       if (data && !data.error) {
         setBrief(data);
-        setLive(true);
         localStorage.setItem(`${BRIEF_CACHE_KEY}:${lang}`, JSON.stringify(data));
       }
     } catch {
@@ -89,6 +85,20 @@ export default function BeforeView() {
     }
   }
 
+  // The Regenerate action lives in the reviewer guide (bottom-left), not the
+  // chair-facing brief. Listen for its trigger, and report syncing back so its
+  // button can show progress. A ref keeps the handler on the latest closure.
+  const regenerateRef = useRef(regenerate);
+  regenerateRef.current = regenerate;
+  useEffect(() => {
+    const handler = () => regenerateRef.current();
+    window.addEventListener(REGENERATE_BRIEF_EVENT, handler);
+    return () => window.removeEventListener(REGENERATE_BRIEF_EVENT, handler);
+  }, []);
+  useEffect(() => {
+    emitBriefSyncing(syncing);
+  }, [syncing]);
+
   // On load and whenever the language changes, use the cached brief for that
   // language if present, else synthesise it fresh in that language.
   useEffect(() => {
@@ -96,13 +106,11 @@ export default function BeforeView() {
     if (cached) {
       try {
         setBrief(JSON.parse(cached));
-        setLive(true);
         return;
       } catch {
         /* fall through to fetch */
       }
     }
-    setLive(false);
     setBrief(MOCK_BRIEF);
     regenerate();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -123,22 +131,6 @@ export default function BeforeView() {
 
   return (
     <AppShell stage="before" leftRail={leftRail}>
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="inline-flex items-center gap-1.5 text-[12px]" style={{ color: C.faint }}>
-          <Sparkles size={13} strokeWidth={2} />
-          {live ? tr("briefingLive") : tr("briefingSample")}
-        </div>
-        <button
-          type="button"
-          onClick={regenerate}
-          disabled={syncing}
-          className="inline-flex items-center gap-1.5 text-[12px] rounded-lg px-3 py-1.5 cursor-pointer hover:opacity-80 disabled:opacity-50"
-          style={{ background: C.surfaceAlt, border: `1px solid ${C.line}`, color: C.muted }}
-        >
-          {syncing ? <Loader2 size={13} className="animate-spin" /> : <RefreshCw size={13} strokeWidth={2} />}
-          {syncing ? tr("synthesising") : tr("regenerateBrief")}
-        </button>
-      </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
         {prior.length > 0 && (
           <Card labelKey="carriedOver" span={2} icon={History}>

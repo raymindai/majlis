@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ArrowRight, BookOpen, GitBranch, Layers, MousePointerClick, Sparkles, Users, X } from "lucide-react";
+import { ArrowRight, BookOpen, GitBranch, Layers, Loader2, MousePointerClick, RefreshCw, Sparkles, Users, X } from "lucide-react";
 import { C } from "@/components/ui";
 import { useLang } from "@/components/lang-context";
+import { BRIEF_SYNCING_EVENT, regenerateBrief } from "@/components/regenerate-bus";
 
 const serif = { fontFamily: "var(--font-newsreader), var(--font-arabic), Georgia, serif" };
 
@@ -37,9 +38,18 @@ const STAGES = [
  */
 export default function ReviewerGuide() {
   const [open, setOpen] = useState(false);
+  const [syncing, setSyncing] = useState(false);
   const { t: tr } = useLang();
   const pathname = usePathname();
   const active = pathname === "/during" ? "during" : pathname === "/after" ? "after" : "before";
+
+  // The Before view owns the brief; it reports its syncing state here so this
+  // button can show progress while the regeneration runs.
+  useEffect(() => {
+    const handler = (e: Event) => setSyncing(Boolean((e as CustomEvent).detail));
+    window.addEventListener(BRIEF_SYNCING_EVENT, handler);
+    return () => window.removeEventListener(BRIEF_SYNCING_EVENT, handler);
+  }, []);
 
   return (
     <div className="fixed bottom-4 left-4 z-[70] flex flex-col items-start gap-2">
@@ -88,6 +98,25 @@ export default function ReviewerGuide() {
               grounded answers; During, it checks each utterance against the record live; After, it drafts the minutes. Every call is
               audit-logged.
             </p>
+
+            {active === "before" && (
+              <div className="mt-4 rounded-xl p-3" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
+                <div className="flex items-start gap-2 text-[12.5px] leading-snug" style={{ color: C.detail }}>
+                  <Sparkles size={14} strokeWidth={2} style={{ color: C.accent, marginTop: 1 }} className="shrink-0" />
+                  <span>The Before brief is synthesised live from the committee pack. Regenerate to watch Claude write a fresh one.</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => regenerateBrief()}
+                  disabled={syncing}
+                  className="mt-2.5 w-full inline-flex items-center justify-center gap-1.5 text-[12px] font-medium rounded-lg px-3 py-2 cursor-pointer hover:opacity-90 disabled:opacity-60 transition active:scale-[0.98]"
+                  style={{ background: C.accent, color: C.onAccent }}
+                >
+                  {syncing ? <Loader2 size={13} className="animate-spin" /> : <RefreshCw size={13} strokeWidth={2} />}
+                  {syncing ? "Synthesising…" : "Regenerate the brief"}
+                </button>
+              </div>
+            )}
 
             <Lbl>How to use it</Lbl>
             <ul className="space-y-2">
