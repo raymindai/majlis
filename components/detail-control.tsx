@@ -18,7 +18,7 @@ export default function DetailControl() {
   const { level, setLevel } = useDetail();
   const { t: tr } = useLang();
   return (
-    <div className="inline-flex items-center gap-1 rounded-lg p-0.5 h-[26px]" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
+    <div className="inline-flex items-center gap-0.5 rounded-[10px] p-1 h-[30px]" style={{ background: C.chipBg }}>
       {LEVELS.map((l) => {
         const Icon = l.icon;
         const on = level === l.v;
@@ -28,10 +28,10 @@ export default function DetailControl() {
             type="button"
             onClick={() => setLevel(l.v)}
             title={`${tr("zoom")}: ${tr(l.key)}`}
-            className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-md cursor-pointer transition-colors"
-            style={on ? { background: C.accent, color: C.onAccent, fontWeight: 600 } : { color: C.muted }}
+            className="inline-flex items-center gap-1.5 text-[11.5px] px-2.5 h-full rounded-md cursor-pointer transition-all"
+            style={on ? { background: C.surface, color: C.ink, fontWeight: 600, boxShadow: "0 1px 2px rgba(64,48,24,0.10), 0 1px 1px rgba(64,48,24,0.06)" } : { color: C.muted, fontWeight: 500 }}
           >
-            <Icon size={12} strokeWidth={2.25} style={{ color: on ? C.onAccent : C.faint }} />
+            <Icon size={12} strokeWidth={2.5} style={{ color: on ? C.accent : C.faint }} />
             {tr(l.key)}
           </button>
         );

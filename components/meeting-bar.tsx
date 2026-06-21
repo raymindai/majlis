@@ -25,11 +25,8 @@ export default function MeetingBar({ stage }: { stage: "before" | "during" | "af
   const current = STAGES.find((s) => s.key === stage)!;
   const live = stage === "during";
 
-  const statusStyle = live
-    ? { background: C.flagBg, color: C.unverified }
-    : stage === "before"
-      ? { background: C.chipBg, color: C.ink }
-      : { background: C.surfaceAlt, color: C.muted };
+  // Neutral status side; only the action carries colour, so the control stays light.
+  const statusStyle = { background: C.chipBg, color: C.detail };
 
   const join =
     stage === "before"
@@ -50,7 +47,7 @@ export default function MeetingBar({ stage }: { stage: "before" | "during" | "af
       </div>
 
       <div className="relative">
-        <div className="inline-flex items-stretch rounded-lg overflow-hidden h-[26px]" style={{ border: `1px solid ${C.line}` }}>
+        <div className="inline-flex items-stretch rounded-[10px] overflow-hidden h-[30px]">
           <button
             type="button"
             onClick={() => setOpen((o) => !o)}
@@ -64,8 +61,8 @@ export default function MeetingBar({ stage }: { stage: "before" | "during" | "af
           </button>
           <Link
             href={join.href}
-            className="inline-flex items-center gap-1.5 px-3 text-[12px] font-medium cursor-pointer hover:opacity-90 border-l"
-            style={{ ...join.style, borderColor: C.line }}
+            className="inline-flex items-center gap-1.5 px-3 text-[12px] font-medium cursor-pointer hover:opacity-90"
+            style={join.style}
           >
             <JoinIcon size={14} strokeWidth={2} />
             <span className="hidden sm:inline">{tr(join.labelKey)}</span>
