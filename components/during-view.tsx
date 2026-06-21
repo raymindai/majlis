@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { Activity, AudioLines, CircleCheck, ClipboardCheck, Gavel, Lightbulb, MessageSquareQuote, Sparkles, TriangleAlert } from "lucide-react";
+import { Activity, AudioLines, CircleCheck, ClipboardCheck, Gavel, Lightbulb, MessageSquareQuote, Play, Sparkles, TriangleAlert } from "lucide-react";
 import { addCommitment, loadState, type Commitment } from "@/lib/store";
 import { type Brief, BRIEF_CACHE_KEY, MOCK_BRIEF } from "@/lib/brief";
 import { PARTICIPANTS } from "@/lib/meetings";
@@ -92,7 +92,7 @@ export default function DuringView() {
   const { open: openProfile } = useParticipant();
   const { level } = useDetail();
   const { lang, t: tr } = useLang();
-  const [revealed, setRevealed] = useState(1);
+  const [revealed, setRevealed] = useState(0);
   const [captured, setCaptured] = useState<Commitment[]>([]);
   const [observations, setObservations] = useState<Record<string, Obs | "loading">>({});
   const [transcribed, setTranscribed] = useState<Set<string>>(() => new Set());
@@ -225,13 +225,15 @@ export default function DuringView() {
           span={2}
           icon={AudioLines}
           aside={
-            <span className="inline-flex items-center gap-2.5 text-[12px]">
-              <span className="inline-flex items-center gap-1.5 font-medium" style={{ color: C.unverified }}>
-                <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: C.unverified }} />
-                <MeetingTimer />
+            revealed > 0 ? (
+              <span className="inline-flex items-center gap-2.5 text-[12px]">
+                <span className="inline-flex items-center gap-1.5 font-medium" style={{ color: C.unverified }}>
+                  <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: C.unverified }} />
+                  <MeetingTimer />
+                </span>
+                <span className="hidden sm:inline" style={{ color: C.muted }}>{tr("majlisListening")}</span>
               </span>
-              <span className="hidden sm:inline" style={{ color: C.muted }}>{tr("majlisListening")}</span>
-            </span>
+            ) : undefined
           }
         >
           <div className="space-y-3">
@@ -345,7 +347,18 @@ export default function DuringView() {
               );
             })}
           </div>
-          {revealed < FEED.length ? (
+          {revealed === 0 ? (
+            <div className="py-10 flex flex-col items-center text-center">
+              <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ background: `color-mix(in srgb, ${C.accent} 12%, transparent)` }}>
+                <AudioLines size={22} strokeWidth={2} style={{ color: C.accent }} />
+              </div>
+              <div className="text-[15px] font-semibold mt-3.5">{tr("readyToBegin")}</div>
+              <p className="text-[13px] mt-1 max-w-xs leading-relaxed" style={{ color: C.muted }}>{tr("startMeetingHint")}</p>
+              <button type="button" onClick={() => setRevealed(1)} className="mt-4 inline-flex items-center gap-2 text-[13px] font-medium rounded-lg px-4 py-2.5 cursor-pointer transition active:scale-95 hover:opacity-90" style={{ background: C.ink, color: C.bg }}>
+                <Play size={14} strokeWidth={2} /> {tr("startMeeting")}
+              </button>
+            </div>
+          ) : revealed < FEED.length ? (
             <button type="button" onClick={() => setRevealed((r) => r + 1)} className="mt-4 text-[13px] rounded-lg px-3 py-2 cursor-pointer transition active:scale-95 hover:opacity-90" style={{ background: C.ink, color: C.bg }}>
               {tr("nextSpeaker")} →
             </button>
