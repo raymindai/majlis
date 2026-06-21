@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Image from "next/image";
+import ZoomImage from "@/components/zoom-image";
 import {
   ArrowRight,
   CircleCheck,
@@ -227,12 +227,11 @@ export default function ProcessPage() {
         {/* The build, in one screen */}
         <Reveal className="mt-10">
           <figure className="rounded-2xl overflow-hidden" style={{ border: `1px solid ${C.line}`, boxShadow: C.shadow }}>
-            <Image
+            <ZoomImage
               src="/working-screen.jpg"
               alt="The Majlis prototype running in a browser on the left, Claude Code writing it in a terminal on the right."
               width={1800}
               height={1012}
-              priority
               className="w-full h-auto block"
             />
           </figure>
