@@ -38,15 +38,18 @@ const STAGES = [
  */
 export default function ReviewerGuide() {
   const [open, setOpen] = useState(false);
-  const [syncing, setSyncing] = useState(false);
+  const [pending, setPending] = useState(false);
   const { t: tr } = useLang();
   const pathname = usePathname();
   const active = pathname === "/during" ? "during" : pathname === "/after" ? "after" : "before";
 
-  // The Before view owns the brief; it reports its syncing state here so this
-  // button can show progress while the regeneration runs.
+  // The Before view reports when a synthesis finishes; clear pending then. The
+  // button only shows progress for a regeneration the reviewer triggered, not the
+  // initial synthesis that runs automatically on first load.
   useEffect(() => {
-    const handler = (e: Event) => setSyncing(Boolean((e as CustomEvent).detail));
+    const handler = (e: Event) => {
+      if (!(e as CustomEvent).detail) setPending(false);
+    };
     window.addEventListener(BRIEF_SYNCING_EVENT, handler);
     return () => window.removeEventListener(BRIEF_SYNCING_EVENT, handler);
   }, []);
@@ -120,13 +123,13 @@ export default function ReviewerGuide() {
                 </div>
                 <button
                   type="button"
-                  onClick={() => regenerateBrief()}
-                  disabled={syncing}
+                  onClick={() => { setPending(true); regenerateBrief(); }}
+                  disabled={pending}
                   className="mt-2.5 w-full inline-flex items-center justify-center gap-1.5 text-[12px] font-medium rounded-lg px-3 py-2 cursor-pointer hover:opacity-90 disabled:opacity-60 transition active:scale-[0.98]"
                   style={{ background: C.accent, color: C.onAccent }}
                 >
-                  {syncing ? <Loader2 size={13} className="animate-spin" /> : <RefreshCw size={13} strokeWidth={2} />}
-                  {syncing ? "Synthesising…" : "Regenerate the brief"}
+                  {pending ? <Loader2 size={13} className="animate-spin" /> : <RefreshCw size={13} strokeWidth={2} />}
+                  {pending ? "Synthesising…" : "Regenerate the brief"}
                 </button>
               </div>
             )}
