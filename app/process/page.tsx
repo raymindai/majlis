@@ -155,7 +155,7 @@ const AGAINST: { crit: string; body: string }[] = [
   { crit: "The AI is the product", body: "Every moment that matters is the AI's judgment, not a feature bolted on: the brief it writes from the pack, the answers it grounds, the contradictions it catches live in the room." },
   { crit: "Thinking", body: "The decision spine above records every fork, what was chosen, why, and what was deliberately left unbuilt. The scenario itself was chosen for reach and for a moment where confidence genuinely varies." },
   { crit: "UI craft, the AI-states", body: "An exception-led, re-skinnable architecture, with the AI-states treated as first-class: streaming, confidence tiers, a citation on every claim, an honest “not in the pack”, and a costly failure mode in a figure that does not reconcile." },
-  { crit: "Working with LLMs", body: "A behavioral contract decides when Majlis answers, flags, or refuses. And the corpus, the people, the brand, and this case study were all built AI-first, Claude before Figma." },
+  { crit: "Working with LLMs", body: "A behavioral contract decides when Majlis answers, flags, or refuses. And the build was AI-first the whole way down: the prototype, the corpus, the people, the assets, and this case study were all written with Claude Code in a native terminal, no Figma and no IDE in the loop." },
 ];
 
 const LIFECYCLE: { icon: typeof Layers; stage: string; line: string; href: string }[] = [
@@ -200,7 +200,7 @@ export default function ProcessPage() {
             </p>
             <p className="text-[14px] mt-4 max-w-xl" style={{ color: C.muted }}>
               A five-day prototype for the AI Experience Designer brief at the Department of Government Enablement, Abu Dhabi.
-              Built AI-first: live Claude, a synthetic committee pack, fal-generated people, and a Supabase audit trail.
+              Built AI-first, every line written with Claude Code in a terminal: live Claude, a synthetic committee pack, fal-generated people, and a Supabase audit trail.
             </p>
             <div className="flex flex-wrap items-center gap-3 mt-7">
               <Link href="/" className="inline-flex items-center gap-1.5 text-[14px] rounded-lg px-4 py-2.5" style={{ background: C.accent, color: C.onAccent }}>
@@ -372,25 +372,6 @@ export default function ProcessPage() {
               </li>
             ))}
           </ol>
-        </section></Reveal>
-
-        {/* Honest next */}
-        <Reveal className="mt-20"><section>
-          <Eyebrow>If I had longer</Eyebrow>
-          <SectionTitle>What I would do next</SectionTitle>
-          <ul className="mt-5 space-y-2.5">
-            {[
-              "Pull the live transcript from real audio, rather than a stepped script.",
-              "Role-scope what each participant can see, since the restricted annex is a real constraint.",
-              "Let the official correct a claim and have that correction become part of the record.",
-              "Measure trust: how often the official opens a citation before acting on a claim.",
-            ].map((t, i) => (
-              <li key={i} className="flex items-start gap-2.5 text-[15px]" style={{ color: C.detail }}>
-                <ArrowRight size={15} strokeWidth={2} style={{ color: C.faint, marginTop: 3 }} className="shrink-0" />
-                {t}
-              </li>
-            ))}
-          </ul>
         </section></Reveal>
 
         {/* The full working record, surfaced as part of the project */}
