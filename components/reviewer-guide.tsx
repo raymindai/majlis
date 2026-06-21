@@ -51,6 +51,19 @@ export default function ReviewerGuide() {
     return () => window.removeEventListener(BRIEF_SYNCING_EVENT, handler);
   }, []);
 
+  // First-time visitors get the guide open so they know how to read the demo;
+  // after that it stays out of the way unless reopened.
+  useEffect(() => {
+    try {
+      if (!localStorage.getItem("majlis-guide-seen")) {
+        setOpen(true);
+        localStorage.setItem("majlis-guide-seen", "1");
+      }
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
   return (
     <div className="fixed bottom-4 left-4 z-[70] flex flex-col items-start gap-2">
       {open && (
