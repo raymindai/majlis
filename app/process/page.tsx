@@ -10,12 +10,15 @@ import {
   Library,
   ListChecks,
   MessageCircleQuestion,
+  MousePointerClick,
   PenTool,
   Repeat,
   Rocket,
   ScanSearch,
   ShieldCheck,
   Sparkles,
+  SquareStack,
+  StickyNote,
   Target,
   Users,
   ZoomIn,
@@ -143,6 +146,9 @@ const FEATURES: { icon: typeof Sparkles; title: string; body: string }[] = [
   { icon: Repeat, title: "Memory that closes the loop", body: "Commitments captured after the meeting are written to memory and return as the next cycle's prior positions, so nothing is silently dropped." },
   { icon: ZoomIn, title: "Level-of-detail zoom", body: "Reshape the whole brief from headlines to full detail in one click, for a reader with eighteen minutes or with the afternoon." },
   { icon: Languages, title: "Bilingual, right-to-left", body: "Full Arabic with a right-to-left layout and answers written in Arabic, not just translated labels over an English product." },
+  { icon: MousePointerClick, title: "Select to ask", body: "Highlight any line in the brief, a transcript, or a source, right-click, and ask Majlis about it in place, without losing where you were." },
+  { icon: SquareStack, title: "Persistent windows", body: "Open any person, document, or citation as a draggable window. It stays with you across Before, During, and After until you close it." },
+  { icon: StickyNote, title: "Save to notes", body: "Pin any answer or passage to a sticky note on the desk, so the threads you are pulling stay in view while you read." },
 ];
 
 const LIFECYCLE: { icon: typeof Layers; stage: string; line: string; href: string }[] = [
@@ -228,7 +234,7 @@ export default function ProcessPage() {
           <Eyebrow>Key features</Eyebrow>
           <SectionTitle>What it actually does</SectionTitle>
           <p className="text-[15px] leading-relaxed mt-3" style={{ color: C.muted }}>
-            Six capabilities that carry the experience. Each one is live in the prototype, not a mockup.
+            What the AI does, and how you work alongside it. Each one is live in the prototype, not a mockup.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-7">
             {FEATURES.map((f) => {
