@@ -219,18 +219,6 @@ input,
 /* Smooth scrolling inside the app's nested scroll regions (sidebar nav -> content). */
 .majlis-smooth-scroll { scroll-behavior: smooth; }
 
-/* When a rail link lands on a section, give it a brief accent ring. */
-@keyframes majlis-target {
-  0%, 100% { outline-color: transparent; }
-  22% { outline-color: color-mix(in srgb, var(--c-accent) 55%, transparent); }
-}
-main section:target {
-  outline: 2px solid transparent;
-  outline-offset: 3px;
-  animation: majlis-target 1.5s ease-out;
-}
-
 @media (prefers-reduced-motion: reduce) {
   .majlis-smooth-scroll { scroll-behavior: auto; }
-  main section:target { animation: none; }
 }
