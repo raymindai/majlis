@@ -388,8 +388,8 @@ export default function BeforeView() {
           </ol>
         </Card>
 
-        <Card labelKey="prepChecklist" icon={ListChecks} minLevel={2}>
-          <ul className="space-y-2.5">
+        <Card labelKey="prepChecklist" span={2} icon={ListChecks} minLevel={2}>
+          <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2.5">
             {brief.prep.map((p, i) => (
               <li key={i} className="flex items-start gap-2.5">
                 <button type="button" onClick={() => setChecked((c) => ({ ...c, [i]: !c[i] }))} className="mt-0.5 shrink-0 cursor-pointer" aria-label="toggle">
@@ -415,8 +415,8 @@ export default function BeforeView() {
           </ul>
         </Card>
 
-        <Card labelKey="likelyQuestions" icon={MessageCircleQuestion} minLevel={3}>
-          <ul className="space-y-3">
+        <Card labelKey="likelyQuestions" span={2} icon={MessageCircleQuestion} minLevel={3}>
+          <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
             {brief.likelyQuestions.map((x, i) => (
               <li key={i}>
                 <div className="text-[14px] font-medium"><Gloss>{x.q}</Gloss></div>
