@@ -27,6 +27,7 @@ const EN: Dict = {
   changeStatus: "Change the meeting status",
   // calendar
   calendar: "Calendar",
+  relatedSessions: "Related sessions",
   meetingSeries: "Meeting series",
   today: "today",
   openCalendar: "Open the calendar",
@@ -89,6 +90,7 @@ const EN: Dict = {
   // rail
   inThisBrief: "In this brief",
   theRoom: "The room",
+  participants: "Participants",
   programme: "Programme",
   sessionOf: "Session {n} of {m} in the series",
   // during
@@ -198,6 +200,7 @@ const AR: Dict = {
   inMinutes: "خلال {n} دقيقة",
   changeStatus: "تغيير حالة الاجتماع",
   calendar: "التقويم",
+  relatedSessions: "جلسات ذات صلة",
   meetingSeries: "سلسلة الاجتماعات",
   today: "اليوم",
   openCalendar: "فتح التقويم",
@@ -253,6 +256,7 @@ const AR: Dict = {
   entities: "جهات",
   inThisBrief: "في هذا الموجز",
   theRoom: "الحضور",
+  participants: "المشاركون",
   programme: "البرنامج",
   sessionOf: "الجلسة {n} من {m} في السلسلة",
   liveTranscript: "المحضر المباشر",

@@ -5,8 +5,8 @@ import Link from "next/link";
 import { Copy, Database, FileText, Gavel, Handshake, ListChecks, Send, ShieldAlert, Sparkles, UserRoundCheck } from "lucide-react";
 import { loadState, resetMeeting, writeToMemory, type MeetingState } from "@/lib/store";
 import { PARTICIPANTS } from "@/lib/meetings";
-import { C, Card, CitationChip, ConfidenceBadge, RailLabel } from "@/components/ui";
-import { Avatar, MeetingContext, NavList, TheRoom } from "@/components/rail";
+import { C, Card, CitationChip, ConfidenceBadge } from "@/components/ui";
+import { Avatar, MeetingContext, NavList, RailSection, TheRoom } from "@/components/rail";
 import RailCalendar from "@/components/rail-calendar";
 import { useParticipant } from "@/components/participant-context";
 import { useCitation } from "@/components/citation-context";
@@ -90,10 +90,9 @@ export default function AfterView() {
   const leftRail = (
     <div className="space-y-6">
       <MeetingContext />
-      <div>
-        <RailLabel>{tr("minutes")}</RailLabel>
+      <RailSection icon={FileText} label={tr("minutes")}>
         <NavList items={NAV} />
-      </div>
+      </RailSection>
       <RailCalendar />
       <TheRoom />
       <button type="button" onClick={resetMeeting} className="text-[12px] cursor-pointer hover:opacity-70" style={{ color: C.muted }}>

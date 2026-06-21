@@ -2,13 +2,13 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { AudioLines, CircleCheck, ClipboardCheck, Gavel, Lightbulb, MessageSquareQuote, Sparkles, TriangleAlert } from "lucide-react";
+import { Activity, AudioLines, CircleCheck, ClipboardCheck, Gavel, Lightbulb, MessageSquareQuote, Sparkles, TriangleAlert } from "lucide-react";
 import { addCommitment, loadState, type Commitment } from "@/lib/store";
 import { type Brief, BRIEF_CACHE_KEY, MOCK_BRIEF } from "@/lib/brief";
 import { PARTICIPANTS } from "@/lib/meetings";
 import { askMajlis } from "@/components/ask-bus";
-import { C, Card, CitationChip, RailLabel } from "@/components/ui";
-import { Avatar, MeetingContext, TheRoom } from "@/components/rail";
+import { C, Card, CitationChip } from "@/components/ui";
+import { Avatar, MeetingContext, RailSection, TheRoom } from "@/components/rail";
 import { useCitation } from "@/components/citation-context";
 import { useParticipant } from "@/components/participant-context";
 import { useDetail } from "@/components/detail-context";
@@ -176,8 +176,7 @@ export default function DuringView() {
   const leftRail = (
     <div className="space-y-6">
       <MeetingContext />
-      <div>
-        <RailLabel>{tr("speakingOrder")}</RailLabel>
+      <RailSection icon={AudioLines} label={tr("speakingOrder")}>
         <ol className="space-y-0.5 -mx-2">
           {FEED.slice(0, revealed).map((f, i) => {
             const sp = speakerOf(f.speaker);
@@ -200,9 +199,8 @@ export default function DuringView() {
             );
           })}
         </ol>
-      </div>
-      <div>
-        <RailLabel>{tr("liveTally")}</RailLabel>
+      </RailSection>
+      <RailSection icon={Activity} label={tr("liveTally")}>
         <div className="rounded-xl p-3 grid grid-cols-2 gap-3" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
           <div>
             <div className="text-[22px] font-semibold leading-none" style={{ color: C.ink }}>{captured.length}</div>
@@ -213,7 +211,7 @@ export default function DuringView() {
             <div className="text-[11px] mt-1.5" style={{ color: C.muted }}>{tr("flagsRaised")}</div>
           </div>
         </div>
-      </div>
+      </RailSection>
       <RailCalendar />
       <TheRoom />
     </div>

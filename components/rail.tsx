@@ -1,13 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
-import { ArrowRight, Layers, type LucideIcon } from "lucide-react";
+import { useState, type ReactNode } from "react";
+import { ArrowRight, ChevronDown, Layers, Users, type LucideIcon } from "lucide-react";
 import { openAboutProgramme } from "@/components/programme-bus";
 import { ENTITIES, deptNameI18n, meetingFieldI18n } from "@/lib/corpus";
 import { MEETINGS, PARTICIPANTS } from "@/lib/meetings";
 import { MEETING_META } from "@/lib/mock";
-import { C, RailLabel, TierTag } from "@/components/ui";
+import { C, TierTag } from "@/components/ui";
 import { useParticipant } from "@/components/participant-context";
 import { useDetail } from "@/components/detail-context";
 import { useLang } from "@/components/lang-context";
@@ -149,6 +149,33 @@ export function MeetingContext() {
   );
 }
 
+/**
+ * One rail section, consistent across the whole sidebar: a left icon, the label,
+ * an optional count, and a chevron that collapses the body. Sections default open;
+ * secondary lists (the related sessions) pass defaultOpen={false} to stay tucked.
+ */
+export function RailSection({ icon: Icon, label, count, defaultOpen = true, children }: { icon: LucideIcon; label: string; count?: number; defaultOpen?: boolean; children: ReactNode }) {
+  const [open, setOpen] = useState(defaultOpen);
+  return (
+    <div>
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className="w-full flex items-center gap-2 text-[11px] font-semibold cursor-pointer hover:opacity-80"
+        style={{ color: C.faint }}
+      >
+        <Icon size={13} strokeWidth={2} className="shrink-0" />
+        <span>{label}</span>
+        <span className="ml-auto inline-flex items-center gap-1.5">
+          {count != null && <span style={{ color: C.muted }}>{count}</span>}
+          <ChevronDown size={13} strokeWidth={2} style={{ transform: open ? "rotate(180deg)" : undefined, transition: "transform 0.15s" }} />
+        </span>
+      </button>
+      {open && <div className="mt-2.5">{children}</div>}
+    </div>
+  );
+}
+
 export function NavList({ items }: { items: { label?: string; key?: string; icon: LucideIcon; min?: number }[] }) {
   // The table of contents tracks the zoom: list only the sections visible at this
   // level, and tier each item so a Headlines, Brief, or Full section reads differently.
@@ -186,8 +213,7 @@ export function TheRoom() {
   const { t: tr } = useLang();
   // Participants stay visible at every zoom level; the room is always worth seeing.
   return (
-    <div>
-      <RailLabel>{tr("theRoom")}</RailLabel>
+    <RailSection icon={Users} label={tr("participants")} count={PARTICIPANTS.length}>
       <ul className="space-y-0.5">
         {PARTICIPANTS.map((p) => {
           const dept = deptFor(p.entity);
@@ -211,6 +237,6 @@ export function TheRoom() {
           );
         })}
       </ul>
-    </div>
+    </RailSection>
   );
 }

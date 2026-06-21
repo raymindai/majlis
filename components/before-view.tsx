@@ -25,8 +25,8 @@ import { loadState, type Commitment } from "@/lib/store";
 import { type Brief, BRIEF_CACHE_KEY, MOCK_BRIEF } from "@/lib/brief";
 import { SOURCES, SOURCE_META, AUTHORITY_LABEL, deptNameI18n } from "@/lib/corpus";
 import { askMajlis } from "@/components/ask-bus";
-import { C, Card, CitationChip, ConfidenceBadge, RailLabel, severityColor } from "@/components/ui";
-import { Avatar, deptFor, MeetingContext, NavList, OrgBadge, StatusTag, TheRoom } from "@/components/rail";
+import { C, Card, CitationChip, ConfidenceBadge, severityColor } from "@/components/ui";
+import { Avatar, deptFor, MeetingContext, NavList, OrgBadge, RailSection, StatusTag, TheRoom } from "@/components/rail";
 import { useCitation } from "@/components/citation-context";
 import { useParticipant } from "@/components/participant-context";
 import { useOpenMeeting } from "@/components/meeting-context";
@@ -111,10 +111,9 @@ export default function BeforeView() {
   const leftRail = (
     <div className="space-y-6">
       <MeetingContext />
-      <div>
-        <RailLabel>{tr("inThisBrief")}</RailLabel>
+      <RailSection icon={ListChecks} label={tr("inThisBrief")}>
         <NavList items={NAV} />
-      </div>
+      </RailSection>
       <RailCalendar />
       <TheRoom />
     </div>
