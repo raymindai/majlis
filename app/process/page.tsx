@@ -6,6 +6,7 @@ import {
   Database,
   GitBranch,
   Layers,
+  Library,
   ListChecks,
   MessageCircleQuestion,
   PenTool,
@@ -16,6 +17,7 @@ import {
 } from "lucide-react";
 import { C } from "@/components/theme";
 import Reveal from "@/components/reveal";
+import { listProcessDocs } from "@/lib/process-docs";
 
 const serif = { fontFamily: "var(--font-newsreader), var(--font-arabic), Georgia, serif" };
 
@@ -142,6 +144,7 @@ function SectionTitle({ children }: { children: string }) {
 }
 
 export default function ProcessPage() {
+  const docCount = listProcessDocs().length;
   return (
     <div className="min-h-dvh" style={{ background: C.bg, color: C.ink, fontFamily: "var(--font-inter), var(--font-arabic), system-ui, sans-serif" }}>
       <div className="mx-auto max-w-3xl px-6 py-12 md:py-16">
@@ -316,6 +319,29 @@ export default function ProcessPage() {
               </li>
             ))}
           </ul>
+        </section></Reveal>
+
+        {/* The full working record, surfaced as part of the project */}
+        <Reveal className="mt-20"><section>
+          <Eyebrow>The full record</Eyebrow>
+          <SectionTitle>The process archive</SectionTitle>
+          <p className="text-[15px] leading-relaxed mt-3" style={{ color: C.muted }}>
+            Everything above is the summary. Underneath it sits the working archive: the running series of documents written
+            as the work happened, from the first read of the brief through the decision log to the gap assessments. Kept
+            diligently as the assignment progressed, not reconstructed afterwards.
+          </p>
+          <Link href="/process/archive" className="mt-6 group flex items-center justify-between gap-4 rounded-2xl p-5 majlis-lift" style={{ background: C.surface, border: `1px solid ${C.line}`, boxShadow: C.shadow }}>
+            <span className="flex items-center gap-4 min-w-0">
+              <span className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0" style={{ background: `color-mix(in srgb, ${C.accent} 12%, transparent)` }}>
+                <Library size={20} strokeWidth={2} style={{ color: C.accent }} />
+              </span>
+              <span className="min-w-0">
+                <span className="block font-semibold text-[16px]">Read the working archive</span>
+                <span className="block text-[13px] mt-0.5" style={{ color: C.muted }}>{docCount} documents: scenario exploration, the decision log, the information architecture, and more.</span>
+              </span>
+            </span>
+            <ArrowRight size={18} strokeWidth={2} className="shrink-0" style={{ color: C.accent }} />
+          </Link>
         </section></Reveal>
 
         <div className="mt-20 pt-8 border-t flex flex-wrap items-center justify-between gap-4" style={{ borderColor: C.line }}>

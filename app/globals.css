@@ -140,3 +140,78 @@ input,
   .majlis-lift { transition: none; }
   .majlis-lift:hover { transform: none; }
 }
+
+/* Rendered markdown for the process archive: editorial prose on the warm palette. */
+.process-prose {
+  color: var(--c-detail);
+  font-size: 15px;
+  line-height: 1.75;
+}
+.process-prose > :first-child { margin-top: 0; }
+.process-prose h1,
+.process-prose h2 {
+  font-family: var(--font-newsreader), var(--font-arabic), Georgia, serif;
+  color: var(--c-ink);
+  letter-spacing: -0.015em;
+  line-height: 1.2;
+}
+.process-prose h1 { font-size: 27px; margin: 2rem 0 0.75rem; }
+.process-prose h2 {
+  font-size: 21px;
+  margin: 2.25rem 0 0.7rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--c-line);
+}
+.process-prose h3 { color: var(--c-ink); font-size: 16px; font-weight: 600; margin: 1.6rem 0 0.4rem; }
+.process-prose h4 { color: var(--c-ink); font-size: 13.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; margin: 1.4rem 0 0.3rem; }
+.process-prose p { margin: 0.75rem 0; }
+.process-prose a { color: var(--c-accent); text-decoration: underline; text-underline-offset: 2px; }
+.process-prose strong { color: var(--c-ink); font-weight: 600; }
+.process-prose em { font-style: italic; }
+.process-prose ul,
+.process-prose ol { margin: 0.75rem 0; padding-inline-start: 1.4rem; }
+.process-prose ul { list-style: disc; }
+.process-prose ol { list-style: decimal; }
+.process-prose li { margin: 0.35rem 0; padding-inline-start: 0.2rem; }
+.process-prose li::marker { color: var(--c-faint); }
+.process-prose code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.85em;
+  background: var(--c-surface-alt);
+  border: 1px solid var(--c-line);
+  border-radius: 4px;
+  padding: 0.08em 0.35em;
+  color: var(--c-ink);
+}
+.process-prose pre {
+  background: var(--c-surface-alt);
+  border: 1px solid var(--c-line);
+  border-radius: 10px;
+  padding: 1rem;
+  overflow-x: auto;
+  margin: 1rem 0;
+}
+.process-prose pre code { background: none; border: none; padding: 0; font-size: 0.82em; }
+.process-prose blockquote {
+  border-inline-start: 3px solid var(--c-line);
+  padding-inline-start: 1rem;
+  margin: 1rem 0;
+  color: var(--c-muted);
+}
+.process-prose hr { border: none; border-top: 1px solid var(--c-line); margin: 2rem 0; }
+.process-prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.1rem 0;
+  font-size: 13.5px;
+  display: block;
+  overflow-x: auto;
+}
+.process-prose th,
+.process-prose td {
+  border: 1px solid var(--c-line);
+  padding: 0.5rem 0.7rem;
+  text-align: start;
+  vertical-align: top;
+}
+.process-prose th { background: var(--c-surface-alt); color: var(--c-ink); font-weight: 600; white-space: nowrap; }
