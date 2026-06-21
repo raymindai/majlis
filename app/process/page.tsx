@@ -181,11 +181,8 @@ export default function ProcessPage() {
             </g>
           </svg>
           <div className="relative">
-            <div className="flex flex-wrap items-center gap-3">
-              <div className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide rounded-full px-2.5 py-1" style={{ background: C.surface, color: C.accent, border: `1px solid ${C.line}` }}>
-                <Sparkles size={12} strokeWidth={2.5} /> Case study
-              </div>
-              <div className="text-[12px]" style={{ color: C.muted }}>Abu Dhabi, United Arab Emirates</div>
+            <div className="inline-flex items-center gap-1.5 text-[12px] font-semibold uppercase" style={{ color: C.accent, letterSpacing: "0.08em" }}>
+              <Sparkles size={13} strokeWidth={2.5} /> Case study
             </div>
             <h1 style={{ ...serif, letterSpacing: "-0.025em" }} className="text-[52px] md:text-[68px] leading-[1.02] mt-4">Majlis</h1>
             <p className="text-[18px] md:text-[20px] leading-relaxed mt-3 max-w-xl" style={{ color: C.detail }}>
