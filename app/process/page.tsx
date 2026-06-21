@@ -151,6 +151,14 @@ const FEATURES: { icon: typeof Sparkles; title: string; body: string }[] = [
   { icon: StickyNote, title: "Save to notes", body: "Pin any answer or passage to a sticky note on the desk, so the threads you are pulling stay in view while you read." },
 ];
 
+/** An explicit map of the deliverable onto the brief's evaluation, for the reviewer. */
+const AGAINST: { crit: string; body: string }[] = [
+  { crit: "The AI is the product", body: "Every moment that matters is the AI's judgment, not a feature bolted on: the brief it writes from the pack, the answers it grounds, the contradictions it catches live in the room." },
+  { crit: "Thinking", body: "The decision spine above records every fork, what was chosen, why, and what was deliberately left unbuilt. The scenario itself was chosen for reach and for a moment where confidence genuinely varies." },
+  { crit: "UI craft, the AI-states", body: "An exception-led, re-skinnable architecture, with the AI-states treated as first-class: streaming, confidence tiers, a citation on every claim, an honest “not in the pack”, and a costly failure mode in a figure that does not reconcile." },
+  { crit: "Working with LLMs", body: "A behavioral contract decides when Majlis answers, flags, or refuses. And the corpus, the people, the brand, and this case study were all built AI-first, Claude before Figma." },
+];
+
 const LIFECYCLE: { icon: typeof Layers; stage: string; line: string; href: string }[] = [
   { icon: Layers, stage: "Before", line: "The brief: bottom line, the decision, ranked exceptions, who is in the room, and grounded Q&A on demand.", href: "/" },
   { icon: Users, stage: "During", line: "A live transcript that flags inconsistencies against the record and suggests the next question to ask.", href: "/during" },
@@ -349,6 +357,23 @@ export default function ProcessPage() {
               );
             })}
           </div>
+        </section></Reveal>
+
+        {/* Against the brief */}
+        <Reveal className="mt-20"><section>
+          <Eyebrow>Against the brief</Eyebrow>
+          <SectionTitle>How this answers what they asked</SectionTitle>
+          <p className="text-[15px] leading-relaxed mt-3 mb-8" style={{ color: C.muted }}>
+            The brief grades three things, on top of one non-negotiable. Here is where each one lives.
+          </p>
+          <ol className="space-y-4">
+            {AGAINST.map((a) => (
+              <li key={a.crit} className="rounded-2xl p-5 md:p-6" style={{ background: C.surface, border: `1px solid ${C.line}`, boxShadow: C.shadow }}>
+                <div className="text-[12px] font-semibold uppercase" style={{ color: C.accent, letterSpacing: "0.06em" }}>{a.crit}</div>
+                <p className="text-[15px] leading-relaxed mt-1.5" style={{ color: C.detail }}>{a.body}</p>
+              </li>
+            ))}
+          </ol>
         </section></Reveal>
 
         {/* Honest next */}
