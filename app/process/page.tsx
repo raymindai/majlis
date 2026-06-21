@@ -193,6 +193,9 @@ export default function ProcessPage() {
               A five-day prototype for the AI Experience Designer brief at the Department of Government Enablement, Abu Dhabi.
               Built AI-first, every line written with Claude Code in a terminal: live Claude, a synthetic committee pack, fal-generated people, and a Supabase audit trail.
             </p>
+            <p className="text-[13.5px] mt-5" style={{ color: C.muted }}>
+              By <span className="font-semibold" style={{ color: C.ink }}>Hyunsang Cho</span>, <a href="mailto:hi@raymind.ai" style={{ color: C.accent }}>hi@raymind.ai</a>
+            </p>
             <div className="flex flex-wrap items-center gap-3 mt-7">
               <Link href="/" className="inline-flex items-center gap-1.5 text-[14px] rounded-lg px-4 py-2.5" style={{ background: C.accent, color: C.onAccent }}>
                 Open the prototype <ArrowRight size={15} strokeWidth={2} />
