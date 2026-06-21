@@ -32,7 +32,7 @@ export default function ZoomImage({
   return (
     <>
       <button type="button" onClick={() => setOpen(true)} className="group relative block w-full cursor-zoom-in" aria-label="Enlarge image">
-        <Image src={src} alt={alt} width={width} height={height} priority className={className} />
+        <Image src={src} alt={alt} width={width} height={height} priority quality={90} sizes="(min-width: 768px) 720px, 92vw" className={className} />
         <span
           className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-[11px] font-medium opacity-90 group-hover:opacity-100 transition-opacity"
           style={{ background: "rgba(20,16,10,0.6)", color: "#fff", backdropFilter: "blur(2px)" }}
@@ -52,7 +52,8 @@ export default function ZoomImage({
             alt={alt}
             width={width}
             height={height}
-            className="max-w-full max-h-[92vh] w-auto h-auto rounded-lg"
+            unoptimized
+            className="max-w-[90vw] max-h-[90vh] w-auto h-auto rounded-lg"
             style={{ boxShadow: "0 24px 80px rgba(0,0,0,0.5)" }}
           />
           <button

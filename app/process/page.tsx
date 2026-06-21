@@ -209,24 +209,12 @@ export default function ProcessPage() {
 
         {/* The build, in one screen */}
         <Reveal className="mt-12">
-          <figure
-            className="overflow-hidden"
-            style={{
-              border: `1px solid ${C.line}`,
-              boxShadow: C.shadow,
-              width: "90vw",
-              position: "relative",
-              left: "50%",
-              right: "50%",
-              marginLeft: "-45vw",
-              marginRight: "-45vw",
-            }}
-          >
+          <figure className="rounded-2xl overflow-hidden" style={{ border: `1px solid ${C.line}`, boxShadow: C.shadow }}>
             <ZoomImage
-              src="/working-screen.jpg"
+              src="/working-screen.png"
               alt="The Majlis prototype running in a browser on the left, Claude Code writing it in a terminal on the right."
-              width={1800}
-              height={1012}
+              width={5120}
+              height={2880}
               className="w-full h-auto block"
             />
           </figure>
