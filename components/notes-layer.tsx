@@ -5,12 +5,14 @@ import { FloatingWindow } from "@/components/floating-window";
 import { loadNotes, NOTES_EVENT, removeNote, updateNotePos, type Note } from "@/lib/notes";
 import { C, CitationChip, ConfidenceBadge } from "@/components/ui";
 import { useCitation } from "@/components/citation-context";
+import { useLang } from "@/components/lang-context";
 import { Gloss } from "@/components/gloss";
 import type { Confidence } from "@/lib/corpus";
 
 /** Renders every saved note as its own floating window. */
 export default function NotesLayer() {
   const { open } = useCitation();
+  const { t: tr } = useLang();
   const [notes, setNotes] = useState<Note[]>([]);
 
   useEffect(() => {
@@ -25,7 +27,7 @@ export default function NotesLayer() {
       {notes.map((n) => (
         <FloatingWindow
           key={n.id}
-          title="Note"
+          title={tr("note")}
           anchor={n.pos}
           onClose={() => removeNote(n.id)}
           onMove={(pos) => updateNotePos(n.id, pos)}

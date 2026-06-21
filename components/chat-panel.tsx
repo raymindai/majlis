@@ -23,6 +23,7 @@ const STAGE_HINT: Record<string, string> = {
 };
 
 const STARTERS = ["Did EKD meet its March commitment?", "Is the SSO slip contained?", "Which MTA budget figure is correct?"];
+const STARTERS_AR = ["هل وفت EKD بالتزامها في مارس؟", "هل جرى احتواء تأخّر الدخول الموحّد؟", "أي رقم لميزانية MTA هو الصحيح؟"];
 
 /** Pull the (possibly partial) summary string out of the streaming JSON buffer. */
 function extractSummary(buf: string): string {
@@ -93,7 +94,7 @@ export default function ChatPanel({ stage }: { stage: "before" | "during" | "aft
     const t = q.trim();
     if (!t) return;
     const n = loadNotes().length;
-    addNote({ title: "My note", summary: t, claims: [], pos: { x: 300 + (n % 5) * 28, y: 120 + (n % 5) * 28 } });
+    addNote({ title: tr("myNote"), summary: t, claims: [], pos: { x: 300 + (n % 5) * 28, y: 120 + (n % 5) * 28 } });
     setQ("");
   }
 
@@ -131,7 +132,7 @@ export default function ChatPanel({ stage }: { stage: "before" | "during" | "aft
           <div className="text-[13px] leading-relaxed" style={{ color: C.muted }}>
             <p>{tr("chatEmpty")}</p>
             <div className="mt-3 flex flex-col gap-2">
-              {STARTERS.map((s) => (
+              {(lang === "ar" ? STARTERS_AR : STARTERS).map((s) => (
                 <button
                   key={s}
                   type="button"
@@ -165,7 +166,7 @@ export default function ChatPanel({ stage }: { stage: "before" | "during" | "aft
 
               {!m.streaming &&
                 (m.answer.notInMaterial ? (
-                  <div className="text-[12px] rounded px-2 py-1 inline-block" style={{ background: C.surfaceAlt, color: C.muted }}>Not in the pack.</div>
+                  <div className="text-[12px] rounded px-2 py-1 inline-block" style={{ background: C.surfaceAlt, color: C.muted }}>{tr("notInPack")}</div>
                 ) : (
                   <div className="space-y-2">
                     {m.answer.claims?.map((c, j) => (
@@ -185,14 +186,14 @@ export default function ChatPanel({ stage }: { stage: "before" | "during" | "aft
                   type="button"
                   onClick={() => {
                     const prev = msgs[i - 1];
-                    const title = i > 0 && prev.role === "user" ? prev.text : "Saved answer";
+                    const title = i > 0 && prev.role === "user" ? prev.text : tr("savedAnswer");
                     const n = loadNotes().length;
                     addNote({ title, summary: m.answer.summary, claims: m.answer.claims ?? [], pos: { x: 300 + (n % 5) * 28, y: 120 + (n % 5) * 28 } });
                   }}
                   className="mt-2 inline-flex items-center gap-1.5 text-[12px] cursor-pointer hover:opacity-70"
                   style={{ color: C.muted }}
                 >
-                  <StickyNote size={13} strokeWidth={2} /> Save as note
+                  <StickyNote size={13} strokeWidth={2} /> {tr("saveAsNote")}
                 </button>
               )}
             </div>
@@ -221,7 +222,7 @@ export default function ChatPanel({ stage }: { stage: "before" | "during" | "aft
             type="button"
             onClick={addAsNote}
             disabled={!q.trim()}
-            title="Add your text as a note, without asking the AI"
+            title={tr("addAsNoteTip")}
             className="inline-flex items-center gap-1 text-[12px] px-2 py-1 rounded-md cursor-pointer disabled:opacity-40 hover:opacity-80"
             style={{ color: C.muted, border: `1px solid ${C.line}` }}
           >

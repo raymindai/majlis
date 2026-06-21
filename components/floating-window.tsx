@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { GripHorizontal, X } from "lucide-react";
 import { C } from "@/components/ui";
+import { useLang } from "@/components/lang-context";
 
 export type WinPos = { x: number; y: number };
 
@@ -36,6 +37,7 @@ export function FloatingWindow({
   onMove?: (pos: WinPos) => void;
   raise?: number;
 }) {
+  const { t: tr } = useLang();
   const [box, setBox] = useState<{ top: number; left: number } | null>(null);
   const [z, setZ] = useState(() => ++WIN_Z);
   const drag = useRef<{ dx: number; dy: number } | null>(null);
@@ -121,7 +123,7 @@ export function FloatingWindow({
         <GripHorizontal size={14} style={{ color: C.faint }} />
         <span className="text-[11px] font-semibold" style={{ color: C.faint }}>{title}</span>
         {headerRight}
-        <button type="button" onClick={onClose} className="ml-auto cursor-pointer hover:opacity-70" style={{ color: C.muted }} aria-label="Close">
+        <button type="button" onClick={onClose} className="ml-auto cursor-pointer hover:opacity-70" style={{ color: C.muted }} aria-label={tr("close")}>
           <X size={15} strokeWidth={2} />
         </button>
       </div>

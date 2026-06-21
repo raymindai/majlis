@@ -96,7 +96,7 @@ export default function AfterView() {
       <RailCalendar />
       <TheRoom />
       <button type="button" onClick={resetMeeting} className="text-[12px] cursor-pointer hover:opacity-70" style={{ color: C.muted }}>
-        Reset demo
+        {tr("resetDemo")}
       </button>
     </div>
   );
@@ -106,9 +106,9 @@ export default function AfterView() {
       <AppShell stage="after" leftRail={leftRail}>
         <Card>
           <div className="text-center py-6">
-            <p className="text-[15px]" style={{ color: C.muted }}>Nothing captured yet. The minutes draft from what Majlis logs in the room.</p>
+            <p className="text-[15px]" style={{ color: C.muted }}>{tr("nothingCaptured")}</p>
             <Link href="/during" className="mt-3 inline-block text-[13px] rounded-lg px-3 py-2" style={{ background: C.ink, color: C.bg }}>
-              Go to the live meeting →
+              {tr("goToLiveMeeting")} →
             </Link>
           </div>
         </Card>
@@ -125,7 +125,7 @@ export default function AfterView() {
           icon={FileText}
           aside={minutes && (
             <button type="button" onClick={copyMinutes} className="inline-flex items-center gap-1.5 text-[12px] rounded-lg px-2.5 py-1 cursor-pointer hover:opacity-80" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}`, color: C.muted }}>
-              <Copy size={12} strokeWidth={2} /> {copied ? "Copied" : "Copy minutes"}
+              <Copy size={12} strokeWidth={2} /> {copied ? tr("copied") : tr("copyMinutes")}
             </button>
           )}
         >
@@ -136,16 +136,16 @@ export default function AfterView() {
               {minutes.riskOutlook && (
                 <div className="mt-3 rounded-lg p-3 text-[13px] flex items-start gap-2" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
                   <ShieldAlert size={14} strokeWidth={2.25} style={{ color: C.unverified, marginTop: 1 }} className="shrink-0" />
-                  <span style={{ color: C.detail }}><span className="font-medium" style={{ color: C.ink }}>Risk outlook: </span><Gloss>{minutes.riskOutlook}</Gloss></span>
+                  <span style={{ color: C.detail }}><span className="font-medium" style={{ color: C.ink }}>{tr("riskOutlook")}: </span><Gloss>{minutes.riskOutlook}</Gloss></span>
                 </div>
               )}
               <div className="mt-3 inline-flex items-center gap-1.5 text-[11px]" style={{ color: C.faint }}>
-                <Sparkles size={12} strokeWidth={2} /> Drafted by Majlis from what was captured{drafting ? ", updating…" : ""}
+                <Sparkles size={12} strokeWidth={2} /> {tr("draftedBy")}{drafting ? tr("updating") : ""}
               </div>
             </>
           ) : (
             <div className="text-[14px] flex items-center gap-2 py-2" style={{ color: C.muted }}>
-              <span className="h-2 w-2 rounded-full animate-pulse" style={{ background: C.accent }} /> Majlis is drafting the minutes…
+              <span className="h-2 w-2 rounded-full animate-pulse" style={{ background: C.accent }} /> {tr("draftingMinutes")}
             </div>
           )}
         </Card>
@@ -172,7 +172,7 @@ export default function AfterView() {
               <li key={c.id} className="rounded-lg p-4" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
                 <div className="flex items-baseline gap-2">
                   <span className="font-semibold text-[14px]"><Gloss>{c.entity}</Gloss></span>
-                  <span className="text-[12px]" style={{ color: C.muted }}>due {c.due}</span>
+                  <span className="text-[12px]" style={{ color: C.muted }}>{tr("due")} {c.due}</span>
                 </div>
                 <p className="text-[14px] mt-0.5"><Gloss>{c.text}</Gloss></p>
                 <div className="mt-1.5 flex items-center gap-2">
@@ -188,9 +188,9 @@ export default function AfterView() {
           <table className="w-full text-[13px]">
             <thead>
               <tr style={{ color: C.faint }}>
-                <th className="text-left font-medium pb-2">Owner</th>
-                <th className="text-left font-medium pb-2">Action</th>
-                <th className="text-left font-medium pb-2">Due</th>
+                <th className="text-left font-medium pb-2">{tr("owner")}</th>
+                <th className="text-left font-medium pb-2">{tr("action")}</th>
+                <th className="text-left font-medium pb-2">{tr("due")}</th>
               </tr>
             </thead>
             <tbody>
@@ -224,7 +224,7 @@ export default function AfterView() {
               <Gloss>{minutes.distributionNote}</Gloss>
             </div>
           )}
-          <div className="text-[11px] font-semibold mb-2.5" style={{ color: C.faint }}>Recipients</div>
+          <div className="text-[11px] font-semibold mb-2.5" style={{ color: C.faint }}>{tr("recipients")}</div>
           <div className="flex flex-wrap gap-2">
             {PARTICIPANTS.map((p) => (
               <button
@@ -246,28 +246,24 @@ export default function AfterView() {
             className="mt-4 text-[13px] rounded-lg px-3 py-2 cursor-pointer disabled:opacity-70"
             style={sent ? { background: C.surfaceAlt, color: C.muted } : { background: C.accent, color: C.onAccent }}
           >
-            {sent ? "✓ Minutes sent to participants" : "Send minutes to participants"}
+            {sent ? `✓ ${tr("minutesSent")}` : tr("sendMinutes")}
           </button>
         </Card>
 
         <Card labelKey="institutionalMemory" span={2} icon={Database} minLevel={2}>
           {state.writtenToMemory ? (
             <div className="rounded-xl p-4" style={{ background: C.priorBg, border: `1px solid ${C.priorBorder}` }}>
-              <div className="font-medium text-[14px]" style={{ color: C.priorInk }}>✓ Written to institutional memory</div>
-              <p className="text-[13px] mt-1" style={{ color: C.muted }}>
-                These carry forward. They appear in the next Before brief&rsquo;s prior-commitment check, closing the loop.
-              </p>
+              <div className="font-medium text-[14px]" style={{ color: C.priorInk }}>✓ {tr("writtenToMemory")}</div>
+              <p className="text-[13px] mt-1" style={{ color: C.muted }}>{tr("memoryCarryNote")}</p>
               <Link href="/" className="mt-3 inline-block text-[13px] rounded-lg px-3 py-2" style={{ background: C.ink, color: C.bg }}>
-                See them in the next brief →
+                {tr("seeInNextBrief")} →
               </Link>
             </div>
           ) : (
             <div>
-              <p className="text-[13px]" style={{ color: C.muted }}>
-                Persist these so the next cycle&rsquo;s brief checks whether they were kept. This is the loop.
-              </p>
+              <p className="text-[13px]" style={{ color: C.muted }}>{tr("persistMemoryNote")}</p>
               <button type="button" onClick={writeToMemory} className="mt-3 text-[13px] rounded-lg px-3 py-2 cursor-pointer" style={{ background: C.accent, color: C.onAccent }}>
-                Write {state.commitments.length} items to memory →
+                {tr("writeItemsToMemory", { n: state.commitments.length })} →
               </button>
             </div>
           )}

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { type Citation } from "@/lib/mock";
-import { getSource, SOURCE_META, AUTHORITY_LABEL } from "@/lib/corpus";
+import { getSource, sourceMetaI18n, authorityLabelI18n } from "@/lib/corpus";
 import { C } from "@/components/ui";
 import { CitationContext } from "@/components/citation-context";
 import { ParticipantContext } from "@/components/participant-context";
@@ -13,6 +13,7 @@ import MeetingPopover from "@/components/meeting-popover";
 import { FloatingWindow, type WinPos } from "@/components/floating-window";
 import NotesLayer from "@/components/notes-layer";
 import { Gloss } from "@/components/gloss";
+import { useLang } from "@/components/lang-context";
 import ReviewerGuide from "@/components/reviewer-guide";
 import AboutProgramme from "@/components/about-programme";
 import SelectionAsk from "@/components/selection-ask";
@@ -31,9 +32,10 @@ type WinItem =
  */
 export default function Desk({ children }: { children: ReactNode }) {
   // A stack of floating windows. Each click adds one; it stays until the user closes it.
+  const { lang, t: tr } = useLang();
   const [windows, setWindows] = useState<WinItem[]>([]);
   const idRef = useRef(0);
-  const [level, setLevelState] = useState<DetailLevel>(3);
+  const [level, setLevelState] = useState<DetailLevel>(1);
 
   useEffect(() => {
     const saved = typeof window !== "undefined" ? Number(localStorage.getItem("majlis-detail")) : 0;
@@ -74,11 +76,11 @@ export default function Desk({ children }: { children: ReactNode }) {
                 if (w.kind === "participant") return <ParticipantPopover key={w.instanceId} id={w.payload} pos={w.pos} raise={w.raise} onClose={() => closeWin(w.instanceId)} />;
                 if (w.kind === "meeting") return <MeetingPopover key={w.instanceId} id={w.payload} pos={w.pos} raise={w.raise} onClose={() => closeWin(w.instanceId)} />;
                 const s = getSource(w.payload.sourceId);
-                const m = SOURCE_META[w.payload.sourceId];
+                const m = sourceMetaI18n(w.payload.sourceId, lang);
                 return (
                   <FloatingWindow
                     key={w.instanceId}
-                    title="Document"
+                    title={tr("document")}
                     anchor={w.pos}
                     raise={w.raise}
                     onClose={() => closeWin(w.instanceId)}
@@ -90,8 +92,8 @@ export default function Desk({ children }: { children: ReactNode }) {
                       <>
                         <div style={serif} className="text-[18px] leading-snug">{s.title}</div>
                         <div className="text-[11px] mt-1.5" style={{ color: C.muted }}>{[m?.docType, m?.issuer, s.date ?? "undated"].filter(Boolean).join(", ")}</div>
-                        <span className="text-[11px] mt-2 inline-block rounded px-2 py-0.5" style={{ background: C.surfaceAlt, color: C.muted }}>{AUTHORITY_LABEL[s.authority]}</span>
-                        <div className="text-[11px] font-semibold mt-4 mb-2" style={{ color: C.faint }}>Document</div>
+                        <span className="text-[11px] mt-2 inline-block rounded px-2 py-0.5" style={{ background: C.surfaceAlt, color: C.muted }}>{authorityLabelI18n(s.authority, lang)}</span>
+                        <div className="text-[11px] font-semibold mt-4 mb-2" style={{ color: C.faint }}>{tr("document")}</div>
                         <div className="space-y-2">
                           {s.passages.map((p) => {
                             const cited = p.id === w.payload.passageId;
@@ -108,7 +110,7 @@ export default function Desk({ children }: { children: ReactNode }) {
                         </div>
                       </>
                     ) : (
-                      <p className="text-[14px]" style={{ color: C.muted }}>This document is not in the loaded pack.</p>
+                      <p className="text-[14px]" style={{ color: C.muted }}>{tr("docNotInPack")}</p>
                     )}
                   </FloatingWindow>
                 );

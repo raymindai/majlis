@@ -15,7 +15,7 @@ const serif = { fontFamily: "var(--font-newsreader), var(--font-arabic), Georgia
 
 const pledgeIcon = { kept: CircleCheck, missed: CircleAlert, open: CircleDashed } as const;
 const pledgeColor: Record<string, string> = { kept: C.confirmed, missed: C.unverified, open: C.muted };
-const pledgeLabel: Record<string, string> = { kept: "Kept", missed: "Missed", open: "Open" };
+const pledgeLabelKey: Record<string, string> = { kept: "pledgeKept", missed: "pledgeMissed", open: "pledgeOpen" };
 
 function Lbl({ children }: { children: string }) {
   return <div className="text-[11px] font-semibold mt-5 mb-2" style={{ color: C.faint }}>{children}</div>;
@@ -23,7 +23,7 @@ function Lbl({ children }: { children: string }) {
 
 /** Participant profile in a draggable, resizable floating window. */
 export default function ParticipantPopover({ id, pos, onClose, raise }: { id: string | null; pos: ParticipantPos | null; onClose: () => void; raise?: number }) {
-  const { lang } = useLang();
+  const { lang, t: tr } = useLang();
   const p = id ? PARTICIPANTS.find((x) => x.id === id) : null;
   if (!p || !pos) return null;
   const dept = deptFor(p.entity);
@@ -31,7 +31,7 @@ export default function ParticipantPopover({ id, pos, onClose, raise }: { id: st
   const first = p.name.split(" ")[0];
 
   return (
-    <FloatingWindow title="Participant" anchor={pos} onClose={onClose} initialW={360} initialH={480} raise={raise}>
+    <FloatingWindow title={tr("participant")} anchor={pos} onClose={onClose} initialW={360} initialH={480} raise={raise}>
       {/* Identity */}
       <div className="flex items-center gap-3">
         <Avatar id={p.id} name={p.name} size={52} />
@@ -43,7 +43,7 @@ export default function ParticipantPopover({ id, pos, onClose, raise }: { id: st
 
       {/* Represents */}
       <div className="mt-4 rounded-xl p-3" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
-        <div className="text-[11px] mb-2" style={{ color: C.faint }}>Represents</div>
+        <div className="text-[11px] mb-2" style={{ color: C.faint }}>{tr("represents")}</div>
         <div className="flex items-start gap-2.5">
           <OrgBadge code={p.entity} size={30} />
           <div className="min-w-0 flex-1">
@@ -51,12 +51,12 @@ export default function ParticipantPopover({ id, pos, onClose, raise }: { id: st
             {dept && <StatusTag status={dept.status} className="mt-0.5" />}
           </div>
         </div>
-        <div className="text-[12px] mt-2.5" style={{ color: C.detail }}>Owns {p.owns}</div>
+        <div className="text-[12px] mt-2.5" style={{ color: C.detail }}>{tr("owns", { x: p.owns })}</div>
         {dept?.headline && <div className="text-[12px] mt-1 leading-snug" style={{ color: C.muted }}><Gloss>{dept.headline}</Gloss></div>}
       </div>
 
       {/* Contact */}
-      <Lbl>Contact</Lbl>
+      <Lbl>{tr("contact")}</Lbl>
       <div className="space-y-1.5 text-[13px]">
         {[{ icon: Mail, v: p.email }, { icon: Phone, v: p.phone }, { icon: MapPin, v: p.location }].map((r, i) => {
           const Icon = r.icon;
@@ -70,7 +70,7 @@ export default function ParticipantPopover({ id, pos, onClose, raise }: { id: st
       </div>
 
       {/* Track record */}
-      <Lbl>Track record</Lbl>
+      <Lbl>{tr("trackRecord")}</Lbl>
       <ul className="space-y-2">
         {p.pledges.map((pl, i) => {
           const Icon = pledgeIcon[pl.status];
@@ -79,7 +79,7 @@ export default function ParticipantPopover({ id, pos, onClose, raise }: { id: st
               <Icon size={15} strokeWidth={2} style={{ color: pledgeColor[pl.status], marginTop: 1 }} className="shrink-0" />
               <div className="min-w-0">
                 <div className="text-[13px] leading-snug"><Gloss>{pl.text}</Gloss></div>
-                <div className="text-[11px] mt-0.5" style={{ color: C.muted }}>{pledgeLabel[pl.status]}, {pl.due}</div>
+                <div className="text-[11px] mt-0.5" style={{ color: C.muted }}>{tr(pledgeLabelKey[pl.status])}, {pl.due}</div>
               </div>
             </li>
           );
@@ -87,7 +87,7 @@ export default function ParticipantPopover({ id, pos, onClose, raise }: { id: st
       </ul>
 
       {/* Context */}
-      <Lbl>In this programme</Lbl>
+      <Lbl>{tr("inThisProgramme")}</Lbl>
       <p className="text-[12px] leading-snug" style={{ color: C.detail }}><Gloss>{p.history}</Gloss></p>
 
       {/* The one thing to ask */}

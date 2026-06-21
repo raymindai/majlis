@@ -5,6 +5,7 @@ import { ChevronDown, ChevronRight } from "lucide-react";
 import { MEETINGS } from "@/lib/meetings";
 import { FloatingWindow, type WinPos } from "@/components/floating-window";
 import { OrgBadge } from "@/components/rail";
+import { useLang } from "@/components/lang-context";
 import { C } from "@/components/ui";
 import { Gloss } from "@/components/gloss";
 
@@ -12,13 +13,14 @@ const serif = { fontFamily: "var(--font-newsreader), var(--font-arabic), Georgia
 
 /** A meeting from the series: its summary, with a toggle for full details. */
 export default function MeetingPopover({ id, pos, onClose, raise }: { id: string | null; pos: WinPos | null; onClose: () => void; raise?: number }) {
+  const { t: tr } = useLang();
   const [expanded, setExpanded] = useState(false);
   const m = id ? MEETINGS.find((x) => x.id === id) : null;
   if (!m || !pos) return null;
 
   return (
     <FloatingWindow
-      title="Meeting"
+      title={tr("meeting")}
       anchor={pos}
       onClose={onClose}
       initialW={380}
@@ -27,7 +29,7 @@ export default function MeetingPopover({ id, pos, onClose, raise }: { id: string
       headerRight={<span className="text-[11px]" style={{ color: C.faint }}>{m.when}</span>}
     >
       <div style={serif} className="text-[17px] leading-snug">{m.title}</div>
-      <div className="text-[12px] mt-1" style={{ color: C.muted }}>{m.kind}{m.current ? ", in progress" : `, ${m.when}`}</div>
+      <div className="text-[12px] mt-1" style={{ color: C.muted }}>{m.kind}{m.current ? tr("inProgressSuffix") : `, ${m.when}`}</div>
       <p className="text-[13px] mt-3 leading-relaxed" style={{ color: C.detail }}><Gloss>{m.summary}</Gloss></p>
 
       {m.details && (
@@ -39,16 +41,16 @@ export default function MeetingPopover({ id, pos, onClose, raise }: { id: string
             style={{ color: C.accent }}
           >
             {expanded ? <ChevronDown size={14} strokeWidth={2} /> : <ChevronRight size={14} strokeWidth={2} />}
-            {expanded ? "Hide details" : "Full details"}
+            {expanded ? tr("hideDetails") : tr("fullDetails")}
           </button>
           {expanded && (
             <div className="mt-3 space-y-4">
               <div>
-                <div className="text-[11px] font-semibold mb-1" style={{ color: C.faint }}>Purpose</div>
+                <div className="text-[11px] font-semibold mb-1" style={{ color: C.faint }}>{tr("purpose")}</div>
                 <p className="text-[12px] leading-snug" style={{ color: C.detail }}><Gloss>{m.details.purpose}</Gloss></p>
               </div>
               <div>
-                <div className="text-[11px] font-semibold mb-1.5" style={{ color: C.faint }}>Key points</div>
+                <div className="text-[11px] font-semibold mb-1.5" style={{ color: C.faint }}>{tr("keyPoints")}</div>
                 <ul className="space-y-1.5">
                   {m.details.points.map((p, i) => (
                     <li key={i} className="text-[12px] flex gap-2 leading-snug" style={{ color: C.detail }}>
@@ -60,7 +62,7 @@ export default function MeetingPopover({ id, pos, onClose, raise }: { id: string
               </div>
               {m.details.attendees && m.details.attendees.length > 0 && (
                 <div>
-                  <div className="text-[11px] font-semibold mb-2" style={{ color: C.faint }}>Attended</div>
+                  <div className="text-[11px] font-semibold mb-2" style={{ color: C.faint }}>{tr("attended")}</div>
                   <div className="flex flex-wrap gap-1.5">
                     {m.details.attendees.map((code) => <OrgBadge key={code} code={code} size={26} />)}
                   </div>

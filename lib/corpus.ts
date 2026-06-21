@@ -228,6 +228,33 @@ export const AUTHORITY_LABEL: Record<Authority, string> = {
   "official-current": "Official, current",
   "informal-unverified": "Informal, unverified",
 };
+const AUTHORITY_LABEL_AR: Record<Authority, string> = {
+  foundational: "أساس، قد يُستبدل",
+  "official-record": "سجل رسمي",
+  "official-current": "رسمي، حالي",
+  "informal-unverified": "غير رسمي، غير مؤكَّد",
+};
+export const authorityLabelI18n = (a: Authority, lang?: string): string =>
+  (lang === "ar" ? AUTHORITY_LABEL_AR[a] : undefined) ?? AUTHORITY_LABEL[a];
+
+/** Arabic document type + issuer for the source viewer; the reference code stays as written. */
+const SOURCE_META_AR: Record<string, { docType: string; issuer: string }> = {
+  CHARTER: { docType: "ميثاق البرنامج", issuer: "مكتب البرنامج" },
+  "Q1-MIN": { docType: "محضر اللجنة", issuer: "مكتب البرنامج" },
+  "Q2-HSA": { docType: "تقرير حالة ربع سنوي", issuer: "مكتب برنامج HSA" },
+  "Q2-EKD": { docType: "تقرير حالة ربع سنوي", issuer: "مكتب برنامج EKD" },
+  "Q2-MTA": { docType: "تقرير حالة ربع سنوي", issuer: "مكتب برنامج MTA" },
+  "Q2-PSD": { docType: "تقرير حالة ربع سنوي (مقيّد)", issuer: "PSD" },
+  "Q2-EDD": { docType: "تقرير حالة ربع سنوي", issuer: "مكتب برنامج EDD" },
+  RISK: { docType: "سجل المخاطر", issuer: "مكتب البرنامج" },
+  "PMO-NOTE": { docType: "بريد غير رسمي", issuer: "مكتب البرنامج" },
+};
+export function sourceMetaI18n(id: string, lang?: string): { docType: string; issuer: string; ref: string } | undefined {
+  const en = SOURCE_META[id];
+  if (!en) return undefined;
+  const ar = lang === "ar" ? SOURCE_META_AR[id] : undefined;
+  return { docType: ar?.docType ?? en.docType, issuer: ar?.issuer ?? en.issuer, ref: en.ref };
+}
 
 export const getSource = (id: string): Source | undefined =>
   SOURCES.find((s) => s.id === id);

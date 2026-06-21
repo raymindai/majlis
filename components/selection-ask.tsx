@@ -4,10 +4,12 @@ import { useEffect, useState } from "react";
 import { MessageSquareQuote } from "lucide-react";
 import { C } from "@/components/ui";
 import { askMajlis } from "@/components/ask-bus";
+import { useLang } from "@/components/lang-context";
 
 type Menu = { x: number; y: number; text: string };
 
 export default function SelectionAsk() {
+  const { t: tr } = useLang();
   const [menu, setMenu] = useState<Menu | null>(null);
 
   useEffect(() => {
@@ -60,7 +62,7 @@ export default function SelectionAsk() {
       >
         <MessageSquareQuote size={16} strokeWidth={2} style={{ color: C.accent, marginTop: 1 }} className="shrink-0" />
         <span className="min-w-0">
-          <span className="text-[13px] font-medium block">Ask Majlis about this</span>
+          <span className="text-[13px] font-medium block">{tr("askAboutThis")}</span>
           <span className="text-[12px] italic block truncate mt-0.5" style={{ color: C.muted }}>&ldquo;{truncated}&rdquo;</span>
         </span>
       </button>

@@ -20,7 +20,7 @@ import {
 import { MEETINGS, PARTICIPANTS } from "@/lib/meetings";
 import { loadState, type Commitment } from "@/lib/store";
 import { type Brief, BRIEF_CACHE_KEY, MOCK_BRIEF } from "@/lib/brief";
-import { SOURCES, SOURCE_META, AUTHORITY_LABEL, deptNameI18n } from "@/lib/corpus";
+import { SOURCES, sourceMetaI18n, authorityLabelI18n, deptNameI18n } from "@/lib/corpus";
 import { askMajlis } from "@/components/ask-bus";
 import { C, Card, CitationChip, ConfidenceBadge, severityColor } from "@/components/ui";
 import { Avatar, deptFor, MeetingContext, NavList, OrgBadge, RailSection, StatusTag, TheRoom } from "@/components/rail";
@@ -333,12 +333,12 @@ export default function BeforeView() {
                     <ChevronRight size={16} strokeWidth={2} className="shrink-0 transition-transform group-hover:translate-x-0.5" style={{ color: C.faint }} />
                   </button>
                   <div className="px-3.5 pb-3">
-                    <div className="text-[11px] mb-1.5" style={{ color: C.faint }}>Represents</div>
+                    <div className="text-[11px] mb-1.5" style={{ color: C.faint }}>{tr("represents")}</div>
                     <div className="flex items-center gap-2.5">
                       <OrgBadge code={p.entity} size={26} />
                       <div className="flex-1 min-w-0">
                         <div className="text-[13px] font-medium truncate">{deptNameI18n(p.entity, lang) ?? p.entity}</div>
-                        <div className="text-[12px] truncate" style={{ color: C.detail }}>Owns {p.owns}</div>
+                        <div className="text-[12px] truncate" style={{ color: C.detail }}>{tr("owns", { x: p.owns })}</div>
                       </div>
                       {dept && <StatusTag status={dept.status} className="self-start shrink-0" />}
                     </div>
@@ -364,7 +364,7 @@ export default function BeforeView() {
         </Card>
 
         <Card labelKey="meetingSeries" span={2} icon={CalendarRange} minLevel={3}>
-          <div className="text-[12px] mb-4" style={{ color: C.muted }}>Today&rsquo;s steering committee sits in a string of related meetings.</div>
+          <div className="text-[12px] mb-4" style={{ color: C.muted }}>{tr("relatedMeetingsNote")}</div>
           <ol>
             {MEETINGS.map((m, i) => (
               <li key={m.id} className="flex gap-3">
@@ -426,7 +426,7 @@ export default function BeforeView() {
             {brief.likelyQuestions.map((x, i) => (
               <li key={i}>
                 <div className="text-[14px] font-medium"><Gloss>{x.q}</Gloss></div>
-                <div className="text-[13px] mt-0.5" style={{ color: C.muted }}>Your line → <Gloss>{x.line}</Gloss></div>
+                <div className="text-[13px] mt-0.5" style={{ color: C.muted }}>{tr("yourLine")} → <Gloss>{x.line}</Gloss></div>
                 {x.citation && (
                   <div className="mt-1">
                     <CitationChip sourceId={x.citation.sourceId} onClick={(pos) => open(x.citation!, pos)} />
@@ -440,7 +440,7 @@ export default function BeforeView() {
         <Card labelKey="committeePack" span={2} icon={FileText} minLevel={3} aside={<span className="text-[12px]" style={{ color: C.muted }}>{SOURCES.length} {tr("documents")}</span>}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
             {SOURCES.map((s) => {
-              const m = SOURCE_META[s.id];
+              const m = sourceMetaI18n(s.id, lang);
               return (
                 <button
                   key={s.id}
@@ -453,7 +453,7 @@ export default function BeforeView() {
                   <div className="min-w-0">
                     <div className="text-[13px] font-semibold leading-tight">{s.title}</div>
                     <div className="text-[11px] mt-0.5" style={{ color: C.muted }}>{[m?.docType, m?.issuer, s.date ?? "undated"].filter(Boolean).join(", ")}</div>
-                    <div className="text-[11px] mt-1" style={{ color: C.faint }}>{AUTHORITY_LABEL[s.authority]}</div>
+                    <div className="text-[11px] mt-1" style={{ color: C.faint }}>{authorityLabelI18n(s.authority, lang)}</div>
                   </div>
                 </button>
               );

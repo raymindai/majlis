@@ -16,17 +16,17 @@ function Lbl({ children }: { children: string }) {
 }
 
 const HOW = [
-  { icon: Layers, t: "Switch stages from the dock: Before, During, After. They are one loop." },
-  { icon: Sparkles, t: "Zoom detail with Headlines / Brief / Full for a busy reader; it reshapes the page and the rail." },
-  { icon: MousePointerClick, t: "Click any person, meeting, or citation to open a draggable window; select text to Ask Majlis." },
-  { icon: Users, t: "Ask anything in the right panel; answers stream in with a confidence rating and a source." },
-  { icon: GitBranch, t: "Capture commitments live, draft the minutes, then write them to memory for the next cycle." },
+  { icon: Layers, key: "guideStep1" },
+  { icon: Sparkles, key: "guideStep2" },
+  { icon: MousePointerClick, key: "guideStep3" },
+  { icon: Users, key: "guideStep4" },
+  { icon: GitBranch, key: "guideStep5" },
 ];
 
 const STAGES = [
-  { key: "before", label: "Before", href: "/" },
-  { key: "during", label: "During", href: "/during" },
-  { key: "after", label: "After", href: "/after" },
+  { key: "before", href: "/" },
+  { key: "during", href: "/during" },
+  { key: "after", href: "/after" },
 ] as const;
 
 /**
@@ -79,7 +79,7 @@ export default function ReviewerGuide() {
             <span className="inline-flex items-center gap-2 text-[12px] font-semibold uppercase tracking-wide">
               <BookOpen size={14} strokeWidth={2.25} /> {tr("reviewersGuide")}
             </span>
-            <button type="button" onClick={() => setOpen(false)} className="cursor-pointer hover:opacity-80" aria-label="Close guide">
+            <button type="button" onClick={() => setOpen(false)} className="cursor-pointer hover:opacity-80" aria-label={tr("close")}>
               <X size={16} strokeWidth={2.25} />
             </button>
           </div>
@@ -91,35 +91,22 @@ export default function ReviewerGuide() {
             </div>
 
             <div style={serif} className="text-[22px] leading-tight mt-1">Majlis</div>
-            <p className="text-[13px] mt-1 leading-snug" style={{ color: C.muted }}>
-              An AI briefing companion that prepares a senior Abu Dhabi government official for a high-stakes committee, across the
-              whole meeting lifecycle, with an institutional memory that carries between cycles.
-            </p>
+            <p className="text-[13px] mt-1 leading-snug" style={{ color: C.muted }}>{tr("guideTagline")}</p>
 
-            <Lbl>The case study</Lbl>
-            <p className="text-[13px] leading-relaxed" style={{ color: C.detail }}>
-              A five-day prototype for the AI Experience Designer brief at the Department of Government Enablement. Built AI-first:
-              live Claude, a synthetic committee pack, fal-generated people, and a Supabase audit trail. All data is synthetic.
-            </p>
+            <Lbl>{tr("guideCaseStudyLabel")}</Lbl>
+            <p className="text-[13px] leading-relaxed" style={{ color: C.detail }}>{tr("guideCaseStudyBody")}</p>
 
-            <Lbl>The scenario</Lbl>
-            <p className="text-[13px] leading-relaxed" style={{ color: C.detail }}>
-              The Q2 steering committee of Manarah, a cross-government digital-services programme. Five entities report; one blocker
-              dominates, a budget figure does not reconcile across sources, and an informal note contradicts an official report.
-            </p>
+            <Lbl>{tr("guideScenarioLabel")}</Lbl>
+            <p className="text-[13px] leading-relaxed" style={{ color: C.detail }}>{tr("guideScenarioBody")}</p>
 
-            <Lbl>What is genuinely live AI</Lbl>
-            <p className="text-[13px] leading-relaxed" style={{ color: C.detail }}>
-              Claude writes the brief from the pack (with a recommendation, weighed options, and citations); the Q&amp;A streams
-              grounded answers; During, it checks each utterance against the record live; After, it drafts the minutes. Every call is
-              audit-logged.
-            </p>
+            <Lbl>{tr("guideLiveLabel")}</Lbl>
+            <p className="text-[13px] leading-relaxed" style={{ color: C.detail }}>{tr("guideLiveBody")}</p>
 
             {active === "before" && (
               <div className="mt-4 rounded-xl p-3" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
                 <div className="flex items-start gap-2 text-[12.5px] leading-snug" style={{ color: C.detail }}>
                   <Sparkles size={14} strokeWidth={2} style={{ color: C.accent, marginTop: 1 }} className="shrink-0" />
-                  <span>The Before brief is synthesised live from the committee pack. Regenerate to watch Claude write a fresh one.</span>
+                  <span>{tr("guideRegenNote")}</span>
                 </div>
                 <button
                   type="button"
@@ -129,19 +116,19 @@ export default function ReviewerGuide() {
                   style={{ background: C.accent, color: C.onAccent }}
                 >
                   {pending ? <Loader2 size={13} className="animate-spin" /> : <RefreshCw size={13} strokeWidth={2} />}
-                  {pending ? "Synthesising…" : "Regenerate the brief"}
+                  {pending ? tr("synthesising") : tr("regenerateBrief")}
                 </button>
               </div>
             )}
 
-            <Lbl>How to use it</Lbl>
+            <Lbl>{tr("guideHowToUse")}</Lbl>
             <ul className="space-y-2">
               {HOW.map((h, i) => {
                 const Icon = h.icon;
                 return (
                   <li key={i} className="flex items-start gap-2.5 text-[13px]" style={{ color: C.detail }}>
                     <Icon size={15} strokeWidth={2} style={{ color: C.accent, marginTop: 1 }} className="shrink-0" />
-                    {h.t}
+                    {tr(h.key)}
                   </li>
                 );
               })}
@@ -149,10 +136,10 @@ export default function ReviewerGuide() {
 
             <div className="flex flex-wrap items-center gap-3 mt-6">
               <Link href="/process" className="inline-flex items-center gap-1.5 text-[13px] rounded-lg px-3 py-2" style={{ background: C.accent, color: C.onAccent }}>
-                Read the full case study <ArrowRight size={14} strokeWidth={2} />
+                {tr("guideReadCaseStudy")} <ArrowRight size={14} strokeWidth={2} />
               </Link>
               <a href="https://github.com/raymindai/majlis" target="_blank" rel="noreferrer" className="text-[13px]" style={{ color: C.muted }}>
-                View the code
+                {tr("guideViewCode")}
               </a>
             </div>
           </div>

@@ -5,7 +5,7 @@ import { createContext, useContext, type ReactNode } from "react";
 export type DetailLevel = 1 | 2 | 3; // 1 = Headlines, 2 = Brief, 3 = Full
 
 export const DetailContext = createContext<{ level: DetailLevel; setLevel: (l: DetailLevel) => void }>({
-  level: 3,
+  level: 1,
   setLevel: () => {},
 });
 

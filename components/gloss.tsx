@@ -3,6 +3,7 @@
 import { Fragment, type ReactNode } from "react";
 import { Tip } from "@/components/tip";
 import { C } from "@/components/ui";
+import { useLang } from "@/components/lang-context";
 
 /** Acronyms used across the product. Hovering any of them reveals the full term. */
 export const GLOSSARY: Record<string, string> = {
@@ -20,6 +21,21 @@ export const GLOSSARY: Record<string, string> = {
   CIO: "Chief Information Officer",
 };
 
+const GLOSSARY_AR: Record<string, string> = {
+  EDD: "دائرة التنمية الاقتصادية",
+  EKD: "دائرة التعليم والمعرفة",
+  MTA: "هيئة البلديات والنقل",
+  HSA: "هيئة الخدمات الصحية",
+  PSD: "مديرية الأمن العام",
+  SSO: "الدخول الموحّد",
+  DGE: "دائرة التمكين الحكومي",
+  DG: "المدير العام",
+  PMO: "مكتب إدارة البرنامج",
+  AED: "درهم إماراتي",
+  AOB: "ما يستجد من أعمال",
+  CIO: "الرئيس التنفيذي للمعلومات",
+};
+
 // Longest keys first so e.g. "DGE" wins over "DG".
 const KEYS = Object.keys(GLOSSARY).sort((a, b) => b.length - a.length);
 const RE = new RegExp(`\\b(${KEYS.join("|")})\\b`, "g");
@@ -33,7 +49,9 @@ const abbrStyle: React.CSSProperties = {
 
 /** Wraps known acronyms in `children` (a string) with a hover tooltip showing the full term. */
 export function Gloss({ children }: { children: ReactNode }) {
+  const { lang } = useLang();
   if (typeof children !== "string") return <>{children}</>;
+  const dict = lang === "ar" ? GLOSSARY_AR : GLOSSARY;
   const out: ReactNode[] = [];
   let last = 0;
   let m: RegExpExecArray | null;
@@ -42,7 +60,7 @@ export function Gloss({ children }: { children: ReactNode }) {
     if (m.index > last) out.push(children.slice(last, m.index));
     const term = m[0];
     out.push(
-      <Tip key={m.index} as="abbr" content={GLOSSARY[term]} style={abbrStyle}>
+      <Tip key={m.index} as="abbr" content={dict[term]} style={abbrStyle}>
         {term}
       </Tip>,
     );

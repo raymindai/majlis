@@ -21,7 +21,7 @@ import AppShell from "@/components/app-shell";
 type Cite = { sourceId: string; passageId: string };
 
 /** A scripted utterance. Majlis observes each one live against the record. */
-type FeedItem = { id: string; speaker: string; text: string };
+type FeedItem = { id: string; speaker: string; text: string; textAr: string };
 
 type Obs = {
   stance: "confirms" | "contradicts" | "neutral";
@@ -32,16 +32,16 @@ type Obs = {
 };
 
 const FEED: FeedItem[] = [
-  { id: "edd", speaker: "EDD", text: "SSO has slipped, and we now forecast completion at the end of Q3." },
-  { id: "ekd", speaker: "EKD", text: "We're confident the Parent Portal is on track for the original timeline." },
-  { id: "mta", speaker: "MTA", text: "Our programme spend is well within budget." },
-  { id: "chair", speaker: "Chair", text: "We'll defer the reallocation pending MTA's reconciliation." },
+  { id: "edd", speaker: "EDD", text: "SSO has slipped, and we now forecast completion at the end of Q3.", textAr: "تأخّر الدخول الموحّد، ونتوقع الآن الإنجاز في نهاية الربع الثالث." },
+  { id: "ekd", speaker: "EKD", text: "We're confident the Parent Portal is on track for the original timeline.", textAr: "نحن واثقون أن بوابة أولياء الأمور تسير وفق الجدول الأصلي." },
+  { id: "mta", speaker: "MTA", text: "Our programme spend is well within budget.", textAr: "إنفاق برنامجنا ضمن حدود الميزانية." },
+  { id: "chair", speaker: "Chair", text: "We'll defer the reallocation pending MTA's reconciliation.", textAr: "سنؤجّل إعادة التخصيص بانتظار تسوية MTA." },
 ];
 
-function speakerOf(code: string): { name: string; id?: string; role?: string } {
+function speakerOf(code: string, tr: (key: string) => string): { name: string; id?: string; role?: string } {
   const p = PARTICIPANTS.find((x) => x.id === code);
   if (p) return { name: p.name, id: p.id, role: `${p.role}, ${p.entity}` };
-  if (code === "Chair") return { name: "You", role: "Chair, Programme Director-General" };
+  if (code === "Chair") return { name: tr("youSpeaker"), role: tr("chairRole") };
   return { name: code };
 }
 
@@ -174,7 +174,8 @@ export default function DuringView() {
 
   // The decision the chair is steering toward, tracked from the brief to the moment it lands.
   const decisionId = "decision-reallocation";
-  const chairText = FEED.find((f) => f.id === "chair")?.text ?? "";
+  const chairItem = FEED.find((f) => f.id === "chair");
+  const chairText = (lang === "ar" ? chairItem?.textAr : chairItem?.text) ?? "";
   const entitiesTotal = FEED.filter((f) => f.speaker !== "Chair").length;
   const entitiesHeard = shown.filter((f) => f.speaker !== "Chair").length;
   const chairSpoke = revealed >= FEED.length;
@@ -199,7 +200,7 @@ export default function DuringView() {
       <RailSection icon={AudioLines} label={tr("speakingOrder")}>
         <ol className="space-y-0.5 -mx-2">
           {FEED.slice(0, revealed).map((f, i) => {
-            const sp = speakerOf(f.speaker);
+            const sp = speakerOf(f.speaker, tr);
             const done = i < revealed;
             const current = i === revealed - 1;
             return (
@@ -258,7 +259,7 @@ export default function DuringView() {
         >
           <div className="space-y-3">
             {shown.map((item) => {
-              const sp = speakerOf(item.speaker);
+              const sp = speakerOf(item.speaker, tr);
               const obs = observations[item.id];
               const listening = !listened.has(item.id);
               const typing = listened.has(item.id) && !transcribed.has(item.id);
@@ -296,9 +297,9 @@ export default function DuringView() {
                     <p className="text-[15px] mt-2 leading-relaxed">
                       &ldquo;
                       {typing ? (
-                        <StreamText text={item.text} onDone={() => setTranscribed((s) => { const n = new Set(s); n.add(item.id); return n; })} />
+                        <StreamText text={lang === "ar" ? item.textAr : item.text} onDone={() => setTranscribed((s) => { const n = new Set(s); n.add(item.id); return n; })} />
                       ) : (
-                        <Gloss>{item.text}</Gloss>
+                        <Gloss>{lang === "ar" ? item.textAr : item.text}</Gloss>
                       )}
                       &rdquo;
                     </p>
@@ -460,7 +461,7 @@ export default function DuringView() {
         {revealed > 0 && (<>
         <Card labelKey="insights" icon={Lightbulb} minLevel={2}>
           {insights.length === 0 && suggestions.length === 0 ? (
-            <div className="text-[13px]" style={{ color: C.muted }}>Majlis surfaces insights and questions as the meeting progresses.</div>
+            <div className="text-[13px]" style={{ color: C.muted }}>{tr("surfaceInsights")}</div>
           ) : (
             <div className="space-y-3">
               {insights.map((ins, idx) => (
@@ -475,7 +476,7 @@ export default function DuringView() {
               ))}
               {suggestions.length > 0 && (
                 <div className="pt-3 border-t" style={{ borderColor: C.line }}>
-                  <div className="text-[11px] font-semibold mb-2" style={{ color: C.faint }}>Questions you could ask</div>
+                  <div className="text-[11px] font-semibold mb-2" style={{ color: C.faint }}>{tr("questionsYouCouldAsk")}</div>
                   <ul className="space-y-2">
                     {suggestions.map((s, idx) => (
                       <li key={`q-${idx}`}>
@@ -494,7 +495,7 @@ export default function DuringView() {
 
         <Card labelKey="capturedThisMeeting" icon={ClipboardCheck} aside={captured.length > 0 ? <Link href="/after" className="text-[12px] hover:opacity-70" style={{ color: C.accent }}>{tr("toMinutes")} →</Link> : undefined}>
           {captured.length === 0 ? (
-            <div className="text-[13px]" style={{ color: C.muted }}>Commitments and decisions you log appear here, then flow into the minutes.</div>
+            <div className="text-[13px]" style={{ color: C.muted }}>{tr("commitmentsFlow")}</div>
           ) : (
             <ul className="space-y-2">
               {captured.map((c) => (
