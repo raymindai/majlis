@@ -392,12 +392,20 @@ export default function DuringView() {
             <div className="mt-3">
               <div className="text-[11px] font-semibold mb-1.5" style={{ color: C.faint }}>{tr("yourOptions")}</div>
               <div className="space-y-1">
-                {brief.decision.options.map((o) => (
-                  <div key={o.label} className="flex items-start gap-2 text-[13px]" style={{ color: C.detail }}>
-                    <span className="mt-[7px] h-1 w-1 rounded-full shrink-0" style={{ background: C.faint }} />
-                    <span><Gloss>{o.label}</Gloss></span>
-                  </div>
-                ))}
+                {brief.decision.options.map((o) => {
+                  const rec = o.stance === "recommended";
+                  const against = o.stance === "against";
+                  return (
+                    <div key={o.label} className="flex items-start gap-2 text-[13px]" style={{ color: against ? C.muted : C.detail }}>
+                      <span className="mt-[7px] h-1 w-1 rounded-full shrink-0" style={{ background: rec ? C.accent : C.faint }} />
+                      <span>
+                        <Gloss>{o.label}</Gloss>
+                        {rec && <span className="ml-1.5 inline-block align-middle text-[10px] font-semibold rounded px-1.5 py-[1px]" style={{ background: `color-mix(in srgb, ${C.accent} 15%, transparent)`, color: C.accent }}>{tr("optRecommended")}</span>}
+                        {against && <span className="ml-1.5 inline-block align-middle text-[10px] font-semibold rounded px-1.5 py-[1px]" style={{ background: `color-mix(in srgb, ${C.unverified} 13%, transparent)`, color: C.unverified }}>{tr("optAgainst")}</span>}
+                      </span>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           )}

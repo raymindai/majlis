@@ -202,15 +202,21 @@ export default function BeforeView() {
                 <div className="mt-4">
                   <div className="text-[11px] font-semibold mb-2" style={{ color: C.faint }}>{tr("yourOptions")}</div>
                   <ul className="space-y-2">
-                    {brief.decision.options.map((o, i) => (
-                      <li key={i} className="flex items-start gap-2.5 text-[13px]">
-                        <span className="mt-1.5 h-1.5 w-1.5 rounded-full shrink-0" style={{ background: C.faint }} />
-                        <span>
-                          <span className="font-medium"><Gloss>{o.label}</Gloss>.</span>{" "}
-                          <span style={{ color: C.detail }}><Gloss>{o.consequence}</Gloss></span>
-                        </span>
-                      </li>
-                    ))}
+                    {brief.decision.options.map((o, i) => {
+                      const rec = o.stance === "recommended";
+                      const against = o.stance === "against";
+                      return (
+                        <li key={i} className="flex items-start gap-2.5 text-[13px]">
+                          <span className="mt-1.5 h-1.5 w-1.5 rounded-full shrink-0" style={{ background: rec ? C.accent : C.faint }} />
+                          <span>
+                            <span className="font-medium" style={against ? { color: C.muted } : undefined}><Gloss>{o.label}</Gloss>.</span>{" "}
+                            <span style={{ color: C.detail }}><Gloss>{o.consequence}</Gloss></span>
+                            {rec && <span className="ml-1.5 inline-block align-middle text-[10.5px] font-semibold rounded px-1.5 py-[1px]" style={{ background: `color-mix(in srgb, ${C.accent} 15%, transparent)`, color: C.accent }}>{tr("optRecommended")}</span>}
+                            {against && <span className="ml-1.5 inline-block align-middle text-[10.5px] font-semibold rounded px-1.5 py-[1px]" style={{ background: `color-mix(in srgb, ${C.unverified} 13%, transparent)`, color: C.unverified }}>{tr("optAgainst")}</span>}
+                          </span>
+                        </li>
+                      );
+                    })}
                   </ul>
                 </div>
               )}

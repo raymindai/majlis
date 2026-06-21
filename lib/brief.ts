@@ -21,7 +21,7 @@ export interface Brief {
     recommendation: string;
     rationale: string;
     hingesOn: string[];
-    options: { label: string; consequence: string }[];
+    options: { label: string; consequence: string; stance?: "recommended" | "against" | "neutral" }[];
   };
   attention: { entity: string; severity: "blocker" | "at-risk"; line: string; action: string; confidence: Confidence; citations: Cite[] }[];
   steady: { entity: string; line: string }[];
@@ -48,8 +48,8 @@ export const MOCK_BRIEF: Brief = {
       "The reallocation rests on MTA's spend forecast, and that figure conflicts across sources (AED 52M against the Charter's 40M), so voting now would move money on an unreconciled number that is hard to defend on audit. The SSO blocker is the binding constraint on two go-lives, so a firm recovery date matters more this session than the budget split.",
     hingesOn: DECISION.hingesOn,
     options: [
-      { label: "Defer the reallocation", consequence: "Avoids voting on an unreconciled figure; the budget question returns next session." },
-      { label: "Approve as proposed", consequence: "Moves money on a figure that conflicts across sources; hard to defend on audit." },
+      { label: "Defer the reallocation", consequence: "Avoids voting on an unreconciled figure; the budget question returns next session.", stance: "recommended" },
+      { label: "Approve as proposed", consequence: "Moves money on a figure that conflicts across sources; hard to defend on audit.", stance: "against" },
     ],
   },
   attention: ATTENTION.map((a) => ({ entity: a.id, severity: a.severity, line: a.line, action: a.action, confidence: a.confidence, citations: a.citations })),
