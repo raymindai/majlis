@@ -96,6 +96,7 @@ export default function DuringView() {
   const [captured, setCaptured] = useState<Commitment[]>([]);
   const [observations, setObservations] = useState<Record<string, Obs | "loading">>({});
   const [transcribed, setTranscribed] = useState<Set<string>>(() => new Set());
+  const [listened, setListened] = useState<Set<string>>(() => new Set());
   const [noteShown, setNoteShown] = useState<Set<string>>(() => new Set());
   const [sugShown, setSugShown] = useState<Set<string>>(() => new Set());
   const [brief, setBrief] = useState<Brief>(MOCK_BRIEF);
@@ -118,6 +119,16 @@ export default function DuringView() {
       /* keep mock */
     }
   }, [lang]);
+
+  // A newly-revealed speaker is "listened to" for a beat before the transcript
+  // starts streaming, so the live feel is listen, then transcribe.
+  useEffect(() => {
+    if (revealed === 0) return;
+    const id = FEED[revealed - 1].id;
+    if (listened.has(id)) return;
+    const t = setTimeout(() => setListened((s) => new Set(s).add(id)), 1100);
+    return () => clearTimeout(t);
+  }, [revealed, listened]);
 
   // Once an utterance finishes "transcribing", Majlis observes it against the record.
   useEffect(() => {
@@ -240,7 +251,8 @@ export default function DuringView() {
             {shown.map((item) => {
               const sp = speakerOf(item.speaker);
               const obs = observations[item.id];
-              const typing = !transcribed.has(item.id);
+              const listening = !listened.has(item.id);
+              const typing = listened.has(item.id) && !transcribed.has(item.id);
               const noteText = obs && obs !== "loading" ? (obs.stance !== "neutral" ? obs.note : level >= 3 ? obs.note : "") : "";
               const noteDone = !noteText || noteShown.has(item.id);
               const addNoteDone = () => setNoteShown((s) => { const n = new Set(s); n.add(item.id); return n; });
@@ -264,22 +276,24 @@ export default function DuringView() {
                         {sp.role && <span className="block text-[11px]" style={{ color: C.muted }}><Gloss>{sp.role}</Gloss></span>}
                       </span>
                     )}
-                    {typing && (
+                    {(listening || typing) && (
                       <span className="inline-flex items-center gap-1.5 text-[11px] shrink-0" style={{ color: C.unverified }}>
                         <AudioBars />
-                        <span className="hidden sm:inline">{tr("transcribing")}</span>
+                        <span className="hidden sm:inline">{listening ? tr("listening") : tr("transcribing")}</span>
                       </span>
                     )}
                   </div>
-                  <p className="text-[15px] mt-2 leading-relaxed">
-                    &ldquo;
-                    {typing ? (
-                      <StreamText text={item.text} onDone={() => setTranscribed((s) => { const n = new Set(s); n.add(item.id); return n; })} />
-                    ) : (
-                      <Gloss>{item.text}</Gloss>
-                    )}
-                    &rdquo;
-                  </p>
+                  {!listening && (
+                    <p className="text-[15px] mt-2 leading-relaxed">
+                      &ldquo;
+                      {typing ? (
+                        <StreamText text={item.text} onDone={() => setTranscribed((s) => { const n = new Set(s); n.add(item.id); return n; })} />
+                      ) : (
+                        <Gloss>{item.text}</Gloss>
+                      )}
+                      &rdquo;
+                    </p>
+                  )}
 
                   {obs === "loading" && (
                     <div className="mt-3 inline-flex items-center gap-2 text-[12px]" style={{ color: C.muted }}>
