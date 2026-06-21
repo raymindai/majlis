@@ -132,7 +132,11 @@ export function MeetingContext() {
   // The header carries the session, room, and time. Here the rail frames the wider
   // programme the session sits inside, so the two complement rather than repeat.
   return (
-    <div className="rounded-xl p-3" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
+    <div className="rounded-xl p-3 overflow-hidden" style={{ background: C.surfaceAlt, border: `1px solid ${C.line}` }}>
+      <div className="-mx-3 -mt-3 mb-2.5 relative h-14 overflow-hidden">
+        <Image src="/manarah-beacon.jpg" alt="" fill sizes="260px" className="object-cover" style={{ objectPosition: "center 42%" }} />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(to top, var(--c-surface-alt), transparent 68%)" }} />
+      </div>
       <div className="inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wide" style={{ color: C.accent }}>
         <Layers size={11} strokeWidth={2.25} /> {tr("initiativeInFocus")}
       </div>

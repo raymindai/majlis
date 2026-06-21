@@ -70,7 +70,7 @@ export default function ReviewerGuide() {
 
           <div className="overflow-y-auto px-5 pb-5">
             <div className="-mx-5 relative h-24 overflow-hidden">
-              <Image src="/manarah-hero.jpg" alt="" fill sizes="400px" className="object-cover" />
+              <Image src="/manarah-beacon.jpg" alt="" fill sizes="400px" className="object-cover" />
               <div className="absolute inset-0" style={{ background: "linear-gradient(to top, var(--c-surface), transparent 70%)" }} />
             </div>
 

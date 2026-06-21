@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Layers } from "lucide-react";
 import { FloatingWindow } from "@/components/floating-window";
@@ -37,6 +38,11 @@ export default function AboutProgramme() {
 
   return (
     <FloatingWindow title={tr("aboutManarah")} anchor={anchor} onClose={() => setOpen(false)} initialW={460} initialH={560}>
+      {/* The programme's beacon identity leads the panel: Manarah = a guiding light. */}
+      <div className="-mx-5 -mt-5 mb-4 relative h-32 overflow-hidden">
+        <Image src="/manarah-beacon.jpg" alt="" fill sizes="460px" priority className="object-cover" />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(to top, var(--c-surface), transparent 62%)" }} />
+      </div>
       <div className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide" style={{ color: C.accent }}>
         <Layers size={13} strokeWidth={2.25} /> {tr("initiativeInFocus")}
       </div>
