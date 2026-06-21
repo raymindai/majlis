@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import {
   ArrowRight,
   CircleCheck,
@@ -222,6 +223,23 @@ export default function ProcessPage() {
             </div>
           ))}
         </div>
+
+        {/* The build, in one screen */}
+        <Reveal className="mt-10">
+          <figure className="rounded-2xl overflow-hidden" style={{ border: `1px solid ${C.line}`, boxShadow: C.shadow }}>
+            <Image
+              src="/working-screen.jpg"
+              alt="The Majlis prototype running in a browser on the left, Claude Code writing it in a terminal on the right."
+              width={1800}
+              height={1012}
+              priority
+              className="w-full h-auto block"
+            />
+          </figure>
+          <figcaption className="text-[12.5px] mt-3 text-center" style={{ color: C.muted }}>
+            The build, in one screen: the running prototype on the left, Claude Code writing it on the right. No Figma, no IDE.
+          </figcaption>
+        </Reveal>
 
         {/* The case */}
         <Reveal className="mt-20"><section>
