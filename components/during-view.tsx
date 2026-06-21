@@ -101,9 +101,14 @@ export default function DuringView() {
   const [sugShown, setSugShown] = useState<Set<string>>(() => new Set());
   const [brief, setBrief] = useState<Brief>(MOCK_BRIEF);
   const requested = useRef<Set<string>>(new Set());
+  const baseline = useRef<Set<string>>(new Set());
 
   useEffect(() => {
-    const sync = () => setCaptured(loadState().commitments);
+    // "Captured this meeting" is only what gets logged during this session; snapshot
+    // the commitments already in the store (prior cycles) and exclude them, so nothing
+    // shows as captured before the meeting has even begun.
+    baseline.current = new Set(loadState().commitments.map((c) => c.id));
+    const sync = () => setCaptured(loadState().commitments.filter((c) => !baseline.current.has(c.id)));
     sync();
     window.addEventListener("majlis-store", sync);
     return () => window.removeEventListener("majlis-store", sync);
@@ -386,9 +391,11 @@ export default function DuringView() {
           span={2}
           icon={Gavel}
           aside={
-            <span className="text-[12px]" style={{ color: chairSpoke ? C.confirmed : C.muted }}>
-              {chairSpoke ? tr("decided") : tr("inputsHeard", { n: entitiesHeard, m: entitiesTotal })}
-            </span>
+            revealed === 0 ? undefined : (
+              <span className="text-[12px]" style={{ color: chairSpoke ? C.confirmed : C.muted }}>
+                {chairSpoke ? tr("decided") : tr("inputsHeard", { n: entitiesHeard, m: entitiesTotal })}
+              </span>
+            )
           }
         >
           <p className="text-[16px] font-medium leading-snug"><Gloss>{brief.decision.text}</Gloss></p>
@@ -424,6 +431,7 @@ export default function DuringView() {
             </div>
           )}
 
+          {revealed > 0 && (
           <div className="mt-4 pt-3 border-t flex items-center gap-3 flex-wrap" style={{ borderColor: C.line }}>
             {!chairSpoke ? (
               <span className="text-[12px]" style={{ color: C.muted }}>{tr("gatheringInputs")}</span>
@@ -445,8 +453,10 @@ export default function DuringView() {
               </>
             )}
           </div>
+          )}
         </Card>
 
+        {revealed > 0 && (<>
         <Card labelKey="insights" icon={Lightbulb} minLevel={2}>
           {insights.length === 0 && suggestions.length === 0 ? (
             <div className="text-[13px]" style={{ color: C.muted }}>Majlis surfaces insights and questions as the meeting progresses.</div>
@@ -498,6 +508,7 @@ export default function DuringView() {
             </ul>
           )}
         </Card>
+        </>)}
       </div>
     </AppShell>
   );
