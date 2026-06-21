@@ -22,7 +22,7 @@ import {
 } from "lucide-react";
 import { C } from "@/components/theme";
 import Reveal from "@/components/reveal";
-import UaeFlag from "@/components/uae-flag";
+import NationalAccent from "@/components/national-accent";
 import { listProcessDocs } from "@/lib/process-docs";
 
 const serif = { fontFamily: "var(--font-newsreader), var(--font-arabic), Georgia, serif" };
@@ -163,6 +163,7 @@ export default function ProcessPage() {
   const docCount = listProcessDocs().length;
   return (
     <div className="min-h-dvh" style={{ background: C.bg, color: C.ink, fontFamily: "var(--font-inter), var(--font-arabic), system-ui, sans-serif" }}>
+      <NationalAccent />
       <div className="mx-auto max-w-3xl px-6 py-12 md:py-16">
         {/* Hero, a branded gradient rather than a stock photo */}
         <header className="relative overflow-hidden rounded-3xl p-8 md:p-12 majlis-fade-up" style={{ border: `1px solid ${C.line}`, background: `linear-gradient(135deg, ${C.chipBg}, ${C.surface} 72%)`, boxShadow: C.shadow }}>
@@ -178,9 +179,7 @@ export default function ProcessPage() {
               <div className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide rounded-full px-2.5 py-1" style={{ background: C.surface, color: C.accent, border: `1px solid ${C.line}` }}>
                 <Sparkles size={12} strokeWidth={2.5} /> Case study
               </div>
-              <div className="inline-flex items-center gap-2 text-[12px]" style={{ color: C.muted }}>
-                <UaeFlag h={13} /> Abu Dhabi, United Arab Emirates
-              </div>
+              <div className="text-[12px]" style={{ color: C.muted }}>Abu Dhabi, United Arab Emirates</div>
             </div>
             <h1 style={{ ...serif, letterSpacing: "-0.025em" }} className="text-[52px] md:text-[68px] leading-[1.02] mt-4">Majlis</h1>
             <p className="text-[18px] md:text-[20px] leading-relaxed mt-3 max-w-xl" style={{ color: C.detail }}>
@@ -389,9 +388,7 @@ export default function ProcessPage() {
         </section></Reveal>
 
         <div className="mt-20 pt-8 border-t flex flex-wrap items-center justify-between gap-4" style={{ borderColor: C.line }}>
-          <span className="inline-flex items-center gap-2 text-[13px]" style={{ color: C.muted }}>
-            <UaeFlag h={12} /> Majlis, a five-day prototype. Synthetic data throughout.
-          </span>
+          <span className="text-[13px]" style={{ color: C.muted }}>Majlis, a five-day prototype. Synthetic data throughout.</span>
           <Link href="/" className="inline-flex items-center gap-1.5 text-[14px]" style={{ color: C.accent }}>
             Open the prototype <ArrowRight size={15} strokeWidth={2} />
           </Link>

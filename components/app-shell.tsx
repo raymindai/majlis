@@ -2,7 +2,7 @@
 
 import { type ReactNode } from "react";
 import { C } from "@/components/ui";
-import UaeFlag from "@/components/uae-flag";
+import NationalAccent from "@/components/national-accent";
 import MeetingBar from "@/components/meeting-bar";
 import DetailControl from "@/components/detail-control";
 import UserMenu from "@/components/user-menu";
@@ -27,11 +27,11 @@ export default function AppShell({
 }) {
   return (
     <div className="h-dvh flex flex-col" style={{ background: C.bg, color: C.ink, fontFamily: "var(--font-inter), var(--font-arabic), system-ui, sans-serif" }}>
+      <NationalAccent />
       {/* header: left = title + meeting + stage, center = zoom, right = theme + profile */}
       <header className="shrink-0 border-b" style={{ borderColor: C.line, background: C.surface }}>
         <div className="px-5 h-14 flex items-center gap-4">
           <div className="flex items-center gap-3 min-w-0 flex-1">
-            <UaeFlag h={15} className="shrink-0" />
             <span style={serif} className="text-xl shrink-0">Majlis</span>
             <span className="h-6 w-px shrink-0" style={{ background: C.line }} />
             <MeetingBar stage={stage} />
