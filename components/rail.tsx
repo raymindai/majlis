@@ -196,10 +196,20 @@ export function NavList({ items }: { items: { label?: string; key?: string; icon
     const ids = anchorKey.split(",").filter(Boolean);
     const els = ids.map((id) => document.getElementById(id)).filter((el): el is HTMLElement => !!el);
     if (!els.length) return;
+    // A callback only carries the sections whose visibility changed, so keep a
+    // running set of everything in view and pick the topmost from the full set.
+    // Otherwise a section that was already visible when a neighbour left is skipped.
+    const visible = new Set<string>();
     const io = new IntersectionObserver(
       (entries) => {
-        const vis = entries.filter((e) => e.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
-        if (vis[0]) setActive((vis[0].target as HTMLElement).id);
+        for (const e of entries) {
+          if (e.isIntersecting) visible.add(e.target.id);
+          else visible.delete(e.target.id);
+        }
+        const top = els
+          .filter((el) => visible.has(el.id))
+          .sort((a, b) => a.getBoundingClientRect().top - b.getBoundingClientRect().top)[0];
+        if (top) setActive(top.id);
       },
       { root: els[0].closest("main"), rootMargin: "0px 0px -72% 0px", threshold: 0 },
     );
