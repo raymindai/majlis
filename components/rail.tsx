@@ -186,7 +186,7 @@ export function NavList({ items }: { items: { label?: string; key?: string; icon
   // The anchor is keyed to the stable English key so in-page links keep working in RTL.
   const { level } = useDetail();
   const { t: tr } = useLang();
-  const [active, setActive] = useState("");
+  const [active, setActive] = useState<Set<string>>(() => new Set());
   const shown = items.filter((n) => !n.min || level >= n.min);
   const anchorKey = shown.map((n) => slug(n.key ?? n.label ?? "")).join(",");
 
@@ -196,25 +196,61 @@ export function NavList({ items }: { items: { label?: string; key?: string; icon
     const ids = anchorKey.split(",").filter(Boolean);
     const els = ids.map((id) => document.getElementById(id)).filter((el): el is HTMLElement => !!el);
     if (!els.length) return;
+    const root = els[0].closest("main");
     // A callback only carries the sections whose visibility changed, so keep a
     // running set of everything in view and pick the topmost from the full set.
     // Otherwise a section that was already visible when a neighbour left is skipped.
     const visible = new Set<string>();
+
+    const commit = (nextIds: string[]) =>
+      setActive((prev) => (prev.size === nextIds.length && nextIds.every((id) => prev.has(id)) ? prev : new Set(nextIds)));
+
+    const compute = () => {
+      // Bottom guard: when the content is scrolled to its end, the last section
+      // wins. On a tall screen it may never have enough content below it to reach
+      // the band on its own, so it would otherwise never become active.
+      if (root && root.scrollHeight - root.clientHeight > 4 && root.scrollTop + root.clientHeight >= root.scrollHeight - 4) {
+        commit([els[els.length - 1].id]);
+        return;
+      }
+      // Highlight every section in the topmost visible row. Side-by-side cards
+      // share a top, so a single pick would always lose the right-hand one.
+      const vis = els
+        .filter((el) => visible.has(el.id))
+        .map((el) => ({ id: el.id, top: el.getBoundingClientRect().top }))
+        .sort((a, b) => a.top - b.top);
+      if (!vis.length) return;
+      const minTop = vis[0].top;
+      commit(vis.filter((v) => v.top <= minTop + 8).map((v) => v.id));
+    };
+
     const io = new IntersectionObserver(
       (entries) => {
         for (const e of entries) {
           if (e.isIntersecting) visible.add(e.target.id);
           else visible.delete(e.target.id);
         }
-        const top = els
-          .filter((el) => visible.has(el.id))
-          .sort((a, b) => a.getBoundingClientRect().top - b.getBoundingClientRect().top)[0];
-        if (top) setActive(top.id);
+        compute();
       },
-      { root: els[0].closest("main"), rootMargin: "0px 0px -72% 0px", threshold: 0 },
+      { root, rootMargin: "0px 0px -72% 0px", threshold: 0 },
     );
     els.forEach((el) => io.observe(el));
-    return () => io.disconnect();
+
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        compute();
+        ticking = false;
+      });
+    };
+    root?.addEventListener("scroll", onScroll, { passive: true });
+
+    return () => {
+      io.disconnect();
+      root?.removeEventListener("scroll", onScroll);
+    };
   }, [anchorKey]);
 
   return (
@@ -225,7 +261,7 @@ export function NavList({ items }: { items: { label?: string; key?: string; icon
         const tone = tier >= 3 ? C.faint : tier === 2 ? C.muted : C.detail;
         const label = n.key ? tr(n.key) : (n.label ?? "");
         const anchor = slug(n.key ?? n.label ?? "");
-        const isActive = active === anchor;
+        const isActive = active.has(anchor);
         return (
           <a
             key={n.key ?? n.label}
