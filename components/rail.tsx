@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { ArrowRight, ChevronDown, Layers, Users, type LucideIcon } from "lucide-react";
 import { openAboutProgramme } from "@/components/programme-bus";
 import { ENTITIES, deptNameI18n, meetingFieldI18n } from "@/lib/corpus";
@@ -187,12 +187,17 @@ export function NavList({ items }: { items: { label?: string; key?: string; icon
   const { level } = useDetail();
   const { t: tr } = useLang();
   const [active, setActive] = useState<Set<string>>(() => new Set());
+  const lockRef = useRef(0);
   const shown = items.filter((n) => !n.min || level >= n.min);
   const anchorKey = shown.map((n) => slug(n.key ?? n.label ?? "")).join(",");
 
-  // Scroll-spy: highlight the rail item for the section you have most recently
-  // scrolled to. Sections scrolled above the top of the view are ignored, so the
-  // highlight stays on the clicked section instead of jumping to a neighbour.
+  // Scroll-spy with a trigger line that slides from the top of the view to the
+  // bottom as you scroll (0% at the top, 100% at the end). Active is the lowest
+  // section whose top has passed it, so the first section wins at the top, the
+  // last at the bottom, and every middle section in between, however little room
+  // there is to scroll. Side-by-side cards share a top, so the whole row lights up.
+  // A click sets the active item explicitly and briefly locks out the spy so the
+  // highlight stays on what was clicked while its smooth scroll runs.
   useEffect(() => {
     const ids = anchorKey.split(",").filter(Boolean);
     const els = ids.map((id) => document.getElementById(id)).filter((el): el is HTMLElement => !!el);
@@ -204,18 +209,11 @@ export function NavList({ items }: { items: { label?: string; key?: string; icon
       setActive((prev) => (prev.size === nextIds.length && nextIds.every((id) => prev.has(id)) ? prev : new Set(nextIds)));
 
     const compute = () => {
+      if (Date.now() < lockRef.current) return;
+      const max = root.scrollHeight - root.clientHeight;
+      const progress = max > 4 ? Math.min(1, Math.max(0, root.scrollTop / max)) : 0;
+      const trigger = root.getBoundingClientRect().top + progress * root.clientHeight;
       const tops = els.map((el) => ({ id: el.id, top: el.getBoundingClientRect().top }));
-      // Bottom guard: scrolled to the end -> the last row, which on a tall screen
-      // may never reach the trigger on its own.
-      if (root.scrollHeight - root.clientHeight > 4 && root.scrollTop + root.clientHeight >= root.scrollHeight - 4) {
-        const lastTop = tops[tops.length - 1].top;
-        commit(tops.filter((t) => Math.abs(t.top - lastTop) < 8).map((t) => t.id));
-        return;
-      }
-      // Active = the lowest section whose top has passed a trigger line just below
-      // the top of the view (ignoring sections already scrolled above it). Side-by-
-      // side cards share a top, so the whole row is highlighted.
-      const trigger = root.getBoundingClientRect().top + 24;
       const passed = tops.filter((t) => t.top <= trigger);
       const pool = passed.length ? passed : tops;
       const mark = passed.length ? Math.max(...passed.map((t) => t.top)) : Math.min(...tops.map((t) => t.top));
@@ -255,6 +253,10 @@ export function NavList({ items }: { items: { label?: string; key?: string; icon
           <a
             key={n.key ?? n.label}
             href={`#${anchor}`}
+            onClick={() => {
+              lockRef.current = Date.now() + 800;
+              setActive(new Set([anchor]));
+            }}
             className={`flex items-center gap-2.5 px-2 py-1.5 rounded-lg text-[13px] ${isActive ? "" : "hover:bg-[var(--c-surface-alt)]"}`}
             style={{
               color: isActive ? C.ink : tone,
