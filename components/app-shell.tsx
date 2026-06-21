@@ -2,6 +2,7 @@
 
 import { type ReactNode } from "react";
 import { C } from "@/components/ui";
+import { useDetail } from "@/components/detail-context";
 import MeetingBar from "@/components/meeting-bar";
 import DetailControl from "@/components/detail-control";
 import UserMenu from "@/components/user-menu";
@@ -24,6 +25,11 @@ export default function AppShell({
   leftRail?: ReactNode;
   children: ReactNode;
 }) {
+  const { level } = useDetail();
+  // Re-key the content on the zoom level so changing detail re-plays a subtle
+  // fade as the view reshapes. A live meeting keeps a stable key so streaming
+  // is never interrupted.
+  const contentKey = stage === "during" ? "live" : `lvl-${level}`;
   return (
     <div className="h-dvh flex flex-col" style={{ background: C.bg, color: C.ink, fontFamily: "var(--font-inter), var(--font-arabic), system-ui, sans-serif" }}>
       {/* header: left = title + meeting + stage, center = zoom, right = theme + profile */}
@@ -48,11 +54,11 @@ export default function AppShell({
 
       {/* 3-zone laptop body */}
       <div className="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-[230px_1fr_380px]">
-        <aside className="hidden lg:block border-r overflow-y-auto p-4" style={{ borderColor: C.line, background: C.surface }}>
+        <aside className="hidden lg:block border-r overflow-y-auto p-4 majlis-smooth-scroll" style={{ borderColor: C.line, background: C.surface }}>
           {leftRail}
         </aside>
-        <main className="overflow-y-auto px-6 py-6">
-          <div className="mx-auto w-full max-w-5xl space-y-6 pb-12">{children}</div>
+        <main className="overflow-y-auto px-6 py-6 majlis-smooth-scroll">
+          <div key={contentKey} className="mx-auto w-full max-w-5xl space-y-6 pb-12 majlis-fade-up">{children}</div>
         </main>
         <div className="hidden lg:flex flex-col border-l min-h-0" style={{ borderColor: C.line, background: C.surface }}>
           <ChatPanel stage={stage} />

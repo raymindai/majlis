@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { ArrowRight, ChevronDown, Layers, Users, type LucideIcon } from "lucide-react";
 import { openAboutProgramme } from "@/components/programme-bus";
 import { ENTITIES, deptNameI18n, meetingFieldI18n } from "@/lib/corpus";
@@ -186,7 +186,27 @@ export function NavList({ items }: { items: { label?: string; key?: string; icon
   // The anchor is keyed to the stable English key so in-page links keep working in RTL.
   const { level } = useDetail();
   const { t: tr } = useLang();
+  const [active, setActive] = useState("");
   const shown = items.filter((n) => !n.min || level >= n.min);
+  const anchorKey = shown.map((n) => slug(n.key ?? n.label ?? "")).join(",");
+
+  // Scroll-spy: as the content scrolls, highlight the rail item whose section is
+  // nearest the top of the view, so the nav stays tied to where the reader is.
+  useEffect(() => {
+    const ids = anchorKey.split(",").filter(Boolean);
+    const els = ids.map((id) => document.getElementById(id)).filter((el): el is HTMLElement => !!el);
+    if (!els.length) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        const vis = entries.filter((e) => e.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+        if (vis[0]) setActive((vis[0].target as HTMLElement).id);
+      },
+      { root: els[0].closest("main"), rootMargin: "0px 0px -72% 0px", threshold: 0 },
+    );
+    els.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, [anchorKey]);
+
   return (
     <nav className="-mx-2 space-y-0.5">
       {shown.map((n) => {
@@ -195,14 +215,20 @@ export function NavList({ items }: { items: { label?: string; key?: string; icon
         const tone = tier >= 3 ? C.faint : tier === 2 ? C.muted : C.detail;
         const label = n.key ? tr(n.key) : (n.label ?? "");
         const anchor = slug(n.key ?? n.label ?? "");
+        const isActive = active === anchor;
         return (
           <a
             key={n.key ?? n.label}
             href={`#${anchor}`}
             className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg text-[13px] hover:bg-[var(--c-surface-alt)]"
-            style={{ color: tone, fontWeight: tier === 1 ? 500 : 400 }}
+            style={{
+              color: isActive ? C.ink : tone,
+              fontWeight: isActive ? 600 : tier === 1 ? 500 : 400,
+              background: isActive ? C.surfaceAlt : "transparent",
+              boxShadow: isActive ? `inset 2px 0 0 ${C.accent}` : "none",
+            }}
           >
-            <Icon size={15} strokeWidth={2} style={{ color: tier === 1 ? C.accent : C.faint }} className="shrink-0" />
+            <Icon size={15} strokeWidth={2} style={{ color: isActive || tier === 1 ? C.accent : C.faint }} className="shrink-0" />
             <span className="flex-1 truncate">{label}</span>
             <TierTag min={n.min} />
           </a>
