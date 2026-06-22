@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/next";
 import { arabic, inter, newsreader } from "@/lib/fonts";
 import { LangProvider } from "@/components/lang-context";
 import "./globals.css";
@@ -23,6 +24,7 @@ export default function RootLayout({
       </head>
       <body>
         <LangProvider>{children}</LangProvider>
+        <Analytics />
       </body>
     </html>
   );
