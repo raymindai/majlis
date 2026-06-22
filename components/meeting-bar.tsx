@@ -52,7 +52,7 @@ export default function MeetingBar({ stage }: { stage: "before" | "during" | "af
             type="button"
             onClick={() => setOpen((o) => !o)}
             title={tr("changeStatus")}
-            className="inline-flex items-center gap-1.5 px-2.5 text-[12px] cursor-pointer hover:opacity-90"
+            className="inline-flex items-center gap-1.5 px-2.5 text-[12px] whitespace-nowrap cursor-pointer hover:opacity-90"
             style={statusStyle}
           >
             {live && <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: C.unverified }} />}
