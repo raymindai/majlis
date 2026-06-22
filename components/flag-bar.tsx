@@ -9,7 +9,7 @@ const UAE = ["#CE1126", "#00732F", "#FFFFFF", "#000000"];
  */
 export default function FlagBar() {
   return (
-    <div dir="ltr" aria-hidden className="shrink-0 flex h-[3px] w-full" style={{ borderTop: `1px solid ${C.line}` }}>
+    <div dir="ltr" aria-hidden className="shrink-0 flex h-[4px] w-full" style={{ borderTop: `1px solid ${C.line}` }}>
       {UAE.map((c) => (
         <span key={c} className="flex-1" style={{ background: c }} />
       ))}
