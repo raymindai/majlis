@@ -33,21 +33,30 @@ export default function AppShell({
     <div className="h-dvh flex flex-col" style={{ background: C.bg, color: C.ink, fontFamily: "var(--font-inter), var(--font-arabic), system-ui, sans-serif" }}>
       {/* header: left = title + meeting + stage, center = zoom, right = theme + profile */}
       <header className="shrink-0 border-b" style={{ borderColor: C.line, background: C.surface }}>
+        {/* Row 1: brand left, zoom centered, language + account right */}
         <div className="px-3 md:px-5 h-14 flex items-center gap-2 md:gap-4">
           <div className="flex items-center gap-2.5 md:gap-3 min-w-0 flex-1">
             <span style={serif} className="text-xl shrink-0">Majlis</span>
-            <span className="h-6 w-px shrink-0" style={{ background: C.line }} />
-            <MeetingBar stage={stage} />
+            {/* large screens keep the meeting inline; smaller screens move it to row 2 */}
+            <div className="hidden lg:flex items-center gap-3 min-w-0">
+              <span className="h-6 w-px shrink-0" style={{ background: C.line }} />
+              <MeetingBar stage={stage} />
+            </div>
           </div>
 
-          <div className="shrink-0 hidden md:block">
+          <div className="shrink-0">
             <DetailControl />
           </div>
 
-          <div className="flex items-center gap-2 md:gap-3 justify-end flex-none md:flex-1">
+          <div className="flex items-center gap-2 md:gap-3 justify-end min-w-0 flex-1">
             <LanguageSwitcher />
             <UserMenu />
           </div>
+        </div>
+
+        {/* Row 2: meeting info (left) and its status (right), only when it cannot sit on row 1 */}
+        <div className="lg:hidden px-3 md:px-5 pb-2.5">
+          <MeetingBar stage={stage} row />
         </div>
       </header>
 
@@ -56,14 +65,8 @@ export default function AppShell({
         <aside className="hidden lg:block border-r overflow-y-auto p-4 majlis-smooth-scroll" style={{ borderColor: C.line, background: C.surface }}>
           {leftRail}
         </aside>
-        <main className="overflow-y-auto majlis-smooth-scroll">
-          {/* phones get the zoom control here; tablets and up keep it in the header */}
-          <div className="md:hidden sticky top-0 z-20 flex justify-end px-4 py-2 border-b" style={{ background: C.bg, borderColor: C.line }}>
-            <DetailControl />
-          </div>
-          <div className="px-6 py-6">
-            <div className="mx-auto w-full max-w-5xl space-y-6 pb-12">{children}</div>
-          </div>
+        <main className="overflow-y-auto px-6 py-6 majlis-smooth-scroll">
+          <div className="mx-auto w-full max-w-5xl space-y-6 pb-12">{children}</div>
         </main>
 
         {/* dim backdrop behind the mobile chat */}

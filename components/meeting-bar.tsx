@@ -19,7 +19,7 @@ const STAGES = [
  * status and the presence action. The left half shows the status and opens the
  * stage selector; the right half is the stage's action (join, leave, replay).
  */
-export default function MeetingBar({ stage }: { stage: "before" | "during" | "after" }) {
+export default function MeetingBar({ stage, row = false }: { stage: "before" | "during" | "after"; row?: boolean }) {
   const [open, setOpen] = useState(false);
   const { t: tr, lang } = useLang();
   const current = STAGES.find((s) => s.key === stage)!;
@@ -37,8 +37,8 @@ export default function MeetingBar({ stage }: { stage: "before" | "during" | "af
   const JoinIcon = join.Icon;
 
   return (
-    <div className="flex items-center gap-2.5 min-w-0">
-      <div className="min-w-0 leading-tight hidden md:block">
+    <div className={row ? "flex items-center justify-between gap-3 w-full min-w-0" : "flex items-center gap-2.5 min-w-0"}>
+      <div className={`min-w-0 leading-tight ${row ? "" : "hidden md:block"}`}>
         <div className="text-[12.5px] font-semibold truncate">{meetingFieldI18n("session", lang)}</div>
         <div className="flex items-center gap-1 text-[11px]" style={{ color: C.muted }}>
           <MapPin size={11} strokeWidth={2} className="shrink-0" />
@@ -65,7 +65,7 @@ export default function MeetingBar({ stage }: { stage: "before" | "during" | "af
             style={join.style}
           >
             <JoinIcon size={14} strokeWidth={2} />
-            <span className="hidden sm:inline">{tr(join.labelKey)}</span>
+            <span className={row ? "" : "hidden sm:inline"}>{tr(join.labelKey)}</span>
           </Link>
         </div>
 

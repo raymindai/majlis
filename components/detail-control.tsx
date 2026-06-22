@@ -28,11 +28,11 @@ export default function DetailControl() {
             type="button"
             onClick={() => setLevel(l.v)}
             title={`${tr("zoom")}: ${tr(l.key)}`}
-            className="inline-flex items-center gap-1.5 text-[11.5px] px-2.5 h-full rounded-md cursor-pointer transition-all"
+            className="inline-flex items-center gap-1.5 text-[11.5px] px-2 md:px-2.5 h-full rounded-md cursor-pointer transition-all"
             style={on ? { background: C.surface, color: C.ink, fontWeight: 600, boxShadow: "0 1px 2px rgba(64,48,24,0.10), 0 1px 1px rgba(64,48,24,0.06)" } : { color: C.muted, fontWeight: 500 }}
           >
             <Icon size={12} strokeWidth={2.5} style={{ color: on ? C.accent : C.faint }} />
-            {tr(l.key)}
+            <span className="hidden md:inline">{tr(l.key)}</span>
           </button>
         );
       })}
