@@ -1,5 +1,6 @@
 import Link from "next/link";
 import ZoomImage from "@/components/zoom-image";
+import FlagBar from "@/components/flag-bar";
 import {
   ArrowRight,
   CircleCheck,
@@ -419,6 +420,7 @@ export default function ProcessPage() {
           </Link>
         </div>
       </div>
+      <FlagBar />
     </div>
   );
 }

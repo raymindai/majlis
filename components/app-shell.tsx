@@ -7,6 +7,7 @@ import DetailControl from "@/components/detail-control";
 import UserMenu from "@/components/user-menu";
 import LanguageSwitcher from "@/components/language-switcher";
 import ChatPanel from "@/components/chat-panel";
+import FlagBar from "@/components/flag-bar";
 
 const serif = { fontFamily: "var(--font-newsreader), var(--font-arabic), Georgia, serif" };
 
@@ -58,6 +59,9 @@ export default function AppShell({
           <ChatPanel stage={stage} />
         </div>
       </div>
+
+      {/* UAE national accent: a slim flag-colour bar flush at the base */}
+      <FlagBar />
     </div>
   );
 }
